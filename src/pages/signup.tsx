@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import signupimage from '@/assets/signup.png';
-import { Button } from '@/components/ui/button';
 import { GoogleSignUpButton } from '@/components/GoogleSignUpButton';
 import { ChessVerificationStep } from '@/components/ChessVerificationStep';
 import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
+
+interface GoogleSignUpResult {
+  success: boolean;
+  verificationCode?: string;
+}
 
 export default function SignUp() {
   const [step, setStep] = useState<'initial' | 'verification'>('initial');
@@ -13,8 +17,8 @@ export default function SignUp() {
   const { signInWithGoogle, isLoading, error } = useGoogleAuth();
 
   const handleGoogleSignUp = async () => {
-    const result = await signInWithGoogle();
-    if (result.success) {
+    const result: GoogleSignUpResult = await signInWithGoogle();
+    if (result.success && result.verificationCode) {
       setVerificationCode(result.verificationCode);
       setStep('verification');
     }
@@ -56,15 +60,14 @@ export default function SignUp() {
               <>
                 <ChessVerificationStep />
                 <VerificationCodeDisplay code={verificationCode} />
-                <Button
-                  as="a"
+                <a
                   href="https://www.chess.com/settings"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-green-600 hover:bg-green-500 text-white mt-4"
                 >
                   Click here to add this to your Chess.com profile location field
-                </Button>
+                </a>
               </>
             )}
           </div>
