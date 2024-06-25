@@ -1,6 +1,6 @@
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
-interface DecodedToken extends jwtDecode.JwtPayload {
+interface DecodedToken extends JwtPayload {
   verificationCode: string;
   chessUsername?: string;
   id: string;

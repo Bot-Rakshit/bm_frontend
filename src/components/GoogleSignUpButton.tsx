@@ -17,7 +17,7 @@ export function GoogleSignUpButton({ onClick, isLoading }: GoogleSignUpButtonPro
       {isLoading ? (
         <span className="loading loading-spinner"></span>
       ) : (
-        <YouTubeIcon className="mr-5" />
+        <YouTubeIcon />
       )}
       Signup and connect your Youtube account
     </Button>
