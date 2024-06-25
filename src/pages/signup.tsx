@@ -5,6 +5,7 @@ import { GoogleSignUpButton } from '@/components/GoogleSignUpButton';
 import { ChessVerificationStep } from '@/components/ChessVerificationStep';
 import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
+import { Alert } from '@/components/ui/Alert.tsx';
 
 interface GoogleSignUpResult {
   success: boolean;
@@ -41,6 +42,11 @@ export default function SignUp() {
         </div>
         <div className="md:w-3/5 flex flex-col items-center justify-center p-8 mt-0 bg-black">
           <div className="w-full max-w-md space-y-8">
+            <Alert
+              variant="info"
+              title="Notice"
+              description="We are currently in development and maintenance. The website will be available for use soon. Thank you for your patience!"
+            />
             {step === 'initial' ? (
               <>
                 <div className="text-center">

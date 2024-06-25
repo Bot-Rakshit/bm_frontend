@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import BMSamayLogo from '../assets/SamayBM.png';
 import samayheader from '../assets/samayheader.png';
+import { Alert } from '@/components/ui/Alert';
 
 const YTsvg = () => {
   return (
@@ -35,7 +36,12 @@ export function LandingPage() {
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+            <Alert
+              variant="info"
+              title="Notice"
+              description="We are currently in development and maintenance. The website will be available for use soon. Thank you for your patience!"
+            />
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center mt-6">
               <div className="flex flex-col justify-center items-center lg:items-start space-y-4 lg:space-y-6 text-center lg:text-left">
                 <div className="space-y-4 lg:space-y-6">
                   <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:text-5xl xl:text-6xl text-white">
