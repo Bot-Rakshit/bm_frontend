@@ -31,10 +31,10 @@ export default function SignUp() {
           <img src={signupimage} alt="Chess community" className="absolute inset-0 object-cover w-full h-full hidden md:block rounded-lg" />
           <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-900/50 hidden md:block rounded-lg"></div>
           <div className="relative z-10 text-center md:text-left md:mt-auto md:mb-12">
-            <h1 className="text-4xl font-bold mb-6 text-white">
-              Just One Step Away from Joining India's Biggest Chess Community
+            <h1 className="text-4xl font-bold mb-6 text-white hidden md:block">
+              Join India's Biggest Chess Community
             </h1>
-            <p className="text-lg mb-8 text-white">
+            <p className="text-lg mb-8 text-white hidden md:block">
               Get access to dashboards, leaderboards, predictions, BM points, and much more!
             </p>
           </div>

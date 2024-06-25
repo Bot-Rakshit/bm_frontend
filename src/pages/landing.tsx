@@ -23,7 +23,7 @@ export function LandingPage() {
         <div className="flex items-center space-x-2">
           <Link className="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105" to="/signup">Early Access(BETA)</Link>
           <Link
-  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white py-2 text-sm font-medium transition-colors hover:bg-green-600 hover:text-white focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-white-950 dark:hover:bg-green-600 dark:hover:text-white dark:focus:bg-green-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50 gap-2"
+            className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white py-2 text-sm font-medium transition-colors hover:bg-green-600 hover:text-white focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-white-950 dark:hover:bg-green-600 dark:hover:text-white dark:focus:bg-green-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50 gap-2"
             to="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw/streams"
             target="_blank"
           >
@@ -38,7 +38,7 @@ export function LandingPage() {
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
               <div className="flex flex-col justify-center items-center lg:items-start space-y-4 lg:space-y-6 text-center lg:text-left">
                 <div className="space-y-4 lg:space-y-6">
-                  <h1 className="text-4xl font-bold tracking-tight sm:text-5xl xl:text-6xl text-white">
+                  <h1 className="text-3xl sm:text-4xl font-bold tracking-tight sm:text-5xl xl:text-6xl text-white">
                     Join the BM SamayRaina community
                   </h1>
                   <p className="max-w-[700px] text-green-200 md:text-xl text-center lg:text-left mx-auto lg:mx-0">
@@ -47,7 +47,7 @@ export function LandingPage() {
                 </div>
                 <div className="flex justify-center mt-6">
                   <Link
-                    className="inline-flex h-14 items-center justify-center rounded-full bg-green-500 px-11 text-sm font-medium text-black shadow transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500 disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-12 sm:h-14 items-center justify-center rounded-full bg-green-500 px-8 sm:px-11 text-sm font-medium text-black shadow transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500 disabled:pointer-events-none disabled:opacity-50"
                     to="/signup"
                   >
                     Connect ChessCom Now (BETA)
@@ -57,7 +57,7 @@ export function LandingPage() {
               <img
                 alt="Hero"
                 className="mx-auto overflow-hidden rounded-xl object-cover sm:w-full lg:order-last"
-                style={{ minHeight: '60vh', width: '80%', objectFit: 'cover', objectPosition: 'top center' }}
+                style={{ minHeight: '40vh', width: '100%', objectFit: 'cover', objectPosition: 'top center' }}
                 src={samayheader}
               />
             </div>
@@ -78,4 +78,3 @@ export function LandingPage() {
     </div>
   );
 }
-
