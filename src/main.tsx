@@ -6,7 +6,7 @@ import { LandingPage } from './pages/landing.tsx';
 import Signup from './pages/signup.tsx';
 import '@/styles/globals.css';
 import Test from './pages/test.tsx'; // Import the Test component
-
+import SignUpCallback from './pages/signupcallback.tsx';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router>
@@ -14,7 +14,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/" element={<LandingPage />} />
         <Route path="/app" element={<App />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/test" element={<Test />} /> {/* Add the test route */}
+        <Route path="/test" element={<Test />} /> 
+        <Route path="/signupcallback" element={<SignUpCallback/>} />
       </Routes>
     </Router>
   </React.StrictMode>
