@@ -1,23 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import signupimage from '@/assets/signup.png';
 import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
+import { decodeJwt } from '@/lib/jwtDecoder';
+import { verifyChessAccount, initiateChessVerification } from '@/services/auth';
 
 export default function SignUpCallback() {
   const [step, setStep] = useState(1);
   const [chessComId, setChessComId] = useState('');
-  const [verificationCode, setVerificationCode] = useState('DUMMY-CODE-1234');
+  const [verificationCode, setVerificationCode] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // State to handle errors
   const location = useLocation();
 
-  const handleNextStep = () => {
-    if (step === 1 && chessComId) {
-      setStep(2);
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get('token');
+    if (token) {
+      const decoded = decodeJwt(token);
+      setVerificationCode(decoded.verificationCode);
+      setToken(token);
+    }
+  }, [location.search]);
+
+  const handleNextStep = async () => {
+    if (step === 1 && chessComId && token) {
+      try {
+        const response = await initiateChessVerification(chessComId, token);
+        if (response.verificationCode) {
+          setStep(2);
+        }
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.error) {
+          setError(error.response.data.error);
+        } else {
+          setError('An unexpected error occurred. Please try again.');
+        }
+      }
     }
   };
 
-  const handleVerify = () => {
-    // Add verification logic here
-    alert('Verification successful!');
+  const handleVerify = async () => {
+    if (chessComId && token) {
+      try {
+        const response = await verifyChessAccount(chessComId, token);
+        if (response.success) {
+          alert('Verification successful!');
+        } else {
+          alert('Verification failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error verifying Chess.com account:', error);
+        alert('Verification failed. Please try again.');
+      }
+    }
   };
 
   return (
@@ -51,6 +87,7 @@ export default function SignUpCallback() {
                     placeholder="Chess.com ID"
                     className="mt-4 w-full p-3 rounded-lg bg-gray-700 text-white border border-neon-green focus:outline-none focus:ring-2 focus:ring-neon-green"
                   />
+                  {error && <p className="text-red-500 mt-2">{error}</p>}
                   <button
                     onClick={handleNextStep}
                     className="w-full bg-gradient-to-r from-green-600 to-gray-800 hover:from-green-700 hover:to-gray-900 text-white mt-6 py-2 px-3 rounded-lg font-semibold text-sm"

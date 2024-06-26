@@ -9,9 +9,8 @@ export function useGoogleAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      const authUrl = await apiSignInWithGoogle();
-      // Redirect the user to the Google auth URL
-      window.location.href = authUrl;
+      // Call the API function which now redirects directly
+      await apiSignInWithGoogle();
       return { success: true };
     } catch (err) {
       setError('Failed to sign in with Google. Please try again.');

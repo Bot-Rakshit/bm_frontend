@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@types/jwt-decode": "^3.1.0",
     "axios": "^1.7.2",
@@ -21,6 +22,7 @@
     "npm": "^10.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
     "react-router-dom": "^6.23.1",
     "tailwindcss-animate": "^1.0.6"
   },
