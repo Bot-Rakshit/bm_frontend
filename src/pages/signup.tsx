@@ -1,9 +1,6 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import signupimage from '@/assets/signup.png';
 import { GoogleSignUpButton } from '@/components/GoogleSignUpButton';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
-import { Alert } from '@/components/ui/Alert.tsx';
 
 export default function SignUp() {
   const { signInWithGoogle, isLoading, error } = useGoogleAuth();
@@ -30,11 +27,6 @@ export default function SignUp() {
           </div>
           <div className="md:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-gray-800 rounded-lg">
             <div className="w-full max-w-md space-y-6 md:space-y-8">
-              <Alert
-                variant="info"
-                title="Notice"
-                description="We are currently in development and maintenance. The website will be available for use soon. Thank you for your patience!"
-              />
               <div className="text-center">
                 <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green">Create Your Account</h2>
                 <p className="mt-2 text-gray-400">Start your journey with us today!</p>
@@ -43,9 +35,9 @@ export default function SignUp() {
               {error && <p className="text-red-500 text-center">{error}</p>}
               <div className="text-center text-sm text-gray-400">
                 Already have an account?{" "}
-                <Link to="/login" className="font-medium text-neon-green hover:text-neon-green-light">
+                <button onClick={handleGoogleSignUp} className="font-medium text-neon-green hover:text-neon-green-light">
                   Sign in here
-                </Link>
+                </button>
               </div>
             </div>
           </div>

@@ -1,28 +1,43 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import samayBM from '@/assets/SamayBM.png';
-import profileIcon from '@/assets/profile.png';
-import { Menu, X } from 'react-feather';
-import Sidebar from '@/components/Sidebar';
+import { useState, useEffect } from 'react';
+import Sidebar from '@/components/sidebar';
+import { getDashboardStats } from '@/services/communityApi';
+
+interface DashboardData {
+  totalUsers: number;
+  averageRapid: number;
+  highestRapid: { rating: number; chessUsername: string };
+  highestBlitz: { rating: number; chessUsername: string };
+  highestBullet: { rating: number; chessUsername: string };
+  highestPuzzleRush: { rating: number; chessUsername: string };
+  top10Bullet: { user: { chessUsername: string }; bullet: number }[];
+  top10Blitz: { user: { chessUsername: string }; blitz: number }[];
+  top10Rapid: { user: { chessUsername: string }; rapid: number }[];
+}
 
 export default function Community() {
-  const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
-  const handleLogout = () => {
-    navigate(process.env.REACT_APP_FRONTEND_URL || "/");
-  };
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const data = await getDashboardStats();
+        setDashboardData(data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+    fetchDashboardData();
+  }, []);
+
+
+  if (!dashboardData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="dark:bg-black dark:text-white h-screen w-full flex flex-col md:flex-row">
-      <Sidebar />
+      <Sidebar isOpen={true} />
       <div className="flex-1 flex flex-col ml-64">
         <header className="bg-white text-black px-4 lg:px-6 h-16 flex items-center justify-center shadow-md mt-4 mx-4 rounded-lg">
           <h1 className="text-xl font-bold">Community Statistics</h1>
@@ -40,27 +55,31 @@ export default function Community() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl mt-8">
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Total Users</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">1,234</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.totalUsers}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Average Rating</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">1500</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.averageRapid}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Highest Rapid Rating</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">2000</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.highestRapid.rating}</p>
+              <p className="text-gray-400 mt-2">{dashboardData.highestRapid.chessUsername}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Highest Blitz Rating</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">1900</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.highestBlitz.rating}</p>
+              <p className="text-gray-400 mt-2">{dashboardData.highestBlitz.chessUsername}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Highest Bullet Rating</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">1800</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.highestBullet.rating}</p>
+              <p className="text-gray-400 mt-2">{dashboardData.highestBullet.chessUsername}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-              <h2 className="text-2xl font-bold text-white">Total Games</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">5,678</p>
+              <h2 className="text-2xl font-bold text-white">Highest Puzzle Rush</h2>
+              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.highestPuzzleRush.rating}</p>
+              <p className="text-gray-400 mt-2">{dashboardData.highestPuzzleRush.chessUsername}</p>
             </div>
           </div>
           <div className="w-full max-w-4xl mt-8">
@@ -69,10 +88,10 @@ export default function Community() {
               <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-[#00ff00]">
                 <h3 className="text-2xl font-bold text-white text-center">Top 10 Bullet</h3>
                 <ul className="mt-4 text-white">
-                  {Array.from({ length: 10 }, (_, i) => (
+                  {dashboardData.top10Bullet.map((player, i) => (
                     <li key={i} className="flex justify-between py-2 border-b border-gray-700">
-                      <span>Player {i + 1}</span>
-                      <span>{1800 - i * 10}</span>
+                      <span>{player.user.chessUsername}</span>
+                      <span>{player.bullet}</span>
                     </li>
                   ))}
                 </ul>
@@ -80,10 +99,10 @@ export default function Community() {
               <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-[#00ff00]">
                 <h3 className="text-2xl font-bold text-white text-center">Top 10 Blitz</h3>
                 <ul className="mt-4 text-white">
-                  {Array.from({ length: 10 }, (_, i) => (
+                  {dashboardData.top10Blitz.map((player, i) => (
                     <li key={i} className="flex justify-between py-2 border-b border-gray-700">
-                      <span>Player {i + 1}</span>
-                      <span>{1900 - i * 10}</span>
+                      <span>{player.user.chessUsername}</span>
+                      <span>{player.blitz}</span>
                     </li>
                   ))}
                 </ul>
@@ -91,10 +110,10 @@ export default function Community() {
               <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-[#00ff00]">
                 <h3 className="text-2xl font-bold text-white text-center">Top 10 Rapid</h3>
                 <ul className="mt-4 text-white">
-                  {Array.from({ length: 10 }, (_, i) => (
+                  {dashboardData.top10Rapid.map((player, i) => (
                     <li key={i} className="flex justify-between py-2 border-b border-gray-700">
-                      <span>Player {i + 1}</span>
-                      <span>{2000 - i * 10}</span>
+                      <span>{player.user.chessUsername}</span>
+                      <span>{player.rapid}</span>
                     </li>
                   ))}
                 </ul>

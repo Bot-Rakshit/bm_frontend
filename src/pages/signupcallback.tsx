@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import signupimage from '@/assets/signup.png';
 import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { verifyChessAccount, initiateChessVerification } from '@/services/auth';
+
+type ErrorResponse = {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+};
 
 export default function SignUpCallback() {
   const [step, setStep] = useState(1);
@@ -12,6 +20,7 @@ export default function SignUpCallback() {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null); // State to handle errors
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -20,8 +29,11 @@ export default function SignUpCallback() {
       const decoded = decodeJwt(token);
       setVerificationCode(decoded.verificationCode);
       setToken(token);
+      if (decoded.chessUsername) {
+        navigate(`/welcome?token=${token}`);
+      }
     }
-  }, [location.search]);
+  }, [location.search, navigate]);
 
   const handleNextStep = async () => {
     if (step === 1 && chessComId && token) {
@@ -30,9 +42,10 @@ export default function SignUpCallback() {
         if (response.verificationCode) {
           setStep(2);
         }
-      } catch (error) {
-        if (error.response && error.response.data && error.response.data.error) {
-          setError(error.response.data.error);
+      } catch (error: unknown) {
+        const err = error as ErrorResponse;
+        if (err.response && err.response.data && err.response.data.error) {
+          setError(err.response.data.error);
         } else {
           setError('An unexpected error occurred. Please try again.');
         }
@@ -45,13 +58,14 @@ export default function SignUpCallback() {
       try {
         const response = await verifyChessAccount(chessComId, token);
         if (response.success) {
-          alert('Verification successful!');
+          const newToken = response.token;
+          navigate(`/welcome?token=${newToken}`);
         } else {
-          alert('Verification failed. Please try again.');
+          setError('Verification failed. Please try again.');
         }
       } catch (error) {
         console.error('Error verifying Chess.com account:', error);
-        alert('Verification failed. Please try again.');
+        setError('Verification failed. Please try again.');
       }
     }
   };
@@ -65,27 +79,24 @@ export default function SignUpCallback() {
             <div className="absolute inset-0 bg-gradient-to-r from-gray-800/90 to-gray-800/50 hidden md:block rounded-lg"></div>
             <div className="relative z-10 text-center md:text-left md:mt-auto md:mb-12">
               <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-neon-green">
-                Verify Your Chess.com Account
+                Join India's Biggest Chess Community
               </h1>
               <p className="text-base md:text-lg mb-4 md:mb-8 text-gray-300">
-                Follow the steps to complete your verification and join our community.
+                Get access to dashboards, leaderboards, predictions, BM points, and much more!
               </p>
             </div>
           </div>
           <div className="md:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-gray-800 rounded-lg">
-            <div className="w-full max-w-md space-y-8">
+            <div className="w-full max-w-md space-y-6 md:space-y-8">
               {step === 1 && (
                 <div className="text-center">
                   <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green">Enter Your Chess.com ID</h2>
-                  <p className="text-base md:text-lg text-gray-400 mt-4">
-                    Please enter your Chess.com ID to proceed with the verification.
-                  </p>
                   <input
                     type="text"
                     value={chessComId}
                     onChange={(e) => setChessComId(e.target.value)}
+                    className="w-full mt-4 p-2 rounded-lg bg-gray-700 text-white"
                     placeholder="Chess.com ID"
-                    className="mt-4 w-full p-3 rounded-lg bg-gray-700 text-white border border-neon-green focus:outline-none focus:ring-2 focus:ring-neon-green"
                   />
                   {error && <p className="text-red-500 mt-2">{error}</p>}
                   <button
