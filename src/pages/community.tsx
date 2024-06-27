@@ -59,7 +59,7 @@ export default function Community() {
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Average Rating</h2>
-              <p className="text-[#00ff00] text-4xl mt-4">{dashboardData.averageRapid}</p>
+              <p className="text-[#00ff00] text-4xl mt-4">{Math.round(dashboardData.averageRapid)}</p>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <h2 className="text-2xl font-bold text-white">Highest Rapid Rating</h2>
