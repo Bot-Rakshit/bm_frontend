@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
-import { Menu } from 'react-feather';
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 
 interface DashboardData {
   totalUsers: number;
@@ -17,7 +18,6 @@ interface DashboardData {
 
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -32,23 +32,19 @@ export default function Community() {
     fetchDashboardData();
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   if (!dashboardData) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="dark:bg-black dark:text-white h-screen w-full flex flex-col md:flex-row">
-      <Sidebar isOpen={isSidebarOpen} />
-      <div className={`flex-1 flex flex-col ${isSidebarOpen ? 'ml-64' : ''}`}>
+      <Sidebar />
+      <div className="flex-1 flex flex-col md:ml-64">
         <header className="bg-white text-black px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg">
           <h1 className="text-xl font-bold">Community Statistics</h1>
-          <button onClick={toggleSidebar} className="text-black md:hidden">
-            <Menu size={24} />
-          </button>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu />
+          </Button>
         </header>
         <div className="bg-black p-8 flex flex-col gap-8 items-center justify-center flex-1">
           <div className="text-center md:text-left w-full max-w-4xl">
