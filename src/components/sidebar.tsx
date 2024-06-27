@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -8,15 +8,11 @@ import { Menu, X } from 'react-feather';
 
 interface SidebarProps {
   isOpen: boolean;
+  toggleSidebar: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   const linkClasses = (path: string) => {
     return location.pathname === path ? 'text-white font-bold' : 'text-gray-500 hover:text-white';
@@ -29,14 +25,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const currentQueryParams = location.search;
 
   return (
-    <div className={`bg-black flex flex-col items-center gap-6 py-6 border-r border-[#333333] md:w-64 w-full fixed top-0 left-0 h-full transition-all duration-300 ${isSidebarOpen ? 'left-0' : '-left-full'}`}>
+    <div className={`bg-black flex flex-col items-center gap-6 py-6 border-r border-[#333333] md:w-64 w-full fixed top-0 left-0 h-full transition-all duration-300 ${isOpen ? 'left-0' : '-left-full md:left-0'}`}>
       <div className="flex justify-between w-full px-4 md:hidden">
         <Link to="#" className="flex items-center">
           <img src={samayBM} alt="BM Samay Logo" className="h-10 w-10" style={{ objectFit: 'contain' }} />
           <span className="text-lg font-bold text-white ml-4">BM Samay</span>
         </Link>
         <button onClick={toggleSidebar} className="text-white">
-          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
       <div className="hidden md:flex flex-col items-center gap-2">
