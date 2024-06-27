@@ -11,7 +11,7 @@ import Welcome from './pages/welcome.tsx';
 import Community from './pages/community.tsx';
 import Blunder from './pages/somethingwentwrong.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
-
+import PrivacyPolicy from './pages/privacypolicy.tsx';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router>
@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/community" element={<Community />} />
           <Route path="/signupcallback" element={<SignUpCallback />} />
           <Route path="/blunder" element={<Blunder />} />
+          <Route path='/privacy' element={<PrivacyPolicy/>}/> 
         </Routes>
       </ErrorBoundary>
     </Router>
