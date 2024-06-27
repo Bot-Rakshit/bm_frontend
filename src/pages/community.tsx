@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
-import { Button } from '@/components/ui/button';
 
 interface DashboardData {
   totalUsers: number;
@@ -41,9 +40,6 @@ export default function Community() {
       <div className="flex-1 flex flex-col">
         <header className="bg-white text-black px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg">
           <h1 className="text-xl font-bold">Community Statistics</h1>
-          <Button variant="outline" className="text-[#00ff00] border-[#00ff00]">
-            View Community Stats
-          </Button>
         </header>
         <div className="bg-black p-8 flex-1 overflow-y-auto">
           <div className="max-w-6xl mx-auto">
