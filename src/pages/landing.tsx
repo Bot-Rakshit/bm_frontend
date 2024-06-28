@@ -15,27 +15,29 @@ export function LandingPage() {
           <img src={BMSamayLogo} alt="BM Samay Logo" className="h-10 mr-2" />
           <span className="text-xl font-bold">BM SamayRaina</span>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="default" className="bg-green-500 hover:bg-green-600 text-black font-semibold" asChild>
-            <Link to="/signup">Early Access (BETA)</Link>
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <Button variant="default" className="bg-green-500 hover:bg-green-600 text-black font-semibold text-xs sm:text-sm px-2 sm:px-4" asChild>
+            <Link to="/signup">Early Access</Link>
           </Button>
-          <Button variant="outline" className="border-green-500 text-green-500 hover:bg-green-500 hover:text-black" asChild>
+          <Button variant="outline" className="border-green-500 text-green-500 hover:bg-green-500 hover:text-black p-2 sm:p-3" asChild>
             <a href="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw/streams" target="_blank" rel="noopener noreferrer" className="flex items-center">
-              <Youtube className="mr-2 h-4 w-4" />
+              <Youtube className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Watch Streams</span>
             </a>
           </Button>
         </div>
       </header>
-      <Alert className="mx-4 mt-4 bg-blue-900 border-blue-500 text-blue-100">
-        <InfoCircledIcon className="h-4 w-4 flex-shrink-0" />
-        <div className="w-full sm:w-auto">
-          <AlertTitle>Coming Soon</AlertTitle>
-          <AlertDescription className="text-sm sm:text-base">
-            We're excited to announce that our website will be fully functional in the near future. We are currently awaiting Google OAuth verification to ensure a secure and seamless login experience for all our users. Thank you for your patience and enthusiasm!
-          </AlertDescription>
-        </div>
-      </Alert>
+      <div className="container px-4 md:px-6 mx-auto">
+        <Alert className="mt-4 bg-blue-900 border-blue-500 text-blue-100">
+          <InfoCircledIcon className="h-4 w-4 flex-shrink-0" />
+          <div className="w-full sm:w-auto">
+            <AlertTitle>Coming Soon</AlertTitle>
+            <AlertDescription className="text-sm sm:text-base">
+              We're excited to announce that our website will be fully functional in the near future. We are currently awaiting Google OAuth verification to ensure a secure and seamless login experience for all our users. Thank you for your patience and enthusiasm!
+            </AlertDescription>
+          </div>
+        </Alert>
+      </div>
       <main className="flex-1 bg-gradient-to-b from-gray-900 to-black py-8">
         <section className="w-full">
           <div className="container px-4 md:px-6 mx-auto">
