@@ -28,11 +28,13 @@ export function LandingPage() {
         </div>
       </header>
       <Alert className="mx-4 mt-4 bg-blue-900 border-blue-500 text-blue-100">
-        <InfoCircledIcon className="h-4 w-4" />
-        <AlertTitle>Coming Soon</AlertTitle>
-        <AlertDescription>
-          We're excited to announce that our website will be fully functional in the near future. We are currently awaiting Google OAuth verification to ensure a secure and seamless login experience for all our users. Thank you for your patience and enthusiasm!
-        </AlertDescription>
+        <InfoCircledIcon className="h-4 w-4 flex-shrink-0" />
+        <div className="w-full sm:w-auto">
+          <AlertTitle>Coming Soon</AlertTitle>
+          <AlertDescription className="text-sm sm:text-base">
+            We're excited to announce that our website will be fully functional in the near future. We are currently awaiting Google OAuth verification to ensure a secure and seamless login experience for all our users. Thank you for your patience and enthusiasm!
+          </AlertDescription>
+        </div>
       </Alert>
       <main className="flex-1 bg-gradient-to-b from-gray-900 to-black py-8">
         <section className="w-full">
@@ -87,8 +89,3 @@ export function LandingPage() {
     </div>
   );
 }
-
-
-
-
-
