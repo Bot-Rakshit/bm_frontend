@@ -17,7 +17,6 @@ export function LandingPage() {
         </div>
         <div className="flex items-center space-x-2 sm:space-x-4">
           <Button variant="default" className="bg-green-500 hover:bg-green-600 text-black font-semibold text-xs sm:text-sm px-2 sm:px-4" asChild>
-            <Link to="/signup">Early Access</Link>
           </Button>
           <Button variant="outline" className="border-green-500 text-green-500 hover:bg-green-500 hover:text-black p-2 sm:p-3" asChild>
             <a href="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw/streams" target="_blank" rel="noopener noreferrer" className="flex items-center">
@@ -53,9 +52,9 @@ export function LandingPage() {
                     Join the BM SamayRaina community and get noticed by Samay Raina. Earn BM points, make predictions, and get discounted offers on Samay's merch as well as a chance to win free show tickets.
                   </p>
                   <Button size="lg" className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-black font-semibold" asChild>
-                    <Link to="/signup">
+                   
                       Connect ChessCom Now (BETA)
-                    </Link>
+                    
                   </Button>
                 </CardContent>
               </Card>
@@ -78,7 +77,7 @@ export function LandingPage() {
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-gray-400">© 2024 BM SamayRaina. All rights reserved.</p>
             <nav className="flex gap-4 mt-4 sm:mt-0">
-              <Link to="/terms" className="text-sm hover:text-green-400 transition-colors">
+              <Link to="/privacy" className="text-sm hover:text-green-400 transition-colors">
                 Terms of Service
               </Link>
               <Link to="/privacy" className="text-sm hover:text-green-400 transition-colors">
