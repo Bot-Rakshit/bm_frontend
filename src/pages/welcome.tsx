@@ -51,30 +51,49 @@ export default function Welcome() {
             <Menu />
           </Button>
         </header>
-        <div className="bg-black p-8 flex-1 overflow-y-auto">
+        <div className="bg-black p-4 md:p-8 flex-1 overflow-y-auto">
           <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col lg:flex-row items-center justify-between">
-              <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="md:w-1/2 md:pr-8 mb-8 md:mb-0">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 text-center md:text-left">
                   congrats, {user?.chessUsername || 'demo name'}. you're in.
                 </h1>
-                <p className="text-gray-400 text-lg">
-                  welcome to the <span className="text-[#00ff00] glow">BM Samay</span> chess community! we're thrilled to have you here. this is a big step, and we're extremely excited to have you join us. the bm community is still in its beta phase, so there's a long way to go, but together, we can make it amazing. as a token of our appreciation, we've given you 100 <span className="text-[#00ff00] glow">BM Points</span> for early signup. use these points to earn rewards, make predictions, and get discounted offers on samay's merch, as well as a chance to win free show tickets. let's embark on this journey together and create something truly special.
+                <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-4">
+                  welcome to the <span className="text-[#00ff00] glow">BM Samay</span> chess community! we're thrilled to have you here. this is a big step, and we're extremely excited to have you join us.
                 </p>
-                <Button variant="outline" className="text-[#00ff00] border-[#00ff00] mt-6" onClick={handleCommunityStats}>
-                  see community stats
-                </Button>
+                <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-4">
+                  as a token of our appreciation, we've given you 100 <span className="text-[#00ff00] glow">BM Points</span> for early signup. use these points to earn rewards, make predictions, and get discounted offers on samay's merch, as well as a chance to win free show tickets.
+                </p>
+                <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-4">
+                  let's embark on this journey together and create something truly special. your participation and enthusiasm will help shape the future of this community.
+                </p>
+                <div className="text-center md:text-left">
+                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00] hover:bg-[#00ff00] hover:text-black transition-colors duration-300" onClick={handleCommunityStats}>
+                    see community stats
+                  </Button>
+                </div>
               </div>
-              <div className="lg:w-1/2 lg:pl-8">
-                <img src={bmuniverse} alt="BM Samay" className="rounded-lg object-cover w-full" style={{ maxHeight: '60vh', objectFit: 'cover', objectPosition: 'center', border: '2px solid rgba(0, 255, 255, 0.5)', boxShadow: '0 0 10px rgba(0, 255, 255, 0.5)' }} />
-                <div className="flex justify-center mt-4 space-x-4">
-                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00]">
+              <div className="md:w-1/2 md:pl-8">
+                <div className="relative" style={{ paddingBottom: '110%' }}>
+                  <img 
+                    src={bmuniverse} 
+                    alt="BM Samay" 
+                    className="absolute inset-0 w-full h-full object-cover rounded-lg" 
+                    style={{ 
+                      objectPosition: 'center 20%',
+                      border: '2px solid rgba(0, 255, 255, 0.5)', 
+                      boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)'
+                    }} 
+                  />
+                </div>
+                <div className="flex justify-center mt-4 space-x-2">
+                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00] hover:bg-[#00ff00] hover:text-black transition-colors duration-300 text-sm">
                     Rapid: {chessStats.rapid}
                   </Button>
-                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00]">
+                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00] hover:bg-[#00ff00] hover:text-black transition-colors duration-300 text-sm">
                     Blitz: {chessStats.blitz}
                   </Button>
-                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00]">
+                  <Button variant="outline" className="text-[#00ff00] border-[#00ff00] hover:bg-[#00ff00] hover:text-black transition-colors duration-300 text-sm">
                     Bullet: {chessStats.bullet}
                   </Button>
                 </div>

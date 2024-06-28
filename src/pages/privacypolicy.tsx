@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
 
                 <h2 className="text-2xl font-semibold mb-4">7. Contact Us</h2>
                 <p className="mb-4">
-                  If you have any questions about this privacy policy, please contact us at [contact email].
+                  If you have any questions about this privacy policy, please contact us at singhrakshit003@gmail.com.
                 </p>
               </CardContent>
             </Card>
