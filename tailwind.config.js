@@ -47,6 +47,10 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        'neon-pink': '#FF6AD5',
+        'neon-blue': '#26C6DA',
+        'neon-green': '#39FF14',
+        'neon-purple': '#B026FF',
       },
       borderRadius: {
         lg: 'var(--radius)',
