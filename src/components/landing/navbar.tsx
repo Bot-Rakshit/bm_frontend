@@ -57,13 +57,3 @@ export function Navbar() {
     </header>
   );
 }
-
-function NavLink({ to, children, mobile = false }: { to: string; children: React.ReactNode; mobile?: boolean }) {
-  const baseClasses = "text-white hover:text-neon-green transition-colors duration-300 font-medium text-sm";
-  const mobileClasses = mobile ? "block py-2" : "";
-  return (
-    <Link to={to} className={`${baseClasses} ${mobileClasses}`}>
-      {children}
-    </Link>
-  );
-}

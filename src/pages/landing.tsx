@@ -8,37 +8,37 @@ import { PredictionCard } from '@/components/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
 
 const Hero = () => (
-  <div className="relative pt-20 flex items-center overflow-hidden">
+  <div className="relative pt-20 lg:pt-32 flex items-center overflow-hidden">
     <div className="container mx-auto px-4 z-10">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-        <div className="lg:w-1/2 space-y-6">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+        <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
             Join the Ultimate <span className="text-neon-green">Chess Community</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-300">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-300">
             Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
           </p>
-          <div className="flex space-x-4">
-            <Button className="rounded-full px-6 py-3 text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300">
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+            <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300">
               Early Access (BETA)
             </Button>
             <Button 
               variant="outline" 
-              className="rounded-full px-6 py-3 text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
+              className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
             >
               Learn More
             </Button>
           </div>
         </div>
-        <div className="lg:w-1/2 relative">
+        <div className="lg:w-1/2 relative mt-12 lg:mt-0">
           <div className="relative w-full max-w-md mx-auto">
             <img 
               src={samayheader}
               alt="Samay Raina"
-              className="rounded-lg shadow-2xl w-full h-[400px] object-cover object-center"
+              className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
             />
-            <div className="absolute -bottom-32 -right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300">
+            <div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
               <PredictionCard />
             </div>
           </div>
@@ -49,8 +49,8 @@ const Hero = () => (
 );
 
 const Partner = () => (
-  <div className="text-center mt-32 mb-24">
-    <h3 className="text-ml font-semibold text-gray-300 mb-4">Official Partner</h3>
+  <div className="text-center mt-24 sm:mt-32 mb-16 sm:mb-24">
+    <h3 className="text-base sm:text-lg font-semibold text-gray-300 mb-4">Official Partner</h3>
     <img src={chesscomLogo} alt="Chess.com" className="h-9 mx-auto" />
   </div>
 );
