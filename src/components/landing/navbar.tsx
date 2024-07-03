@@ -24,7 +24,6 @@ export function Navbar() {
             <img src={BMSamayLogo} alt="BM Samay Logo" className="h-8 sm:h-10 w-auto" />
           </Link>
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <NavLink to="/community">Community</NavLink>
             <Button variant="outline" className="border-2 border-neon-green/50 text-white hover:bg-neon-green/20 hover:border-neon-green transition-all duration-300 rounded-full px-4 lg:px-6 py-1 lg:py-2 text-xs lg:text-sm font-semibold" asChild>
               <Link to="/signup">Sign Up</Link>
             </Button>
@@ -43,7 +42,6 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden mt-2 bg-black/80 backdrop-filter backdrop-blur-lg rounded-2xl overflow-hidden border border-neon-green/30 shadow-lg shadow-neon-green/20">
           <div className="px-4 py-3 space-y-2">
-            <NavLink to="/community" mobile>Community</NavLink>
             <Button variant="outline" className="w-full border-2 border-neon-green/50 text-white hover:bg-neon-green/20 hover:border-neon-green transition-all duration-300 rounded-full py-2 text-sm font-semibold" asChild>
               <Link to="/signup">Sign Up</Link>
             </Button>
