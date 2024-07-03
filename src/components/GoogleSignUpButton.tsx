@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { YouTubeIcon } from '@/components/ui/icons';
+import { FaYoutube } from 'react-icons/fa';
 
 interface GoogleSignUpButtonProps {
   onClick: () => void;
@@ -10,16 +10,16 @@ export function GoogleSignUpButton({ onClick, isLoading }: GoogleSignUpButtonPro
   return (
     <Button
       variant="outline"
-      className="w-full bg-white text-gray-900 hover:bg-gray-100 hover:text-green-600"
+      className="w-full bg-white text-gray-900 hover:bg-gray-100 hover:text-green-600 flex items-center justify-center gap-2"
       onClick={onClick}
       disabled={isLoading}
     >
       {isLoading ? (
         <span className="loading loading-spinner"></span>
       ) : (
-        <YouTubeIcon />
+        <FaYoutube className="w-5 h-5" />
       )}
-      SignIn with Youtube
+      Sign up with Google
     </Button>
   );
 }

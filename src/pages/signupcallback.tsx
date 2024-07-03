@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import signupimage from '@/assets/signup.png';
+import signupimage from '@/assets/signup.webp';
 import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { verifyChessAccount, initiateChessVerification } from '@/services/auth';
+import { motion } from 'framer-motion';
 
 type ErrorResponse = {
   response?: {
@@ -70,13 +71,32 @@ export default function SignUpCallback() {
     }
   };
 
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white w-full justify-center items-center font-sans p-4">
-      <div className="bg-gray-800 p-6 md:p-10 rounded-lg border border-neon-green w-full max-w-4xl shadow-lg shadow-neon-green h-auto md:h-[90vh]">
-        <div className="flex flex-col md:flex-row flex-1 h-full">
-          <div className="md:w-2/5 flex flex-col justify-center items-center p-4 md:p-8 bg-gray-700 relative rounded-lg">
-            <img src={signupimage} alt="Chess community" className="absolute inset-0 object-cover w-full h-full hidden md:block rounded-lg" />
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-800/90 to-gray-800/50 hidden md:block rounded-lg"></div>
+    <div className="flex min-h-screen bg-black text-white w-full justify-center items-center font-sans p-4 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
+        <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+      </div>
+      
+      {/* Depth elements */}
+      <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
+      <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
+      
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        transition={{ duration: 0.5 }}
+        className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] p-6 rounded-3xl border border-neon-green/20 w-full max-w-5xl shadow-2xl shadow-neon-green/20 relative z-10"
+      >
+        <div className="flex flex-col lg:flex-row gap-8 h-full">
+          <div className="lg:w-2/5 flex flex-col justify-center items-center p-4 md:p-8 relative rounded-lg">
+            <img src={signupimage} alt="Chess community" className="absolute inset-0 object-cover w-full h-full rounded-lg opacity-70" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1a3a1a]/70 to-transparent rounded-lg"></div>
             <div className="relative z-10 text-center md:text-left md:mt-auto md:mb-12">
               <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-neon-green">
                 Join India's Biggest Chess Community
@@ -86,32 +106,31 @@ export default function SignUpCallback() {
               </p>
             </div>
           </div>
-          <div className="md:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-gray-800 rounded-lg">
+          <div className="lg:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-white/5 rounded-lg backdrop-blur-sm">
             <div className="w-full max-w-md space-y-6 md:space-y-8">
               {step === 1 && (
                 <div className="text-center">
-                  <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green">Enter Your Chess.com ID</h2>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green mb-4">Enter Your Chess.com ID</h2>
                   <input
                     type="text"
                     value={chessComId}
                     onChange={(e) => setChessComId(e.target.value)}
-                    className="w-full mt-4 p-2 rounded-lg bg-gray-700 text-white"
-                    placeholder="Chess.com ID"
+                    placeholder="Your Chess.com ID"
+                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-neon-green/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-green"
                   />
-                  {error && <p className="text-red-500 mt-2">{error}</p>}
                   <button
                     onClick={handleNextStep}
-                    className="w-full bg-gradient-to-r from-green-600 to-gray-800 hover:from-green-700 hover:to-gray-900 text-white mt-6 py-2 px-3 rounded-lg font-semibold text-sm"
+                    className="w-full bg-neon-green text-black mt-6 py-2 px-4 rounded-lg font-semibold hover:bg-opacity-80 transition-all duration-300"
                   >
-                    Next
+                    Submit
                   </button>
                 </div>
               )}
               {step === 2 && (
                 <div className="text-center">
-                  <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green">Paste the Verification Code</h2>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-neon-green mb-4">Paste the Verification Code</h2>
                   <VerificationCodeDisplay code={verificationCode} />
-                  <p className="mt-4 text-lg text-gray-400">
+                  <p className="mt-4 text-lg text-gray-300">
                     Copy the code above and paste it into the "Location" field of your Chess.com profile settings.
                   </p>
                   <div className="flex justify-center mt-6">
@@ -119,26 +138,27 @@ export default function SignUpCallback() {
                       href="https://www.chess.com/settings"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block bg-gradient-to-r from-green-600 to-gray-800 hover:from-green-700 hover:to-gray-900 text-white py-3 px-4 rounded-lg text-center font-semibold text-sm"
+                      className="inline-block bg-neon-green text-black py-3 px-4 rounded-lg text-center font-semibold text-sm hover:bg-opacity-80 transition-all duration-300"
                     >
                       Go to Chess.com Settings
                     </a>
                   </div>
-                  <p className="mt-4 text-lg text-gray-400">
+                  <p className="mt-4 text-lg text-gray-300">
                     This step is necessary to verify your account ownership.
                   </p>
                   <button
                     onClick={handleVerify}
-                    className="w-full bg-gradient-to-r from-green-600 to-gray-800 hover:from-green-700 hover:to-gray-900 text-white mt-6 py-2 px-3 rounded-lg font-semibold text-sm"
+                    className="w-full bg-neon-green text-black mt-6 py-2 px-4 rounded-lg font-semibold hover:bg-opacity-80 transition-all duration-300"
                   >
                     Verify
                   </button>
                 </div>
               )}
+              {error && <p className="text-red-400 text-center mt-4">{error}</p>}
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
