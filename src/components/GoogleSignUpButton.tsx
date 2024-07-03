@@ -19,7 +19,7 @@ export function GoogleSignUpButton({ onClick, isLoading }: GoogleSignUpButtonPro
       ) : (
         <YouTubeIcon />
       )}
-      Signup and connect your Youtube account
+      SignIn with Youtube
     </Button>
   );
 }

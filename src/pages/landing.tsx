@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Avatar,  AvatarFallback } from "@/components/ui/avatar"
 import { Navbar } from '@/components/landing/navbar';
+import { Link } from 'react-router-dom';
 import samayheader from '../assets/samayheader.png';
 import chesscomLogo from '../assets/chesscomlogo.png';
 import { PredictionCard } from '@/components/PredictionCard';
@@ -19,8 +20,8 @@ const Hero = () => (
             Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
           </p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-            <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300">
-              Early Access (BETA)
+            <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
+              <Link to="/signup">Early Access (BETA)</Link>
             </Button>
             <Button 
               variant="outline" 
@@ -226,7 +227,7 @@ const Footer = () => (
 
 export function LandingPage() {
   return (
-    <div className="relative bg-black min-h-screen text-white flex flex-col">
+    <div className="relative bg-black min-h-screen text-white flex flex-col overflow-x-hidden">
       
       <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
         <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
