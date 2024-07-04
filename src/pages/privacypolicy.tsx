@@ -60,6 +60,11 @@ export default function PrivacyPolicy() {
                 <p className="mb-4">
                   If you have any questions about this privacy policy, please contact us at singhrakshit003@gmail.com.
                 </p>
+
+                <h2 className="text-2xl font-semibold mb-4">8. Google API Services User Data Policy</h2>
+                <p className="mb-4">
+                  BM Samay Raina's use and transfer of information received from Google APIs to any other app will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" className="text-neon-green hover:underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -71,4 +76,3 @@ export default function PrivacyPolicy() {
     </div>
   );
 }
-

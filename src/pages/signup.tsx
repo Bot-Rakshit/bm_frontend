@@ -3,6 +3,7 @@ import { GoogleSignUpButton } from '@/components/GoogleSignUpButton';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 import { BarChart2, Zap, Award, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function SignUp() {
   const { signInWithGoogle, isLoading, error } = useGoogleAuth();
@@ -73,6 +74,15 @@ export default function SignUp() {
                   Sign in here
                 </button>
               </div>
+              <p className="text-xs text-gray-400 mt-4 text-center">
+                BM Samay Raina's use and transfer of information received from Google APIs to any other app will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" className="text-neon-green hover:underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
+              </p>
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                By signing up, you agree to our{" "}
+                <Link to="/privacy" className="text-neon-green hover:underline">
+                  Privacy Policy
+                </Link>
+              </p>
             </div>
           </div>
         </div>
