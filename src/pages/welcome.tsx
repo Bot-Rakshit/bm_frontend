@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.jpg';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
-import { Menu, Trophy, Target, Zap, AlertCircle } from 'lucide-react';
+import { Trophy, Target, Zap, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
@@ -70,7 +70,7 @@ export default function Welcome() {
   };
 
   return (
-    <div className="dark:bg-black dark:text-white min-h-screen w-full flex overflow-hidden">
+    <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col relative">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
@@ -84,7 +84,6 @@ export default function Welcome() {
         <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <h1 className="text-xl font-bold">Welcome</h1>
           <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu />
           </Button>
         </header>
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">

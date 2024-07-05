@@ -79,16 +79,16 @@ const Sidebar = () => {
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden text-neon-green">
+          <Button variant="ghost" size="icon" className="md:hidden fixed top-4 left-4 z-50 text-neon-green">
             <Menu />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 bg-black/80 backdrop-blur-md">
+        <SheetContent side="left" className="p-0 w-56 bg-black/80 backdrop-blur-md">
           <NavContent />
         </SheetContent>
       </Sheet>
 
-      <div className="hidden md:flex h-screen w-56 flex-col fixed top-0 left-0 border-r border-neon-green/10 bg-black/80 backdrop-blur-md">
+      <div className="hidden md:block w-56 h-screen bg-black/80 backdrop-blur-md border-r border-neon-green/10">
         <NavContent />
       </div>
     </>
