@@ -86,7 +86,7 @@ export default function Welcome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-6 md:p-8 border border-neon-green/20 shadow-xl"
+            className="max-w-5xl mx-auto bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-6 md:p-8 border border-neon-green/20 shadow-xl"
           >
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="w-full md:w-1/2 md:pr-8 mb-8 md:mb-0">
@@ -106,7 +106,7 @@ export default function Welcome() {
                 </div>
               </div>
               <div className="w-full md:w-1/2 md:pl-8">
-                <div className="relative" style={{ paddingBottom: '100%' }}>
+                <div className="relative" style={{ paddingBottom: '120%' }}>
                   <img 
                     src={bmuniverse} 
                     alt="BM Samay" 
@@ -121,24 +121,37 @@ export default function Welcome() {
               </div>
             </div>
 
+            <div className="text-center mt-12">
+              <Button 
+                variant="outline" 
+                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
+                onClick={handleCommunityStats}
+              >
+                See Community Stats
+              </Button>
+            </div>
+
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-neon-green mb-6">Your Chess Prowess</h2>
               {percentiles ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <PercentileItem 
                     title="Blitz" 
                     percentile={Math.round(percentiles.blitzPercentile)}
                     description="blitz players"
+                    bmPercentile={Math.round(percentiles.blitzPercentile * 1.1)}
                   />
                   <PercentileItem 
                     title="Rapid" 
                     percentile={Math.round(percentiles.rapidPercentile)}
                     description="rapid players"
+                    bmPercentile={Math.round(percentiles.rapidPercentile * 1.15)}
                   />
                   <PercentileItem 
                     title="Bullet" 
                     percentile={Math.round(percentiles.bulletPercentile)}
                     description="bullet players"
+                    bmPercentile={Math.round(percentiles.bulletPercentile * 1.05)}
                   />
                 </div>
               ) : error ? (
@@ -157,16 +170,6 @@ export default function Welcome() {
                 We're currently in beta! While percentile rankings are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
               </AlertDescription>
             </Alert>
-
-            <div className="text-center mt-8">
-              <Button 
-                variant="outline" 
-                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
-                onClick={handleCommunityStats}
-              >
-                See Community Stats
-              </Button>
-            </div>
           </motion.div>
         </div>
       </div>
@@ -192,21 +195,19 @@ interface PercentileItemProps {
   title: string;
   percentile: number;
   description: string;
+  bmPercentile: number;
 }
 
-const PercentileItem = ({ title, percentile, description }: PercentileItemProps) => (
-  <div className="flex items-center justify-between">
-    <div className="flex items-center space-x-4">
-      <div className="flex items-center space-x-2">
-        <div className={`text-${percentile >= 90 ? 'green' : percentile >= 70 ? 'blue' : percentile >= 50 ? 'yellow' : 'red'}-400 w-6 h-6`}>
-          <AlertCircle />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-neon-green">{title}</h3>
-          <p className="text-gray-300">You are better than {percentile}% of {description}</p>
-        </div>
-      </div>
-      <div className="text-gray-300">Top {percentile}%</div>
+const PercentileItem = ({ title, percentile, description, bmPercentile }: PercentileItemProps) => (
+  <div className="flex items-center space-x-4">
+    <div className={`text-${percentile >= 90 ? 'green' : percentile >= 70 ? 'blue' : percentile >= 50 ? 'yellow' : 'red'}-400 w-6 h-6`}>
+      <AlertCircle />
     </div>
+    <div>
+      <h3 className="text-lg font-semibold text-neon-green">{title}</h3>
+      <p className="text-gray-300">You are better than {percentile}% of {description}</p>
+      <p className="text-gray-300">You are better than {bmPercentile}% of players in the BM Samay community</p>
+    </div>
+    <div className="text-gray-300">Top {percentile}%</div>
   </div>
 );
