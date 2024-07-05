@@ -4,6 +4,8 @@ import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 import { BarChart2, Zap, Award, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { AlertCircle } from "lucide-react";
 
 export default function SignUp() {
   const { signInWithGoogle, isLoading, error } = useGoogleAuth();
@@ -62,15 +64,21 @@ export default function SignUp() {
           </div>
           <div className="lg:w-2/5 flex flex-col items-center justify-center p-6 bg-white/5 rounded-2xl backdrop-blur-sm">
             <div className="w-full max-w-md space-y-8">
+              <Alert variant="destructive" className="bg-yellow-900 border-yellow-600 text-yellow-100">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Google OAuth verification is pending. Signups are temporarily paused.
+                </AlertDescription>
+              </Alert>
               <div className="text-center">
                 <h2 className="text-3xl font-bold text-neon-green mb-2">Create Your Account</h2>
                 <p className="text-lg text-gray-300">Start your chess journey today!</p>
               </div>
-              <GoogleSignUpButton onClick={handleGoogleSignUp} isLoading={isLoading} />
+              <GoogleSignUpButton onClick={handleGoogleSignUp} isLoading={isLoading} disabled={true} />
               {error && <p className="text-red-400 text-center mt-4">{error}</p>}
               <div className="text-center text-gray-400 mt-6">
                 Already have an account?{" "}
-                <button onClick={handleGoogleSignUp} className="font-medium text-neon-green hover:text-neon-green-light transition-colors duration-300">
+                <button onClick={handleGoogleSignUp} className="font-medium text-neon-green hover:text-neon-green-light transition-colors duration-300" disabled>
                   Sign in here
                 </button>
               </div>
