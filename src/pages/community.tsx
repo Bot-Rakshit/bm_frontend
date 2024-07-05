@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
@@ -17,19 +17,29 @@ interface DashboardData {
 
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const data = await getDashboardStats();
+      setDashboardData(data);
+      setLastUpdated(new Date());
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const data = await getDashboardStats();
-        setDashboardData(data);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      }
-    };
-
     fetchDashboardData();
-  }, []);
+
+    // Set up interval to fetch data every minute
+    const intervalId = setInterval(() => {
+      fetchDashboardData();
+    }, 60000); // 60000 ms = 1 minute
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [fetchDashboardData]);
 
   if (!dashboardData) {
     return <div>Loading...</div>;
@@ -49,6 +59,11 @@ export default function Community() {
         
         <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <h1 className="text-xl font-bold">Community Statistics</h1>
+          {lastUpdated && (
+            <p className="text-sm text-gray-300">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </p>
+          )}
         </header>
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div 

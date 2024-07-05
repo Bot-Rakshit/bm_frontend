@@ -31,12 +31,14 @@ export default function Welcome() {
   const [chessStats, setChessStats] = useState({ rapid: 0, blitz: 0, bullet: 0 });
   const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get('token');
-    if (token) {
-      const decoded = decodeJwt(token) as unknown as User;
+    const tokenFromQuery = queryParams.get('token');
+    if (tokenFromQuery) {
+      setToken(tokenFromQuery);
+      const decoded = decodeJwt(tokenFromQuery) as unknown as User;
       if (decoded && decoded.stats) {
         setUser(decoded);
         setChessStats(decoded.stats);
@@ -60,7 +62,11 @@ export default function Welcome() {
   };
 
   const handleCommunityStats = () => {
-    navigate('/community');
+    if (token) {
+      navigate(`/community?token=${encodeURIComponent(token)}`);
+    } else {
+      navigate('/community');
+    }
   };
 
   return (
