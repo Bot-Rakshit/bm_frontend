@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.jpg';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
-import { Menu, Trophy, Target, Zap, BarChart2, Users, AlertCircle } from 'lucide-react';
+import { Menu, Trophy, Target, Zap, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
@@ -86,10 +86,10 @@ export default function Welcome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-6xl mx-auto bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-8 border border-neon-green/20 shadow-xl"
+            className="max-w-4xl mx-auto bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-6 md:p-8 border border-neon-green/20 shadow-xl"
           >
             <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="md:w-1/2 md:pr-8 mb-8 md:mb-0">
+              <div className="w-full md:w-1/2 md:pr-8 mb-8 md:mb-0">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neon-green mb-4 text-center md:text-left">
                   Congrats, {user?.chessUsername || 'demo name'}!
                 </h1>
@@ -99,18 +99,14 @@ export default function Welcome() {
                 <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
                   As a token of our appreciation, we've given you <span className="text-neon-green font-semibold">100 BM Points</span> for early signup.
                 </p>
-                <div className="text-center md:text-left mt-8">
-                  <Button 
-                    variant="outline" 
-                    className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
-                    onClick={handleCommunityStats}
-                  >
-                    See Community Stats
-                  </Button>
+                <div className="flex justify-center md:justify-start mt-6 space-x-4">
+                  <StatCard title="Rapid" value={chessStats.rapid} icon={<Zap className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Blitz" value={chessStats.blitz} icon={<Trophy className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Bullet" value={chessStats.bullet} icon={<Target className="w-6 h-6 text-neon-green" />} />
                 </div>
               </div>
-              <div className="md:w-1/2 md:pl-8">
-                <div className="relative" style={{ paddingBottom: '110%' }}>
+              <div className="w-full md:w-1/2 md:pl-8">
+                <div className="relative" style={{ paddingBottom: '100%' }}>
                   <img 
                     src={bmuniverse} 
                     alt="BM Samay" 
@@ -122,95 +118,56 @@ export default function Welcome() {
                     }} 
                   />
                 </div>
-                <div className="flex justify-center mt-6 space-x-4">
-                  <StatCard title="Rapid" value={chessStats.rapid} icon={<Zap className="w-6 h-6 text-neon-green" />} />
-                  <StatCard title="Blitz" value={chessStats.blitz} icon={<Trophy className="w-6 h-6 text-neon-green" />} />
-                  <StatCard title="Bullet" value={chessStats.bullet} icon={<Target className="w-6 h-6 text-neon-green" />} />
-                </div>
               </div>
             </div>
-          </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            <FeatureCard
-              icon={<BarChart2 className="w-12 h-12 text-neon-green" />}
-              title="Track Progress"
-              description="Monitor your chess rating and BM Points in real-time."
-            />
-            <FeatureCard
-              icon={<Users className="w-12 h-12 text-neon-green" />}
-              title="Community Events"
-              description="Participate in exclusive tournaments and challenges."
-            />
-            <FeatureCard
-              icon={<Target className="w-12 h-12 text-neon-green" />}
-              title="Set Goals"
-              description="Set personal chess goals and track your achievements."
-            />
-          </motion.div>
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-neon-green mb-6">Your Chess Prowess</h2>
+              {percentiles ? (
+                <div className="space-y-4">
+                  <PercentileItem 
+                    title="Blitz" 
+                    percentile={Math.round(percentiles.blitzPercentile)}
+                    description="blitz players"
+                  />
+                  <PercentileItem 
+                    title="Rapid" 
+                    percentile={Math.round(percentiles.rapidPercentile)}
+                    description="rapid players"
+                  />
+                  <PercentileItem 
+                    title="Bullet" 
+                    percentile={Math.round(percentiles.bulletPercentile)}
+                    description="bullet players"
+                  />
+                </div>
+              ) : error ? (
+                <Alert>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              ) : (
+                <Alert>
+                  <AlertDescription>Loading percentile rankings...</AlertDescription>
+                </Alert>
+              )}
+            </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-8 border border-neon-green/20 shadow-xl"
-          >
-            <h2 className="text-2xl font-bold text-neon-green mb-6">Look at where you stand</h2>
-            {percentiles ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <AlertCircle className="w-6 h-6 text-yellow-400" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-neon-green">Rapid Percentile</h3>
-                      <p className="text-gray-300">{percentiles.rapidPercentile}%</p>
-                    </div>
-                  </div>
-                  <div className="text-gray-300">Top {percentiles.rapidPercentile}%</div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <AlertCircle className="w-6 h-6 text-blue-400" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-neon-green">Blitz Percentile</h3>
-                      <p className="text-gray-300">{percentiles.blitzPercentile}%</p>
-                    </div>
-                  </div>
-                  <div className="text-gray-300">Top {percentiles.blitzPercentile}%</div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <AlertCircle className="w-6 h-6 text-green-400" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-neon-green">Bullet Percentile</h3>
-                      <p className="text-gray-300">{percentiles.bulletPercentile}%</p>
-                    </div>
-                  </div>
-                  <div className="text-gray-300">Top {percentiles.bulletPercentile}%</div>
-                </div>
-              </div>
-            ) : error ? (
-              <Alert>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            ) : (
-              <Alert>
-                <AlertDescription>Loading percentile rankings...</AlertDescription>
-              </Alert>
-            )}
-            <Alert className="mt-4">
+            <Alert className="mt-8">
               <AlertDescription>
                 We're currently in beta! While percentile rankings are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
               </AlertDescription>
             </Alert>
-          </motion.div>
 
-          <RecentActivity />
+            <div className="text-center mt-8">
+              <Button 
+                variant="outline" 
+                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
+                onClick={handleCommunityStats}
+              >
+                See Community Stats
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -231,65 +188,25 @@ const StatCard = ({ title, value, icon }: StatCardProps) => (
   </div>
 );
 
-interface FeatureCardProps {
-  icon: React.ReactNode;
+interface PercentileItemProps {
   title: string;
+  percentile: number;
   description: string;
 }
 
-const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
-  <div className="bg-white/5 backdrop-filter backdrop-blur-md rounded-xl p-6 border border-neon-green/20 shadow-lg hover:shadow-neon-green/20 transition-all duration-300">
-    <div className="flex items-center space-x-4 mb-4">
-      {icon}
-      <h3 className="text-xl font-semibold text-neon-green">{title}</h3>
-    </div>
-    <p className="text-gray-300">{description}</p>
-  </div>
-);
-
-const RecentActivity = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: 0.4 }}
-    className="mt-16 bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-8 border border-neon-green/20 shadow-xl"
-  >
-    <h2 className="text-2xl font-bold text-neon-green mb-6">Recent Activity</h2>
-    <div className="space-y-4">
-      <ActivityItem
-        icon={<Trophy className="w-6 h-6 text-yellow-400" />}
-        title="Won a Blitz match"
-        description="You won against IM_"
-      />
-      <ActivityItem
-        icon={<BarChart2 className="w-6 h-6 text-blue-400" />}
-        title="Improved rating"
-        description="Your rating increased by 100 points"
-      />
-      <ActivityItem
-        icon={<Users className="w-6 h-6 text-green-400" />}
-        title="Joined a tournament"
-        description="You joined the 'Summer Blitz' tournament"
-      />
-    </div>
-  </motion.div>
-);
-
-interface ActivityItemProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-const ActivityItem = ({ icon, title, description }: ActivityItemProps) => (
+const PercentileItem = ({ title, percentile, description }: PercentileItemProps) => (
   <div className="flex items-center justify-between">
     <div className="flex items-center space-x-4">
-      {icon}
-      <div>
-        <h3 className="text-lg font-semibold text-neon-green">{title}</h3>
-        <p className="text-gray-300">{description}</p>
+      <div className="flex items-center space-x-2">
+        <div className={`text-${percentile >= 90 ? 'green' : percentile >= 70 ? 'blue' : percentile >= 50 ? 'yellow' : 'red'}-400 w-6 h-6`}>
+          <AlertCircle />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-neon-green">{title}</h3>
+          <p className="text-gray-300">You are better than {percentile}% of {description}</p>
+        </div>
       </div>
+      <div className="text-gray-300">Top {percentile}%</div>
     </div>
-    <div className="text-gray-300">2 hours ago</div>
   </div>
 );
