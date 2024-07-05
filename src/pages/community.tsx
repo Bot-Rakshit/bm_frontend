@@ -15,6 +15,9 @@ interface DashboardData {
   top10Rapid: { user: { chessUsername: string }; rapid: number }[];
 }
 
+const CACHE_KEY = 'dashboardData';
+const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
+
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -23,21 +26,33 @@ export default function Community() {
     try {
       const data = await getDashboardStats();
       setDashboardData(data);
-      setLastUpdated(new Date());
+      const now = new Date();
+      setLastUpdated(now);
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: now.getTime() }));
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
   }, []);
 
   useEffect(() => {
-    fetchDashboardData();
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    if (cachedData) {
+      const { data, timestamp } = JSON.parse(cachedData);
+      const now = new Date().getTime();
+      if (now - timestamp < UPDATE_INTERVAL) {
+        setDashboardData(data);
+        setLastUpdated(new Date(timestamp));
+      } else {
+        fetchDashboardData();
+      }
+    } else {
+      fetchDashboardData();
+    }
 
-    // Set up interval to fetch data every minute
     const intervalId = setInterval(() => {
       fetchDashboardData();
-    }, 60000); // 60000 ms = 1 minute
+    }, UPDATE_INTERVAL);
 
-    // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, [fetchDashboardData]);
 
