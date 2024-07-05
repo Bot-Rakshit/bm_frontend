@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.jpg';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
-import { Menu, Trophy, Target, Zap, BarChart2, Users } from 'lucide-react';
+import { Menu, Trophy, Target, Zap, BarChart2, Users, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { getPercentileRanking } from '@/services/chessApi';
 
 interface User {
   chessUsername: string;
@@ -16,11 +18,18 @@ interface User {
   };
 }
 
+interface PercentileRanking {
+  rapid: number;
+  blitz: number;
+  bullet: number;
+}
+
 export default function Welcome() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [chessStats, setChessStats] = useState({ rapid: 0, blitz: 0, bullet: 0 });
+  const [percentileRanking, setPercentileRanking] = useState<PercentileRanking | null>(null);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -30,6 +39,7 @@ export default function Welcome() {
       if (decoded && decoded.stats) {
         setUser(decoded);
         setChessStats(decoded.stats);
+        fetchPercentileRanking(decoded.chessUsername);
       } else {
         navigate('/blunder');
       }
@@ -37,6 +47,15 @@ export default function Welcome() {
       navigate('/blunder');
     }
   }, [location.search, navigate]);
+
+  const fetchPercentileRanking = async (chessUsername: string) => {
+    try {
+      const ranking = await getPercentileRanking(chessUsername);
+      setPercentileRanking(ranking);
+    } catch (error) {
+      console.error('Error fetching percentile ranking:', error);
+    }
+  };
 
   const handleCommunityStats = () => {
     navigate('/community');
@@ -131,6 +150,54 @@ export default function Welcome() {
               title="Set Goals"
               description="Set personal chess goals and track your achievements."
             />
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-12 bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-8 border border-neon-green/20 shadow-xl"
+          >
+            <h2 className="text-2xl font-bold text-neon-green mb-6">Look at where you stand</h2>
+            {percentileRanking && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <AlertCircle className="w-6 h-6 text-yellow-400" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-neon-green">Rapid Percentile</h3>
+                      <p className="text-gray-300">{percentileRanking.rapid}%</p>
+                    </div>
+                  </div>
+                  <div className="text-gray-300">Top {percentileRanking.rapid}%</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <AlertCircle className="w-6 h-6 text-blue-400" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-neon-green">Blitz Percentile</h3>
+                      <p className="text-gray-300">{percentileRanking.blitz}%</p>
+                    </div>
+                  </div>
+                  <div className="text-gray-300">Top {percentileRanking.blitz}%</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <AlertCircle className="w-6 h-6 text-green-400" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-neon-green">Bullet Percentile</h3>
+                      <p className="text-gray-300">{percentileRanking.bullet}%</p>
+                    </div>
+                  </div>
+                  <div className="text-gray-300">Top {percentileRanking.bullet}%</div>
+                </div>
+              </div>
+            )}
+            <Alert className="mt-4">
+              <AlertDescription>
+                We're currently in beta! While percentile rankings are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
+              </AlertDescription>
+            </Alert>
           </motion.div>
 
           <RecentActivity />
