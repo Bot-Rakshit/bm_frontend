@@ -19,9 +19,9 @@ interface User {
 }
 
 interface PercentileRanking {
-  rapid: number;
-  blitz: number;
-  bullet: number;
+  blitzPercentile: number;
+  bulletPercentile: number;
+  rapidPercentile: number;
 }
 
 export default function Welcome() {
@@ -29,7 +29,8 @@ export default function Welcome() {
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [chessStats, setChessStats] = useState({ rapid: 0, blitz: 0, bullet: 0 });
-  const [percentileRanking, setPercentileRanking] = useState<PercentileRanking | null>(null);
+  const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -50,10 +51,11 @@ export default function Welcome() {
 
   const fetchPercentileRanking = async (chessUsername: string) => {
     try {
-      const ranking = await getPercentileRanking(chessUsername);
-      setPercentileRanking(ranking);
-    } catch (error) {
-      console.error('Error fetching percentile ranking:', error);
+      const data = await getPercentileRanking(chessUsername);
+      setPercentiles(data);
+    } catch (err) {
+      setError('Failed to fetch percentile rankings');
+      console.error(err);
     }
   };
 
@@ -159,39 +161,47 @@ export default function Welcome() {
             className="mt-12 bg-white/5 backdrop-filter backdrop-blur-md rounded-3xl p-8 border border-neon-green/20 shadow-xl"
           >
             <h2 className="text-2xl font-bold text-neon-green mb-6">Look at where you stand</h2>
-            {percentileRanking && (
+            {percentiles ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <AlertCircle className="w-6 h-6 text-yellow-400" />
                     <div>
                       <h3 className="text-lg font-semibold text-neon-green">Rapid Percentile</h3>
-                      <p className="text-gray-300">{percentileRanking.rapid}%</p>
+                      <p className="text-gray-300">{percentiles.rapidPercentile}%</p>
                     </div>
                   </div>
-                  <div className="text-gray-300">Top {percentileRanking.rapid}%</div>
+                  <div className="text-gray-300">Top {percentiles.rapidPercentile}%</div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <AlertCircle className="w-6 h-6 text-blue-400" />
                     <div>
                       <h3 className="text-lg font-semibold text-neon-green">Blitz Percentile</h3>
-                      <p className="text-gray-300">{percentileRanking.blitz}%</p>
+                      <p className="text-gray-300">{percentiles.blitzPercentile}%</p>
                     </div>
                   </div>
-                  <div className="text-gray-300">Top {percentileRanking.blitz}%</div>
+                  <div className="text-gray-300">Top {percentiles.blitzPercentile}%</div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <AlertCircle className="w-6 h-6 text-green-400" />
                     <div>
                       <h3 className="text-lg font-semibold text-neon-green">Bullet Percentile</h3>
-                      <p className="text-gray-300">{percentileRanking.bullet}%</p>
+                      <p className="text-gray-300">{percentiles.bulletPercentile}%</p>
                     </div>
                   </div>
-                  <div className="text-gray-300">Top {percentileRanking.bullet}%</div>
+                  <div className="text-gray-300">Top {percentiles.bulletPercentile}%</div>
                 </div>
               </div>
+            ) : error ? (
+              <Alert>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : (
+              <Alert>
+                <AlertDescription>Loading percentile rankings...</AlertDescription>
+              </Alert>
             )}
             <Alert className="mt-4">
               <AlertDescription>
