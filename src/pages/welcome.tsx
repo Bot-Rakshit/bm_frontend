@@ -139,19 +139,16 @@ export default function Welcome() {
                     title="Blitz" 
                     percentile={Math.round(percentiles.blitzPercentile)}
                     description="blitz players"
-                    bmPercentile={Math.round(percentiles.blitzPercentile * 1.1)}
                   />
                   <PercentileItem 
                     title="Rapid" 
                     percentile={Math.round(percentiles.rapidPercentile)}
                     description="rapid players"
-                    bmPercentile={Math.round(percentiles.rapidPercentile * 1.15)}
                   />
                   <PercentileItem 
                     title="Bullet" 
                     percentile={Math.round(percentiles.bulletPercentile)}
                     description="bullet players"
-                    bmPercentile={Math.round(percentiles.bulletPercentile * 1.05)}
                   />
                 </div>
               ) : error ? (
@@ -167,7 +164,7 @@ export default function Welcome() {
 
             <Alert className="mt-8">
               <AlertDescription>
-                We're currently in beta! While percentile rankings are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
+                We're currently in beta! While Signups are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -195,19 +192,18 @@ interface PercentileItemProps {
   title: string;
   percentile: number;
   description: string;
-  bmPercentile: number;
 }
 
-const PercentileItem = ({ title, percentile, description, bmPercentile }: PercentileItemProps) => (
+const PercentileItem = ({ title, percentile, description }: PercentileItemProps) => (
   <div className="flex items-center space-x-4">
     <div className={`text-${percentile >= 90 ? 'green' : percentile >= 70 ? 'blue' : percentile >= 50 ? 'yellow' : 'red'}-400 w-6 h-6`}>
       <AlertCircle />
     </div>
     <div>
-      <h3 className="text-lg font-semibold text-neon-green">{title}</h3>
-      <p className="text-gray-300">You are better than {percentile}% of {description}</p>
-      <p className="text-gray-300">You are better than {bmPercentile}% of players in the BM Samay community</p>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-sm text-neon-green">
+        You're better than {percentile}% of {description} in the BM Samay community!
+      </p>
     </div>
-    <div className="text-gray-300">Top {percentile}%</div>
   </div>
 );

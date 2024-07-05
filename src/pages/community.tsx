@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
+import { motion } from 'framer-motion';
 
 interface DashboardData {
   totalUsers: number;
@@ -37,18 +38,31 @@ export default function Community() {
   return (
     <div className="dark:bg-black dark:text-white min-h-screen w-full flex">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white text-black px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg">
+      <div className="flex-1 flex flex-col relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
+          <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+        </div>
+        
+        {/* Depth elements */}
+        <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
+        
+        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <h1 className="text-xl font-bold">Community Statistics</h1>
         </header>
-        <div className="bg-black p-8 flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-6xl mx-auto"
+          >
             <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to the BM Samay Community Dashboard</h1>
-              <p className="text-gray-400 font-mono">
+              <h1 className="text-4xl md:text-5xl font-bold text-neon-green mb-4">Welcome to the BM Samay Community Dashboard</h1>
+              <p className="text-gray-300 font-mono">
                 Here you can find all the statistics and leaderboards of our vibrant chess community. Stay updated with the latest numbers and see where you stand among the best!
               </p>
-              <p className="text-gray-400 font-mono mt-2">
+              <p className="text-gray-300 font-mono mt-2">
                 Note: The average rating displayed is for rapid games.
               </p>
             </div>
@@ -83,7 +97,7 @@ export default function Community() {
               </div>
             </div>
             <div className="mt-12">
-              <h2 className="text-3xl font-bold text-white text-center mb-6">Leaderboards</h2>
+              <h2 className="text-3xl font-bold text-neon-green text-center mb-6">Leaderboards</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-[#00ff00]">
                   <h3 className="text-2xl font-bold text-white text-center">Top 10 Bullet</h3>
@@ -120,7 +134,7 @@ export default function Community() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

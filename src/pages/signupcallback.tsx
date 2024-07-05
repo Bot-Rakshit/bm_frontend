@@ -5,21 +5,30 @@ import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { verifyChessAccount, initiateChessVerification } from '@/services/auth';
 import { motion } from 'framer-motion';
+import { Alert, AlertDescription } from "@/components/ui/Alert";
 
 type ErrorResponse = {
   response?: {
     data?: {
       error?: string;
+      message?: string;
     };
+    status?: number;
   };
 };
+
+const ErrorDisplay = ({ message }: { message: string }) => (
+  <Alert variant="destructive">
+    <AlertDescription>{message}</AlertDescription>
+  </Alert>
+);
 
 export default function SignUpCallback() {
   const [step, setStep] = useState(1);
   const [chessComId, setChessComId] = useState('');
   const [verificationCode, setVerificationCode] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null); // State to handle errors
+  const [error, setError] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -45,8 +54,10 @@ export default function SignUpCallback() {
         }
       } catch (error: unknown) {
         const err = error as ErrorResponse;
-        if (err.response && err.response.data && err.response.data.error) {
+        if (err.response?.data?.error) {
           setError(err.response.data.error);
+        } else if (err.response?.data?.message) {
+          setError(err.response.data.message);
         } else {
           setError('An unexpected error occurred. Please try again.');
         }
@@ -64,9 +75,15 @@ export default function SignUpCallback() {
         } else {
           setError('Verification failed. Please try again.');
         }
-      } catch (error) {
-        console.error('Error verifying Chess.com account:', error);
-        setError('Verification failed. Please try again.');
+      } catch (error: unknown) {
+        const err = error as ErrorResponse;
+        if (err.response?.data?.error) {
+          setError(err.response.data.error);
+        } else if (err.response?.data?.message) {
+          setError(err.response.data.message);
+        } else {
+          setError('Verification failed. Please try again.');
+        }
       }
     }
   };
@@ -154,7 +171,10 @@ export default function SignUpCallback() {
                   </button>
                 </div>
               )}
-              {error && <p className="text-red-400 text-center mt-4">{error}</p>}
+              {error && <ErrorDisplay message={error} />}
+              <p className="text-xs text-gray-400 mt-4 text-center">
+                BM Samay Raina's use and transfer of information received from Google APIs to any other app will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" className="text-neon-green hover:underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
+              </p>
             </div>
           </div>
         </div>
