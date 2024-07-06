@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
@@ -21,6 +22,8 @@ const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const location = useLocation();
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -35,6 +38,15 @@ export default function Community() {
   }, []);
 
   useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('token');
+      const searchParams = new URLSearchParams(location.search);
+      const queryToken = searchParams.get('token');
+      return !!(token || queryToken);
+    };
+
+    setShowSidebar(checkToken());
+
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       const { data, timestamp } = JSON.parse(cachedData);
@@ -54,17 +66,19 @@ export default function Community() {
     }, UPDATE_INTERVAL);
 
     return () => clearInterval(intervalId);
-  }, [fetchDashboardData]);
+  }, [fetchDashboardData, location.search]);
 
   if (!dashboardData) {
     return <div>Loading...</div>;
   }
 
   return (
-
     <div className="dark:bg-black dark:text-white h-screen w-full flex overflow-x-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col relative">
+    <div className="dark:bg-black dark:text-white min-h-screen w-full flex">
+      {showSidebar && <Sidebar />}
+      <div className={`flex-1 flex flex-col relative ${!showSidebar ? 'w-full' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
           <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>

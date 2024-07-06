@@ -15,15 +15,18 @@ import profileIcon from '@/assets/profile.png';
 const navItems = [
   { name: 'Welcome', path: '/welcome', icon: Home },
   { name: 'Community', path: '/community', icon: Users },
-  { name: 'Integrations', path: '#', icon: Zap, comingSoon: true },
-  { name: 'BM Points', path: '#', icon: Award, comingSoon: true },
-  { name: 'Streamers', path: '#', icon: Video, comingSoon: true },
+  { name: 'Integrations', path: '/comingsoon', icon: Zap, comingSoon: true },
+  { name: 'BM Points', path: '/comingsoon', icon: Award, comingSoon: true },
+  { name: 'Streamers', path: '/comingsoon', icon: Video, comingSoon: true },
 ];
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentQueryParams = location.search;
+  
+  // Extract token from the current URL
+  const searchParams = new URLSearchParams(location.search);
+  const token = searchParams.get('token') || '';
 
   const handleLogout = () => {
     // Implement logout logic here
@@ -40,7 +43,7 @@ const Sidebar = () => {
         {navItems.map((item) => (
           <Link
             key={item.name}
-            to={item.path + currentQueryParams}
+            to={`${item.path}?token=${token}`}
             className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
               location.pathname === item.path
                 ? 'bg-neon-green/10 text-neon-green font-medium'
