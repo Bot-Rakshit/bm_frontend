@@ -97,7 +97,7 @@ const Leaderboard = () => (
         <TableBody>
           {[
             { rank: 1, name: "Samay Raina", initials: "SR", points: 10000, rating: 1850 },
-            { rank: 2, name: "Beaststats", initials: "BS", points: 8500, rating: 1700 },
+            { rank: 2, name: "Beaststats", initials: "BS", points: 8500, rating: 1900 },
             { rank: 3, name: "Drama Queen", initials: "DQ", points: 7800, rating: 1450 },
           ].map((player) => (
             <TableRow key={player.rank} className="border-b border-neon-green/10">
