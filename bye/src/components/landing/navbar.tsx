@@ -4,6 +4,7 @@ import BMSamayLogo from '../../assets/SamayBM.png';
 import { Youtube, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
+
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -23,6 +24,12 @@ export function Navbar() {
                 <Youtube className="h-4 w-4 mr-2" />
                 <span>Live</span>
               </a>
+            </Button>
+            <Button className="bg-white text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full px-6 py-2 font-semibold text-sm flex items-center shadow-md shadow-neon-green/30" asChild>
+              <Link to="/Discussion">Discussion</Link>
+                
+                
+              
             </Button>
           </div>
           <button className="md:hidden text-white hover:text-neon-green transition-colors duration-300" onClick={() => setIsMenuOpen(!isMenuOpen)}>
