@@ -21,6 +21,7 @@ const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [hasToken, setHasToken] = useState<boolean>(false);
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -35,6 +36,9 @@ export default function Community() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    setHasToken(!!token);
+
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       const { data, timestamp } = JSON.parse(cachedData);
@@ -62,8 +66,8 @@ export default function Community() {
 
   return (
     <div className="dark:bg-black dark:text-white min-h-screen w-full flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col relative">
+      {hasToken && <Sidebar />}
+      <div className={`flex-1 flex flex-col relative ${!hasToken ? 'w-full' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
           <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
