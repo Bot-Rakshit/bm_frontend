@@ -18,7 +18,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex min-h-screen bg-black text-white w-full justify-center items-center font-sans p-4 overflow-hidden">
+    <div className="flex min-h-screen fixed bg-black text-white w-full justify-center items-center font-sans p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
         <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
       </div>

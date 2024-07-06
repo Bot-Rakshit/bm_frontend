@@ -67,6 +67,21 @@
     --ring: 217.2 32.6% 17.5%;
   }
 }
+
+::-webkit-scrollbar {
+  width: 12px; 
+  
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f100; 
+}
+::-webkit-scrollbar-thumb {
+  background: #a1ff37; 
+  border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #baff81; 
+}
  
 @layer base {
   * {

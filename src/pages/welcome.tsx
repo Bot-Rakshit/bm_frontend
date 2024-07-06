@@ -69,8 +69,9 @@ export default function Welcome() {
     }
   };
 
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-x-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col relative">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
@@ -81,7 +82,7 @@ export default function Welcome() {
         <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
         <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
         
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
+        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10 ">
           <h1 className="text-xl font-bold">Welcome</h1>
           <Button variant="ghost" size="icon" className="md:hidden">
           </Button>

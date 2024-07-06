@@ -76,7 +76,7 @@ const Sidebar = () => {
   );
 
   return (
-    <>
+    <div className='flex'>
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden fixed top-4 left-4 z-50 text-neon-green">
@@ -88,10 +88,14 @@ const Sidebar = () => {
         </SheetContent>
       </Sheet>
 
-      <div className="hidden md:block w-56 h-screen bg-black/80 backdrop-blur-md border-r border-neon-green/10">
+      <div className="hidden md:block fixed w-56 h-screen bg-black/80 backdrop-blur-md border-r border-neon-green/10">
         <NavContent />
       </div>
-    </>
+
+      <div className="flex-1 ml-56 overflow-y-auto">
+        {/* Main content goes here */}
+      </div>
+    </div>
   );
 };
 

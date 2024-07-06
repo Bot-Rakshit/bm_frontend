@@ -61,7 +61,8 @@ export default function Community() {
   }
 
   return (
-    <div className="dark:bg-black dark:text-white min-h-screen w-full flex">
+
+    <div className="dark:bg-black dark:text-white h-screen w-full flex overflow-x-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col relative">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
@@ -167,6 +168,7 @@ export default function Community() {
           </motion.div>
         </div>
       </div>
-    </div>
+      </div>
+     
   );
 }
