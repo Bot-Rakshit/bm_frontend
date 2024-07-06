@@ -38,11 +38,14 @@ export default function Community() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const searchParams = new URLSearchParams(location.search);
-    const queryToken = searchParams.get('token');
+    const checkToken = () => {
+      const token = localStorage.getItem('token');
+      const searchParams = new URLSearchParams(location.search);
+      const queryToken = searchParams.get('token');
+      return !!(token || queryToken);
+    };
 
-    setShowSidebar(!!(token || queryToken));
+    setShowSidebar(checkToken());
 
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
