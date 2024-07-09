@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu, Home, Users, Zap, Award, LogOut, Video } from 'lucide-react';
+import { Menu, Home, Users, Zap, Award, LogOut, Video, Newspaper } from 'lucide-react';
 import { motion } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.png';
 import profileIcon from '@/assets/profile.png';
@@ -16,6 +16,7 @@ import profileIcon from '@/assets/profile.png';
 const navItems = [
   { name: 'Welcome', path: '/welcome', icon: Home },
   { name: 'Community', path: '/community', icon: Users },
+  { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Integrations', path: '/comingsoon', icon: Zap, comingSoon: true },
   { name: 'BM Points', path: '/comingsoon', icon: Award, comingSoon: true },
   { name: 'Streamers', path: '/comingsoon', icon: Video, comingSoon: true },
