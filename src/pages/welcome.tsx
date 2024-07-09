@@ -112,7 +112,7 @@ export default function Welcome() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Welcome!,{user?.chessUsername || 'Chess Master'} 
+                  Glad to have you, {user?.chessUsername || 'Chess Master'}!
                 </motion.h1>
                 <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
                   You've just joined the most exciting <span className="text-neon-green font-semibold">BM Samay</span> chess community! We're thrilled to have you here.
@@ -125,10 +125,10 @@ export default function Welcome() {
                 >
                   As a special welcome gift, we've credited your account with <span className="text-neon-green font-semibold">100 BM Points</span>. Use them wisely in upcoming events and predictions!
                 </motion.p>
-                <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6">
-                  <StatCard title="Rapid" value={chessStats.rapid} icon={<FaBolt className="w-5 h-5 sm:w-6 sm:h-6" />} />
-                  <StatCard title="Blitz" value={chessStats.blitz} icon={<FaTrophy className="w-5 h-5 sm:w-6 sm:h-6" />} />
-                  <StatCard title="Bullet" value={chessStats.bullet} icon={<FaCrosshairs className="w-5 h-5 sm:w-6 sm:h-6" />} />
+                <div className="flex justify-center md:justify-start mt-6 space-x-4">
+                  <StatCard title="Rapid" value={chessStats.rapid} icon={<FaBolt className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Blitz" value={chessStats.blitz} icon={<FaTrophy className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Bullet" value={chessStats.bullet} icon={<FaCrosshairs className="w-6 h-6 text-neon-green" />} />
                 </div>
               </div>
               <div className="w-full md:w-1/2 md:pl-8">
@@ -160,7 +160,7 @@ export default function Welcome() {
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-neon-green mb-6">Your Chess Prowess</h2>
               {percentiles ? (
-                <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-6">
                   <PercentileItem 
                     title="Blitz" 
                     percentile={Math.round(percentiles.blitzPercentile)}
@@ -211,12 +211,12 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon }: StatCardProps) => (
   <motion.div 
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 sm:p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
     whileHover={{ scale: 1.05 }}
   >
-    <div className="text-2xl sm:text-3xl md:text-4xl text-neon-green mb-2 sm:mb-4">{icon}</div>
-    <h3 className="text-sm sm:text-base md:text-xl font-semibold text-white mb-1 sm:mb-2">{title}</h3>
-    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-neon-green">{value}</p>
+    <div className="text-4xl text-neon-green mb-4">{icon}</div>
+    <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+    <p className="text-3xl font-bold text-neon-green">{value}</p>
   </motion.div>
 );
 
@@ -229,18 +229,19 @@ interface PercentileItemProps {
 
 const PercentileItem = ({ title, percentile, description, message }: PercentileItemProps) => (
   <motion.div 
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
     whileHover={{ scale: 1.02 }}
   >
-    <h3 className="text-xl sm:text-2xl font-semibold text-neon-green mb-2">{title}</h3>
-    <div className="flex items-center mb-2 sm:mb-4">
-      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
-        <span className="text-lg sm:text-2xl font-bold text-neon-green">{percentile}%</span>
+    <h3 className="text-2xl font-semibold text-neon-green mb-2">{title}</h3>
+    <div className="flex items-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-4">
+        <span className="text-2xl font-bold text-neon-green">{percentile}%</span>
       </div>
-      <p className="text-sm sm:text-base text-white">
+      <p className="text-white">
         You're better than {percentile}% of {description} in the BM Samay community!
       </p>
     </div>
-    <p className="text-xs sm:text-sm text-gray-300 italic">{message}</p>
+    <p className="text-gray-300 italic">{message}</p>
   </motion.div>
 );
+
