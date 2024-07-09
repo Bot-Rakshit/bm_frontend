@@ -244,4 +244,3 @@ const PercentileItem = ({ title, percentile, description, message }: PercentileI
     <p className="text-gray-300 italic">{message}</p>
   </motion.div>
 );
-
