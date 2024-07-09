@@ -7,47 +7,62 @@ import samayheader from '../assets/samayheader.png';
 import chesscomLogo from '../assets/chesscomlogo.png';
 import { PredictionCard } from '@/components/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
-const Hero = () => (
-  <div className="relative pt-20 lg:pt-32 flex items-center overflow-hidden">
-    <div className="container mx-auto px-4 z-10">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-        <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-            Join the Ultimate <span className="text-neon-green">Chess Community</span>
-          </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-300">
-            Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
-          </p>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-            <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
-              <Link to="/signup">Early Access (BETA)</Link>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
-            >
-              Learn More
-            </Button>
+const Hero = () => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+      className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
+    >
+      <div className="container mx-auto px-4 z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
+              Join the Ultimate <span className="text-neon-green">Chess Community</span>
+            </h1>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-300">
+              Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+              <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
+                <Link to="/signup">Early Access (BETA)</Link>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
+              >
+                Learn More
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="lg:w-1/2 relative mt-12 lg:mt-0">
-          <div className="relative w-full max-w-md mx-auto">
-            <img 
-              src={samayheader}
-              alt="Samay Raina"
-              className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
-            />
-            <div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
-              <PredictionCard />
+          <div className="lg:w-1/2 relative mt-12 lg:mt-0">
+            <div className="relative w-full max-w-md mx-auto">
+              <img 
+                src={samayheader}
+                alt="Samay Raina"
+                className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
+              />
+              <div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
+                <PredictionCard />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-);
+    </motion.div>
+  );
+};
 
 const Partner = () => (
   <div className="text-center mt-24 sm:mt-32 mb-16 sm:mb-24">
@@ -82,7 +97,12 @@ const HowItWorks = () => (
 );
 
 const Leaderboard = () => (
-  <div className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] rounded-3xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 border border-neon-green/20">
+  <motion.div
+    initial={{ opacity: 0, scale: 0.9 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5 }}
+    className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] rounded-3xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 border border-neon-green/20"
+  >
     <h2 className="text-3xl font-bold text-neon-green mb-8">Leaderboard</h2>
     <div className="overflow-x-auto">
       <Table>
@@ -117,7 +137,7 @@ const Leaderboard = () => (
         </TableBody>
       </Table>
     </div>
-  </div>
+  </motion.div>
 );
 
 const Features = () => (
@@ -245,10 +265,15 @@ export function LandingPage() {
             <Hero />
             <Partner />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24 mt-32">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24 mt-32"
+          >
             <Leaderboard />
             <Features />
-          </div>
+          </motion.div>
           <HowItWorks />
           <CommunityFeatures />
         </div>
