@@ -32,6 +32,7 @@ export default function Welcome() {
   const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [showSidebar] = useState(true);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -83,8 +84,8 @@ export default function Welcome() {
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col relative overflow-y-auto">
+      {showSidebar && <Sidebar />}
+      <div className={`flex-1 flex flex-col relative overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>

@@ -95,7 +95,7 @@ export default function Community() {
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
         
-        <header className="bg-gray-800/80 backdrop-filter backdrop-blur-lg text-white px-6 py-4 flex items-center justify-between shadow-lg z-10">
+        <header className="bg-gray-800/80 backdrop-filter backdrop-blur-lg text-white px-6 py-4 flex items-center justify-between shadow-lg z-10 md:ml-16">
           <h1 className="text-2xl font-bold">Community Dashboard</h1>
           {lastUpdated && (
             <p className="text-sm text-gray-300">
@@ -104,7 +104,7 @@ export default function Community() {
           )}
         </header>
         
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 z-10">
+        <div className="flex-1 overflow-y-auto p-6 md:p-10 md:pl-20 z-10">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
