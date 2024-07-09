@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.jpg';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
-import { Trophy, Target, Zap, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
+import { FaTrophy, FaBolt, FaCrosshairs, FaChessKnight } from 'react-icons/fa';
 
 interface User {
   chessUsername: string;
@@ -38,12 +38,17 @@ export default function Welcome() {
     const tokenFromQuery = queryParams.get('token');
     if (tokenFromQuery) {
       setToken(tokenFromQuery);
-      const decoded = decodeJwt(tokenFromQuery) as unknown as User;
-      if (decoded && decoded.stats) {
-        setUser(decoded);
-        setChessStats(decoded.stats);
-        fetchPercentileRanking(decoded.chessUsername);
-      } else {
+      try {
+        const decoded = decodeJwt(tokenFromQuery) as unknown as User;
+        if (decoded && decoded.stats) {
+          setUser(decoded);
+          setChessStats(decoded.stats);
+          fetchPercentileRanking(decoded.chessUsername);
+        } else {
+          throw new Error('Invalid user data');
+        }
+      } catch (err) {
+        console.error('Error decoding token:', err);
         navigate('/blunder');
       }
     } else {
@@ -69,12 +74,19 @@ export default function Welcome() {
     }
   };
 
+  const getMotivationalMessage = (percentile: number) => {
+    if (percentile >= 90) return "Exceptional! You're among the elite!";
+    if (percentile >= 70) return "Impressive! You're well above average!";
+    if (percentile >= 50) return "Great job! You're above average!";
+    return "Keep practicing! You're on your way up!";
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 flex flex-col relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
-          <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+      <div className="flex-1 flex flex-col relative overflow-y-auto">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
+          <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
         
         {/* Depth elements */}
@@ -82,9 +94,8 @@ export default function Welcome() {
         <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
         
         <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <h1 className="text-xl font-bold">Welcome</h1>
-          <Button variant="ghost" size="icon" className="md:hidden">
-          </Button>
+          <h1 className="text-xl font-bold">Welcome to BM Samay</h1>
+          <FaChessKnight className="w-8 h-8 text-neon-green" />
         </header>
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div 
@@ -95,19 +106,29 @@ export default function Welcome() {
           >
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="w-full md:w-1/2 md:pr-8 mb-8 md:mb-0">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neon-green mb-4 text-center md:text-left">
-                  Congrats, {user?.chessUsername || 'demo name'}!
-                </h1>
+                <motion.h1 
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-neon-green mb-6 text-center md:text-left"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Welcome to BM Samay, {user?.chessUsername || 'Chess Master'}!
+                </motion.h1>
                 <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
-                  Welcome to the <span className="text-neon-green font-semibold">BM Samay</span> chess community! We're thrilled to have you here.
+                  You've just joined the most exciting <span className="text-neon-green font-semibold">BM Samay</span> chess community! We're thrilled to have you here.
                 </p>
-                <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
-                  As a token of our appreciation, we've given you <span className="text-neon-green font-semibold">100 BM Points</span> for early signup.
-                </p>
+                <motion.p 
+                  className="text-gray-300 text-base md:text-lg leading-relaxed mb-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  As a special welcome gift, we've credited your account with <span className="text-neon-green font-semibold">100 BM Points</span>. Use them wisely in upcoming events and predictions!
+                </motion.p>
                 <div className="flex justify-center md:justify-start mt-6 space-x-4">
-                  <StatCard title="Rapid" value={chessStats.rapid} icon={<Zap className="w-6 h-6 text-neon-green" />} />
-                  <StatCard title="Blitz" value={chessStats.blitz} icon={<Trophy className="w-6 h-6 text-neon-green" />} />
-                  <StatCard title="Bullet" value={chessStats.bullet} icon={<Target className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Rapid" value={chessStats.rapid} icon={<FaBolt className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Blitz" value={chessStats.blitz} icon={<FaTrophy className="w-6 h-6 text-neon-green" />} />
+                  <StatCard title="Bullet" value={chessStats.bullet} icon={<FaCrosshairs className="w-6 h-6 text-neon-green" />} />
                 </div>
               </div>
               <div className="w-full md:w-1/2 md:pl-8">
@@ -144,16 +165,19 @@ export default function Welcome() {
                     title="Blitz" 
                     percentile={Math.round(percentiles.blitzPercentile)}
                     description="blitz players"
+                    message={getMotivationalMessage(percentiles.blitzPercentile)}
                   />
                   <PercentileItem 
                     title="Rapid" 
                     percentile={Math.round(percentiles.rapidPercentile)}
                     description="rapid players"
+                    message={getMotivationalMessage(percentiles.rapidPercentile)}
                   />
                   <PercentileItem 
                     title="Bullet" 
                     percentile={Math.round(percentiles.bulletPercentile)}
                     description="bullet players"
+                    message={getMotivationalMessage(percentiles.bulletPercentile)}
                   />
                 </div>
               ) : error ? (
@@ -186,29 +210,37 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, icon }: StatCardProps) => (
-  <div className="bg-white/10 backdrop-filter backdrop-blur-md rounded-xl p-4 flex flex-col items-center">
-    {icon}
-    <h3 className="text-lg font-semibold text-neon-green mt-2">{title}</h3>
-    <p className="text-2xl font-bold text-white">{value}</p>
-  </div>
+  <motion.div 
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    whileHover={{ scale: 1.05 }}
+  >
+    <div className="text-4xl text-neon-green mb-4">{icon}</div>
+    <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+    <p className="text-3xl font-bold text-neon-green">{value}</p>
+  </motion.div>
 );
 
 interface PercentileItemProps {
   title: string;
   percentile: number;
   description: string;
+  message: string;
 }
 
-const PercentileItem = ({ title, percentile, description }: PercentileItemProps) => (
-  <div className="flex items-center space-x-4">
-    <div className={`text-${percentile >= 90 ? 'green' : percentile >= 70 ? 'blue' : percentile >= 50 ? 'yellow' : 'red'}-400 w-6 h-6`}>
-      <AlertCircle />
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-sm text-neon-green">
+const PercentileItem = ({ title, percentile, description, message }: PercentileItemProps) => (
+  <motion.div 
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    whileHover={{ scale: 1.02 }}
+  >
+    <h3 className="text-2xl font-semibold text-neon-green mb-2">{title}</h3>
+    <div className="flex items-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-4">
+        <span className="text-2xl font-bold text-neon-green">{percentile}%</span>
+      </div>
+      <p className="text-white">
         You're better than {percentile}% of {description} in the BM Samay community!
       </p>
     </div>
-  </div>
+    <p className="text-gray-300 italic">{message}</p>
+  </motion.div>
 );
