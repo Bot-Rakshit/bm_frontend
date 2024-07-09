@@ -24,7 +24,7 @@ const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const location = useLocation();
 
   const fetchDashboardData = useCallback(async () => {
@@ -88,15 +88,18 @@ export default function Community() {
   ];
 
   return (
-    <div className="dark:bg-gray-900 dark:text-white min-h-screen w-full flex">
+    <div className="flex h-screen">
       {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative ${!showSidebar ? 'w-full' : ''}`}>
+      <div className={`flex-1 flex flex-col relative overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
         
-        <header className="bg-gray-800/80 backdrop-filter backdrop-blur-lg text-white px-6 py-4 flex items-center justify-between shadow-lg z-10 md:ml-16">
-          <h1 className="text-2xl font-bold">Community Dashboard</h1>
+        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
+          <div className="flex items-center">
+            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
+            <h1 className="text-xl font-bold">Community Dashboard</h1>
+          </div>
           {lastUpdated && (
             <p className="text-sm text-gray-300">
               Last updated: {lastUpdated.toLocaleTimeString()}

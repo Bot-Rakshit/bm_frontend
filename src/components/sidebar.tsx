@@ -12,6 +12,7 @@ import { Menu, Home, Users, Zap, Award, LogOut, Video, Newspaper } from 'lucide-
 import { motion } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.png';
 import profileIcon from '@/assets/profile.png';
+import { useState } from 'react';
 
 const navItems = [
   { name: 'Welcome', path: '/welcome', icon: Home },
@@ -32,6 +33,8 @@ const Sidebar = () => {
   const handleLogout = () => {
     navigate('/');
   };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const NavItem = ({ item, isActive }: { item: typeof navItems[number]; isActive: boolean }) => (
     <Link
@@ -93,12 +96,13 @@ const Sidebar = () => {
 
   return (
     <>
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
             variant="ghost" 
             size="icon" 
-            className="md:hidden fixed top-4 left-4 z-[60] text-neon-green bg-black/50 backdrop-filter backdrop-blur-sm rounded-full"
+            className={`md:hidden fixed top-4 left-4 z-[60] text-neon-green bg-black/50 backdrop-filter backdrop-blur-sm rounded-full ${isOpen ? 'hidden' : ''}`}
+            onClick={() => setIsOpen(true)}
           >
             <Menu />
           </Button>
