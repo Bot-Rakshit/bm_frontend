@@ -50,7 +50,7 @@ export default function SignUp() {
       {showMobileAlert && (
         <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black">
           <AlertDescription>
-            For the best experience, please use Chrome or Safari instead of an in-app browser.
+            The signups don't work on in-app browsers, kindly use a default browser like Safari or chrome.
           </AlertDescription>
         </Alert>
       )}
