@@ -48,9 +48,9 @@ export default function SignUp() {
       <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
       
       {showMobileAlert && (
-        <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black">
-          <AlertDescription>
-            The signups don't work on in-app browsers, kindly use a default browser like Safari or chrome.
+        <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black p-2 sm:p-4">
+          <AlertDescription className="text-sm sm:text-base text-center">
+            Signups don't work in in-app browsers. Please use Safari or Chrome.
           </AlertDescription>
         </Alert>
       )}
