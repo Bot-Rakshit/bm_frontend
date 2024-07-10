@@ -6,7 +6,6 @@ import { BarChart2, Zap, Award, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
-import { Button } from '@/components/ui/button';
 
 interface NavigatorWithStandalone extends Navigator {
   standalone?: boolean;
@@ -33,11 +32,6 @@ export default function SignUp() {
     await signInWithGoogle();
   };
 
-  const handleRedirectToDefaultBrowser = () => {
-    const currentUrl = window.location.href;
-    window.location.href = `https://bmsamayraina.com/open-in-browser?redirect=${encodeURIComponent(currentUrl)}`;
-  };
-
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -55,11 +49,8 @@ export default function SignUp() {
       
       {showMobileAlert && (
         <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black">
-          <AlertDescription className="flex flex-col items-center">
-            <p className="mb-2">For the best experience, please use your default browser.</p>
-            <Button onClick={handleRedirectToDefaultBrowser} variant="outline" className="bg-white text-black hover:bg-gray-100">
-              Open in Default Browser
-            </Button>
+          <AlertDescription>
+            For the best experience, please use Chrome or Safari instead of an in-app browser.
           </AlertDescription>
         </Alert>
       )}
