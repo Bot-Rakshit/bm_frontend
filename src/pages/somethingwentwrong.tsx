@@ -3,10 +3,10 @@ import Sidebar from '@/components/sidebar';
 import blunderImage from '@/assets/blunder.jpg';
 import { Button } from '@/components/ui/button';
 
+
 export default function SomethingWentWrong() {
   const navigate = useNavigate();
-
-  const handleGoBack = () => {
+ const handleGoBack = () => {
     navigate('/');
   };
 

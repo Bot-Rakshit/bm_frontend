@@ -13,6 +13,7 @@ import ErrorBoundary from './components/ErrorBoundary.tsx';
 import PrivacyPolicy from './pages/privacypolicy.tsx';
 import ComingSoon from './components/comingsoon.tsx';
 import ChessNews from './pages/ChessNews.tsx';
+import Chat from './pages/chat.tsx';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router>
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/app" element={<App />} />
+          <Route path="/chat" element={<Chat/>} />
           <Route path='/chessnews' element={<ChessNews/>}/>
           <Route path="/signup" element={<Signup />} />
           <Route path="/welcome" element={<Welcome />} />
