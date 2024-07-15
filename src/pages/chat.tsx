@@ -86,7 +86,9 @@ export default function Chat() {
 
   const startLiveStreamChat = async () => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/chat/livestream/start`, { url: streamUrl });
+      const response = await axios.post(`${BACKEND_URL}/api/chat/livestream/start`, null, {
+        params: { url: streamUrl }
+      });
       setLiveId(response.data.liveId);
       connectToEventSource(response.data.liveId);
       setIsConnected(true);
