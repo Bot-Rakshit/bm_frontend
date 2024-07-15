@@ -21,7 +21,7 @@ export default function SignUp() {
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
       const isStandalone = 'standalone' in window.navigator && (window.navigator as NavigatorWithStandalone).standalone;
       const isInAppBrowser = ua.includes('Instagram') || ua.includes('FBAN') || ua.includes('FBAV');
-      
+
       setShowMobileAlert(isMobile && !isStandalone && isInAppBrowser);
     };
 
@@ -38,15 +38,15 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex min-h-screen bg-black text-white w-full justify-center items-center font-sans p-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
-        <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+    <div className="flex min-h-screen bg-black text-white w-full justify-center items-center font-sans p-4 overflow-hidden contain-paint">
+      <div className="contain-paint absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
+        <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat fa"></div>
       </div>
-      
+
       {/* Depth elements */}
       <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
       <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-      
+
       {showMobileAlert && (
         <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black p-2 sm:p-4">
           <AlertDescription className="text-sm sm:text-base text-center">
@@ -55,7 +55,7 @@ export default function SignUp() {
         </Alert>
       )}
 
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={fadeIn}

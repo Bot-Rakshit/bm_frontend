@@ -42,15 +42,18 @@ export default function ChessNews() {
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-          <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+      <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-hidden ${!showSidebar ? 'w-full' : ''}`}>
+
+        <div className='contain-paint h-full w-full absolute'>
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
+            <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+          </div>
+
+          {/* Enhanced depth elements */}
+          <div className="absolute top-20 -left-20 w-96 h-96 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-20 -right-20 w-96 h-96 bg-blue-500 opacity-10 rounded-full filter blur-3xl"></div>
         </div>
-        
-        {/* Enhanced depth elements */}
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-blue-500 opacity-10 rounded-full filter blur-3xl"></div>
-        
+
         <header className="bg-black/50 backdrop-filter backdrop-blur-lg text-white px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mt-4 sm:mt-6 mx-4 sm:mx-6 rounded-2xl z-10 border border-neon-green/20">
           <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center mb-4 sm:mb-0">
             <FaChessKnight className="text-neon-green mr-2 sm:mr-4 text-4xl sm:text-5xl" />
@@ -64,7 +67,7 @@ export default function ChessNews() {
           </div>
         </header>
 
-        <main className="flex-1 p-6 md:p-10 z-10">
+        <main className="flex-1 p-6 md:p-10 z-10 overflow-auto">
           {loading ? (
             <div className="flex justify-center items-center h-full">
               <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-neon-green"></div>
@@ -88,9 +91,9 @@ export default function ChessNews() {
                       <h2 className="text-2xl font-bold mb-4 text-neon-green hover:text-white transition-colors duration-300 line-clamp-3">{article.title}</h2>
                       <p className="text-gray-300 mb-6 text-base line-clamp-4">{article.summary}</p>
                     </div>
-                    <a 
-                      href={article.url} 
-                      target="_blank" 
+                    <a
+                      href={article.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center bg-neon-green text-black px-4 py-2 rounded-full hover:bg-white transition-colors duration-300 text-base font-medium w-full"
                     >
