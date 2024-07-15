@@ -50,6 +50,7 @@ export default function Chat() {
   const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
   const chatRef = useRef<HTMLDivElement>(null);
   const eventSource = useRef<EventSource | null>(null);
+  const [liveId, setLiveId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchRegisteredUsers();
@@ -77,36 +78,57 @@ export default function Chat() {
 
   const handleConnect = async () => {
     if (isConnected) {
-      if (eventSource.current) {
-        eventSource.current.close();
-      }
-      setIsConnected(false);
-      setComments([]);
-      setError(null);
+      await stopLiveStreamChat();
     } else {
+      await startLiveStreamChat();
+    }
+  };
+
+  const startLiveStreamChat = async () => {
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/chat/livestream/start`, { url: streamUrl });
+      setLiveId(response.data.liveId);
+      connectToEventSource(response.data.liveId);
+      setIsConnected(true);
+      setError(null);
+    } catch (error) {
+      console.error('Failed to start live stream chat:', error);
+      setError(`Failed to connect. Error: ${(error as Error).message || 'Unknown error'}`);
+    }
+  };
+
+  const stopLiveStreamChat = async () => {
+    if (liveId) {
       try {
-        const encodedUrl = encodeURIComponent(streamUrl);
-        eventSource.current = new EventSource(`${BACKEND_URL}/api/chat/livestream?url=${encodedUrl}`);
-
-        eventSource.current.onmessage = (event) => {
-          const chatItem: ChatItem = JSON.parse(event.data);
-          setComments((prevComments) => [...prevComments, chatItem].slice(-100));
-        };
-
-        eventSource.current.onerror = (err) => {
-          console.error('EventSource error:', err);
-          setIsConnected(false);
-          setError('An error occurred. Please try reconnecting.');
-          eventSource.current?.close();
-        };
-
-        setIsConnected(true);
+        await axios.post(`${BACKEND_URL}/api/chat/livestream/${liveId}/stop`);
+        if (eventSource.current) {
+          eventSource.current.close();
+        }
+        setIsConnected(false);
+        setComments([]);
         setError(null);
+        setLiveId(null);
       } catch (error) {
-        console.error('An error occurred:', error);
-        setError(`Failed to connect. Error: ${(error as Error).message || 'Unknown error'}`);
+        console.error('Failed to stop live stream chat:', error);
+        setError(`Failed to disconnect. Error: ${(error as Error).message || 'Unknown error'}`);
       }
     }
+  };
+
+  const connectToEventSource = (id: string) => {
+    eventSource.current = new EventSource(`${BACKEND_URL}/api/chat/livestream/${id}/messages`);
+
+    eventSource.current.onmessage = (event) => {
+      const chatItem: ChatItem = JSON.parse(event.data);
+      setComments((prevComments) => [...prevComments, chatItem].slice(-100));
+    };
+
+    eventSource.current.onerror = (err) => {
+      console.error('EventSource error:', err);
+      setIsConnected(false);
+      setError('An error occurred. Please try reconnecting.');
+      eventSource.current?.close();
+    };
   };
 
   const isRegisteredUser = (channelId: string) => registeredUsers.includes(channelId);
