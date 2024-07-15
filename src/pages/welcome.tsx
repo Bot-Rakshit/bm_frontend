@@ -85,7 +85,7 @@ export default function Welcome() {
   return (
     <div className="flex h-screen">
       {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative h-fitt ${!showSidebar ? 'w-full' : ''}`}>
+      <div className={`flex-1 flex flex-col relativ ${!showSidebar ? 'w-full' : ''}`}>
         <div className='contain-paint h-full w-full absolute'>
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
             <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
