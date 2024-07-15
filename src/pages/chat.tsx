@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { LiveChat } from 'youtube-chat';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck } from 'react-icons/fa';
 import Sidebar from '@/components/sidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
+import axios from 'axios';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 // Define ChatItem interface based on the documentation
 interface ChatItem {
@@ -45,13 +47,15 @@ export default function Chat() {
   const [comments, setComments] = useState<ChatItem[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
   const chatRef = useRef<HTMLDivElement>(null);
-  const liveChat = useRef<LiveChat | null>(null);
+  const eventSource = useRef<EventSource | null>(null);
 
   useEffect(() => {
+    fetchRegisteredUsers();
     return () => {
-      if (liveChat.current) {
-        liveChat.current.stop();
+      if (eventSource.current) {
+        eventSource.current.close();
       }
     };
   }, []);
@@ -62,48 +66,50 @@ export default function Chat() {
     }
   }, [comments]);
 
+  const fetchRegisteredUsers = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/chess/registered-users`);
+      setRegisteredUsers(response.data);
+    } catch (error) {
+      console.error('Failed to fetch registered users:', error);
+    }
+  };
+
   const handleConnect = async () => {
     if (isConnected) {
-      if (liveChat.current) {
-        liveChat.current.stop();
+      if (eventSource.current) {
+        eventSource.current.close();
       }
       setIsConnected(false);
       setComments([]);
       setError(null);
     } else {
-      const liveId = extractLiveId(streamUrl);
-      if (liveId) {
-        try {
-          liveChat.current = new LiveChat({ liveId });
-          await liveChat.current.start();
-          console.log('LiveChat started successfully for video ID:', liveId);
-          setIsConnected(true);
-          setError(null);
+      try {
+        const encodedUrl = encodeURIComponent(streamUrl);
+        eventSource.current = new EventSource(`${BACKEND_URL}/api/chat/livestream?url=${encodedUrl}`);
 
-          liveChat.current.on('chat', (chatItem: ChatItem) => {
-            setComments((prevComments) => [...prevComments, chatItem].slice(-100));
-          });
+        eventSource.current.onmessage = (event) => {
+          const chatItem: ChatItem = JSON.parse(event.data);
+          setComments((prevComments) => [...prevComments, chatItem].slice(-100));
+        };
 
-          liveChat.current.on('error', (err) => {
-            console.error('LiveChat error:', err);
-            setIsConnected(false);
-            setError('An error occurred. Please try reconnecting.');
-          });
-        } catch (error) {
-          console.error('An error occurred:', error);
-          setError(`Failed to connect. Error: ${(error as Error).message || 'Unknown error'}`);
-        }
-      } else {
-        setError('Invalid YouTube URL. Please enter a valid YouTube video or live stream URL.');
+        eventSource.current.onerror = (err) => {
+          console.error('EventSource error:', err);
+          setIsConnected(false);
+          setError('An error occurred. Please try reconnecting.');
+          eventSource.current?.close();
+        };
+
+        setIsConnected(true);
+        setError(null);
+      } catch (error) {
+        console.error('An error occurred:', error);
+        setError(`Failed to connect. Error: ${(error as Error).message || 'Unknown error'}`);
       }
     }
   };
 
-  const extractLiveId = (url: string) => {
-    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  };
+  const isRegisteredUser = (channelId: string) => registeredUsers.includes(channelId);
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-900 to-black text-white">
@@ -143,7 +149,9 @@ export default function Chat() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className="mb-2 p-3 bg-gray-700/70 rounded-lg backdrop-blur-sm"
+                className={`mb-2 p-3 bg-gray-700/70 rounded-lg backdrop-blur-sm ${
+                  isRegisteredUser(comment.author.channelId) ? 'border-2 border-neon-green' : ''
+                }`}
               >
                 <div className="flex items-center mb-1">
                   {comment.author.thumbnail && (
