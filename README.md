@@ -4,6 +4,16 @@
 
 This is Samay Raina's official community website for chess enthusiasts.
 
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [Available Scripts](#-available-scripts)
+- [Project Structure](#-project-structure)
+- [Contribution](#-contribution)
+- [License](#-license)
+
 ## 🎉 Features
 
 - **Community Dashboard** - An interactive dashboard which shows the chess community stats and leaderboard.
@@ -86,6 +96,18 @@ bm_frontend/
   ├── tsconfig.json      # TypeScript configuration
   └── vite.config.ts     # Vite configuration
 ```
+
+## 🤝 Contribution
+
+We welcome contributions to the BMSamay.com Frontend project! To contribute:
+
+1. Fork the repository.
+2. Create a new branch (git checkout -b feature-branch).
+3. Make your changes and commit them (git commit -m 'Add some feature').
+4. Push to the branch (git push origin feature-branch).
+5. Open a pull request.
+
+Please read our [Contributing Guidelines](Contributing.md) for more details.
 
 ## 📄 License
 
