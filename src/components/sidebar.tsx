@@ -101,7 +101,7 @@ const Sidebar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className={`md:hidden fixed top-4 left-4 z-[60] text-neon-green bg-black/50 backdrop-filter backdrop-blur-sm rounded-full ${isOpen ? 'hidden' : ''}`}
+            className={`md:hidden fixed top-7 left-6 z-[60] text-neon-green bg-black/50 backdrop-filter backdrop-blur-sm rounded-full ${isOpen ? 'hidden' : ''}`}
             onClick={() => setIsOpen(true)}
           >
             <Menu />

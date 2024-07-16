@@ -83,9 +83,9 @@ export default function Welcome() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relativ ${!showSidebar ? 'w-full' : ''}`}>
+      <div className={`flex-1 flex flex-col relative ${!showSidebar ? 'w-full' : ''}`}>
         <div className='contain-paint h-full w-full absolute'>
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
             <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
@@ -95,13 +95,17 @@ export default function Welcome() {
           <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
           <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
         </div>
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
+        
+        {/* Header  */}
+        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 py-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <div className="flex items-center">
             <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
             <h1 className="text-xl font-bold">Welcome to BM Samay</h1>
           </div>
           <FaChessKnight className="w-8 h-8 text-neon-green" />
         </header>
+
+        {/* CONTENT */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -145,7 +149,7 @@ export default function Welcome() {
                     style={{
                       objectPosition: 'center 20%',
                       border: '2px solid rgba(0, 255, 0, 0.5)',
-                      boxShadow: '0 0 20px rgba(0, 255, 0, 0.5)'
+                      boxShadow: '0 0 5px rgba(0, 255, 0, 0.5)'
                     }}
                   />
                 </div>
@@ -155,7 +159,7 @@ export default function Welcome() {
             <div className="text-center mt-12">
               <Button
                 variant="outline"
-                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
+                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300 bg-transparent"
                 onClick={handleCommunityStats}
               >
                 See Community Stats
@@ -216,7 +220,7 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon }: StatCardProps) => (
   <motion.div
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 w-[120px] flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
     whileHover={{ scale: 1.05 }}
   >
     <div className="text-4xl text-neon-green mb-4">{icon}</div>
@@ -239,7 +243,7 @@ const PercentileItem = ({ title, percentile, description, message }: PercentileI
   >
     <h3 className="text-2xl font-semibold text-neon-green mb-2">{title}</h3>
     <div className="flex items-center mb-4">
-      <div className="w-16 h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-4">
+      <div className="w-16 h-16 p-2 rounded-full bg-neon-green/20 flex items-center justify-center mr-4">
         <span className="text-2xl font-bold text-neon-green">{percentile}%</span>
       </div>
       <p className="text-white">
