@@ -76,6 +76,9 @@ dependencies:
     version: 2.2.0
 
 devDependencies:
+  '@ianvs/prettier-plugin-sort-imports':
+    specifier: ^4.3.1
+    version: 4.3.1(prettier@3.3.2)
   '@types/node':
     specifier: ^20.8.0
     version: 20.14.8
@@ -114,7 +117,7 @@ devDependencies:
     version: 8.4.38
   prettier-plugin-tailwindcss:
     specifier: 0.2.5
-    version: 0.2.5(prettier@3.3.2)
+    version: 0.2.5(@ianvs/prettier-plugin-sort-imports@4.3.1)(prettier@3.3.2)
   tailwind-merge:
     specifier: ^1.14.0
     version: 1.14.0
@@ -649,6 +652,26 @@ packages:
   /@humanwhocodes/object-schema@2.0.3:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
+    dev: true
+
+  /@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.3.2):
+    resolution: {integrity: sha512-ZHwbyjkANZOjaBm3ZosADD2OUYGFzQGxfy67HmGZU94mHqe7g1LCMA7YYKB1Cq+UTPCBqlAYapY0KXAjKEw8Sg==}
+    peerDependencies:
+      '@vue/compiler-sfc': 2.7.x || 3.x
+      prettier: 2 || 3
+    peerDependenciesMeta:
+      '@vue/compiler-sfc':
+        optional: true
+    dependencies:
+      '@babel/core': 7.24.7
+      '@babel/generator': 7.24.7
+      '@babel/parser': 7.24.7
+      '@babel/traverse': 7.24.7
+      '@babel/types': 7.24.7
+      prettier: 3.3.2
+      semver: 7.6.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@isaacs/cliui@8.0.2:
@@ -2638,7 +2661,7 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /prettier-plugin-tailwindcss@0.2.5(prettier@3.3.2):
+  /prettier-plugin-tailwindcss@0.2.5(@ianvs/prettier-plugin-sort-imports@4.3.1)(prettier@3.3.2):
     resolution: {integrity: sha512-vZ/iKieyCx0WTxHbkf5E1rBlv/ybFk8WTT4hL5W2jlVxum2Zbe0jMUpuQdDrpa4z2vnPiJ5KIWCqL/kd16fKYg==}
     engines: {node: '>=12.17.0'}
     peerDependencies:
@@ -2690,6 +2713,7 @@ packages:
       prettier-plugin-twig-melody:
         optional: true
     dependencies:
+      '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.3.2)
       prettier: 3.3.2
     dev: true
 

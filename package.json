@@ -35,6 +35,7 @@
     "youtube-chat": "^2.2.0"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@types/node": "^20.8.0",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
