@@ -45,6 +45,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "hemantmodii",
+      "name": "Hemant Pradeep Modi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143285136?v=4",
+      "profile": "https://my-portfolio-mauve-eight-48.vercel.app/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
