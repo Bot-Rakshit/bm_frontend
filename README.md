@@ -28,8 +28,8 @@ This is Samay Raina's official community website for chess enthusiasts.
 
 Make sure you have the following installed on your development machine:
 
-- Node.js (version 16 or above)
-- pnpm (package manager) or npm
+- Node.js (version 16 or above) - preferred v22.x.x
+- pnpm (package manager) or npm - preferred pnpm
 
 ## 🚀 Getting Started
 
