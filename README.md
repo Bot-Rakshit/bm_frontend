@@ -1,42 +1,40 @@
-# React + Vite + TypeScript Template (react-vite-ui)
+# BMSamay.com Frontend
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
 
-A React + Vite template powered by shadcn/ui.
+This is Samay Raina's official community website for chess enthusiasts.
 
 ## 🎉 Features
 
-- **React** - A JavaScript library for building user interfaces.
-- **Vite** - A fast, opinionated frontend build tool.
-- **TypeScript** - A typed superset of JavaScript that compiles to plain JavaScript.
-- **Tailwind CSS** - A utility-first CSS framework.
-- **Tailwind Prettier Plugin** - A Prettier plugin for formatting Tailwind CSS classes.
-- **ESLint** - A pluggable linting utility for JavaScript and TypeScript.
-- **PostCSS** - A tool for transforming CSS with JavaScript.
-- **Autoprefixer** - A PostCSS plugin to parse CSS and add vendor prefixes.
-- **shadcn/ui** - Beautifully designed components that you can copy and paste into your apps.
+- **Community Dashboard** - An interactive dashboard which shows the chess community stats and leaderboard.
+- **Chess News** - Chess news from all over the world powered by [ChessBase India](https://chessbase.in/).
+- **Connect Your Chess.com Profile** - Connect your chess.com profile to see where you stand in the community leaderboard.
+- **BM Points** - A point based scoring for correct guesses of samay's chess games.
+- **Integrations** - Coming soon.
+- **Streamers** - Coming soon.
+
 
 ## ⚙️ Prerequisites
 
 Make sure you have the following installed on your development machine:
 
 - Node.js (version 16 or above)
-- pnpm (package manager)
+- pnpm (package manager) or npm
 
 ## 🚀 Getting Started
 
-Follow these steps to get started with the react-vite-ui template:
+Follow these steps to get started with the BMSamay.com Frontend:
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/dan5py/react-vite-ui.git
+   git clone https://github.com/Bot-Rakshit/bm_frontend.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd react-vite-ui
+   cd bm_frontend
    ```
 
 3. Install the dependencies:
@@ -44,11 +42,19 @@ Follow these steps to get started with the react-vite-ui template:
    ```bash
    pnpm install
    ```
+   or 
+
+   ```bash
+   npm install
+   ```
 
 4. Start the development server:
 
    ```bash
    pnpm dev
+   ```
+   ```bash
+   npm run dev
    ```
 
 ## 📜 Available Scripts
@@ -63,7 +69,7 @@ Follow these steps to get started with the react-vite-ui template:
 The project structure follows a standard React application layout:
 
 ```python
-react-vite-ui/
+bm_frontend/
   ├── node_modules/      # Project dependencies
   ├── public/            # Public assets
   ├── src/               # Application source code
