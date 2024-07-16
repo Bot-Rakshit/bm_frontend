@@ -14,6 +14,7 @@ import PrivacyPolicy from './pages/privacypolicy.tsx';
 import ComingSoon from './components/comingsoon.tsx';
 import ChessNews from './pages/ChessNews.tsx';
 import Chat from './pages/chat.tsx';
+import Chatbot from './components/Chatbot.tsx';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router>
@@ -33,5 +34,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </Routes>
       </ErrorBoundary>
     </Router>
+    <Chatbot />
   </React.StrictMode>
 );
