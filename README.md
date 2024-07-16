@@ -13,6 +13,7 @@ This is Samay Raina's official community website for chess enthusiasts.
 - [Project Structure](#-project-structure)
 - [Contribution](#-contribution)
 - [License](#-license)
+- [FAQ](#-faq)
 
 ## 🎉 Features
 
@@ -112,3 +113,15 @@ Please read our [Contributing Guidelines](Contributing.md) for more details.
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](https://choosealicense.com/licenses/mit/) file for details.
+
+
+## ❓ FAQ
+
+**Q: How do I connect my Chess.com profile?**  
+A: Navigate to the dashboard and follow the instructions to link your Chess.com account.
+
+**Q: What are BM Points?**  
+A: BM Points are earned by making correct predictions on Samay's chess games. They reflect your engagement and activity in the community.
+
+**Q: How can I report a bug?**  
+A: Please open an issue on the [GitHub repository](https://github.com/Bot-Rakshit/bm_frontend/issues).
