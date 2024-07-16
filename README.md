@@ -1,4 +1,7 @@
 # BMSamay.com Frontend
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
 
@@ -111,20 +114,37 @@ We welcome contributions to the BMSamay.com Frontend project! To contribute:
 
 Please read our [Contributing Guidelines](Contributing.md) for more details.
 
-## Contributors
-
-Thank you to all the contributors who have helped with this project!
-
-- [Bot-Rakshit](https://github.com/Bot-Rakshit)
-- [Dinesh-Gautam](https://github.com/Dinesh-Gautam)
-- [karthiksneu](https://github.com/karthiksneu)
-- [vishant007](https://github.com/vishant007)
-- [hemantmodii](https://github.com/hemantmodii)
-- [MoutasimQazi](https://github.com/MoutasimQazi)
-- [itsnileshgosavi](https://github.com/itsnileshgosavi)
-- [manjotsk](https://github.com/manjotsk)
-
-
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](https://choosealicense.com/licenses/mit/) file for details.
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Bot-Rakshit"><img src="https://avatars.githubusercontent.com/u/89170079?v=4?s=100" width="100px;" alt="Rakshit Singh"/><br /><sub><b>Rakshit Singh</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=Bot-Rakshit" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
