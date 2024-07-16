@@ -4,8 +4,6 @@
 
 This is Samay Raina's official community website for chess enthusiasts.
 
-You can support the developer here - ![image](https://github.com/user-attachments/assets/c653dc27-3d94-4ea9-8d4c-6289a411bb6e)
-
 ## 📑 Table of Contents
 
 - [Features](#-features)
