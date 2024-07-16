@@ -1,6 +1,6 @@
 # BMSamay.com Frontend
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
@@ -134,6 +134,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vishant007"><img src="https://avatars.githubusercontent.com/u/64253459?v=4?s=100" width="100px;" alt="Vishant Shah"/><br /><sub><b>Vishant Shah</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=vishant007" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://my-portfolio-mauve-eight-48.vercel.app/"><img src="https://avatars.githubusercontent.com/u/143285136?v=4?s=100" width="100px;" alt="Hemant Pradeep Modi"/><br /><sub><b>Hemant Pradeep Modi</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=hemantmodii" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://moutasimqazi.github.io/resume/"><img src="https://avatars.githubusercontent.com/u/115083371?v=4?s=100" width="100px;" alt="Moutasim"/><br /><sub><b>Moutasim</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=MoutasimQazi" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/itsnileshgosavi"><img src="https://avatars.githubusercontent.com/u/109579816?v=4?s=100" width="100px;" alt="Nilesh Gosavi"/><br /><sub><b>Nilesh Gosavi</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=itsnileshgosavi" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
