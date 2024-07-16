@@ -111,6 +111,20 @@ We welcome contributions to the BMSamay.com Frontend project! To contribute:
 
 Please read our [Contributing Guidelines](Contributing.md) for more details.
 
+## Contributors
+
+Thank you to all the contributors who have helped with this project!
+
+- [Bot-Rakshit](https://github.com/Bot-Rakshit)
+- [Dinesh-Gautam](https://github.com/Dinesh-Gautam)
+- [karthiksneu](https://github.com/karthiksneu)
+- [vishant007](https://github.com/vishant007)
+- [hemantmodii](https://github.com/hemantmodii)
+- [MoutasimQazi](https://github.com/MoutasimQazi)
+- [itsnileshgosavi](https://github.com/itsnileshgosavi)
+- [manjotsk](https://github.com/manjotsk)
+
+
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](https://choosealicense.com/licenses/mit/) file for details.
