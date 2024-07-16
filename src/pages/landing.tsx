@@ -223,7 +223,7 @@ const Footer = () => (
 					<h3 className="text-lg font-semibold text-white mb-4">Community</h3>
 					<ul className="grid grid-cols-2 gap-3">
 					<li><a href="https://discord.com/invite/maisamayhoon" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Discord</a></li>
-					<li><a href="https://www.youtube.com/@SamayRainaOfficial" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">YouTube</a></li>
+					<li><a href="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">YouTube</a></li>
 					<li><a href="https://www.chess.com/club/samay-raina-official" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Chess.com</a></li>
 					<li><a href="https://x.com/ReheSamay" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Twitter</a></li>
 					<li><a href="https://www.reddit.com/r/SamayRaina/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Reddit</a></li>
