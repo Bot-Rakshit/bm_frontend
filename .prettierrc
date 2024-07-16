@@ -2,7 +2,7 @@
   "useTabs": false,
   "singleQuote": true,
   "trailingComm": "all",
-  "singleAttributePerLine": true,
+  "singleAttributePerLine": false,
   "printWidth": 80,
   "tabWidth": 2,
   "experimentalTernaries": true,
