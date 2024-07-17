@@ -1,6 +1,6 @@
 # BMSamay.com Frontend
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
@@ -138,6 +138,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://manjot.in/"><img src="https://avatars.githubusercontent.com/u/26750100?v=4?s=100" width="100px;" alt="Manjot Singh"/><br /><sub><b>Manjot Singh</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=manjotsk" title="Code">💻</a> <a href="#maintenance-manjotsk" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://n0step.xyz/"><img src="https://avatars.githubusercontent.com/u/69315835?v=4?s=100" width="100px;" alt="n0step_"/><br /><sub><b>n0step_</b></sub></a><br /><a href="https://github.com/Bot-Rakshit/https://github.com/Bot-Rakshit/bm_frontend/commits?author=krushna06" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
