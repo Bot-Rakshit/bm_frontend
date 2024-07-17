@@ -13,6 +13,14 @@ interface Video {
   url: string;
 }
 
+interface YouTubeApiItem {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    thumbnails: { high: { url: string } };
+  };
+}
+
 export default function ChessTutorials() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +40,7 @@ export default function ChessTutorials() {
             key: API_KEY,
           },
         });
-        const videoData = response.data.items.map((item: any) => ({
+        const videoData = response.data.items.map((item: YouTubeApiItem) => ({
           id: item.id.videoId,
           title: item.snippet.title,
           thumbnail: item.snippet.thumbnails.high.url,
