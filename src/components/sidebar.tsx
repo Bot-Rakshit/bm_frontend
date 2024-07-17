@@ -9,13 +9,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu, Home, Users,  LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.png';
 import profileIcon from '@/assets/profile.png';
 
-// Add this type definition at the top of the file
 type NavItem = {
   name: string;
   path: string;
@@ -23,16 +22,11 @@ type NavItem = {
   comingSoon?: boolean;
 };
 
-// Update the navItems array declaration
 const navItems: NavItem[] = [
   { name: 'Welcome', path: '/welcome', icon: Home },
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
-  // Uncomment and update these items if needed
-  // { name: 'Integrations', path: '/comingsoon', icon: Zap, comingSoon: true },
-  // { name: 'BM Points', path: '/comingsoon', icon: Award, comingSoon: true },
-  // { name: 'Streamers', path: '/comingsoon', icon: Video, comingSoon: true },
 ];
 
 const Sidebar = () => {
@@ -42,11 +36,14 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token') || '';
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsDropdownOpen(false);
     navigate('/');
   };
 
@@ -77,7 +74,6 @@ const Sidebar = () => {
     }
   };
 
-  // Update the NavItem component prop type
   const NavItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) => (
     <Link
       to={`${item.path}?token=${token}`}
@@ -129,9 +125,13 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed && !isHovered ? 'flex justify-center' : ''}`}>
-        <DropdownMenu>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className={`w-full justify-start text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'px-0' : ''}`}>
+            <Button 
+              variant="ghost" 
+              className={`w-full justify-start text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'px-0' : ''}`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
               <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
                 <AvatarImage src={profileIcon} alt="Profile" />
                 <AvatarFallback>BM</AvatarFallback>
@@ -140,7 +140,7 @@ const Sidebar = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-gray-800 border border-gray-700">
-            <DropdownMenuItem onClick={handleLogout} className="text-gray-300 hover:text-neon-green hover:bg-neon-green/5">
+            <DropdownMenuItem onClick={handleLogout} className="text-gray-300 hover:text-neon-green hover:bg-neon-green/5 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
