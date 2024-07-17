@@ -38,6 +38,7 @@ const categories = [
 ];
 
 const CACHE_KEY = 'chessTutorialsData';
+const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 export default function ChessTutorials() {
   const [videos, setVideos] = useState<{ [key: string]: Video[] }>({});
@@ -55,8 +56,13 @@ export default function ChessTutorials() {
         return;
       }
 
+      if (!API_KEY) {
+        console.error('YouTube API key is not set');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const API_KEY = 'AIzaSyDZMY09s4-C2TjJlkTig2L5JRjcJri1xYU';
         const videosByCategory: { [key: string]: Video[] } = {};
 
         for (const category of categories) {
