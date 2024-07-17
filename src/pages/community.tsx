@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
