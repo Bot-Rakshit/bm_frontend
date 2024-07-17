@@ -27,8 +27,10 @@ const navItems = [
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token') || '';
@@ -39,9 +41,9 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsCollapsed(true);
-      }
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setIsCollapsed(mobile ? false : true);
     };
 
     window.addEventListener('resize', handleResize);
@@ -49,6 +51,20 @@ const Sidebar = () => {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      setIsHovered(true);
+      setIsCollapsed(false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setIsHovered(false);
+      setIsCollapsed(true);
+    }
+  };
 
   const NavItem = ({ item, isActive }: { item: typeof navItems[number]; isActive: boolean }) => (
     <Link
@@ -64,10 +80,10 @@ const Sidebar = () => {
         whileTap={{ scale: 0.95 }}
         className="flex items-center gap-4"
       >
-        <item.icon className={`h-5 w-5 ${isCollapsed ? 'mr-0' : 'mr-3'}`} />
-        {!isCollapsed && <span className="text-sm whitespace-nowrap">{item.name}</span>}
+        <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
+        {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
       </motion.div>
-      {!isCollapsed && item.comingSoon && (
+      {(!isCollapsed || isHovered) && item.comingSoon && (
         <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-1 rounded-full ml-auto">
           Soon
         </span>
@@ -76,37 +92,39 @@ const Sidebar = () => {
   );
 
   const NavContent = () => (
-    <div className={`flex flex-col h-full bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} shadow-xl transition-all duration-300`}>
-      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-4 py-6 border-b border-gray-800`}>
-        {!isCollapsed && (
+    <div className={`flex flex-col h-full bg-gray-900 ${isCollapsed && !isHovered ? 'w-20' : 'w-64'} shadow-xl transition-all duration-300`}>
+      <div className={`flex items-center ${isCollapsed && !isHovered ? 'justify-center' : 'justify-between'} px-4 py-6 border-b border-gray-800`}>
+        {(!isCollapsed || isHovered) && (
           <div className="flex items-center gap-3">
             <img src={samayBM} alt="BM Samay Logo" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold text-neon-green">BM Samay</span>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
-        >
-          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
+          >
+            {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </Button>
+        )}
       </div>
       <nav className="flex-1 py-6 space-y-1 px-3">
         {navItems.map((item) => (
           <NavItem key={item.name} item={item} isActive={location.pathname === item.path} />
         ))}
       </nav>
-      <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed ? 'flex justify-center' : ''}`}>
+      <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed && !isHovered ? 'flex justify-center' : ''}`}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className={`w-full justify-start text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed ? 'px-0' : ''}`}>
-              <Avatar className={`h-8 w-8 ${isCollapsed ? '' : 'mr-3'}`}>
+            <Button variant="ghost" className={`w-full justify-start text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'px-0' : ''}`}>
+              <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
                 <AvatarImage src={profileIcon} alt="Profile" />
                 <AvatarFallback>BM</AvatarFallback>
               </Avatar>
-              {!isCollapsed && <span className="text-sm">Profile</span>}
+              {(!isCollapsed || isHovered) && <span className="text-sm">Profile</span>}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-gray-800 border border-gray-700">
@@ -140,11 +158,13 @@ const Sidebar = () => {
 
       <AnimatePresence>
         <motion.div
-          initial={{ width: isCollapsed ? 80 : 256 }}
-          animate={{ width: isCollapsed ? 80 : 256 }}
+          initial={{ width: 80 }}
+          animate={{ width: isCollapsed && !isHovered ? 80 : 256 }}
           exit={{ width: 80 }}
           transition={{ duration: 0.3 }}
           className="hidden md:block h-screen"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <NavContent />
         </motion.div>
