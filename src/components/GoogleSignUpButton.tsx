@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { FaYoutube } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 
 interface GoogleSignUpButtonProps {
   onClick: () => void;
@@ -18,7 +18,7 @@ export function GoogleSignUpButton({ onClick, isLoading, disabled }: GoogleSignU
       {isLoading ? (
         <span className="loading loading-spinner"></span>
       ) : (
-        <FaYoutube className="w-5 h-5" />
+        <FaGoogle className="w-5 h-5" />
       )}
       Sign up with Google
     </Button>
