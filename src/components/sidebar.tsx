@@ -9,19 +9,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu, Home, Users, Zap, Award, LogOut, Video, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, Users,  LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.png';
 import profileIcon from '@/assets/profile.png';
 
-const navItems = [
+// Add this type definition at the top of the file
+type NavItem = {
+  name: string;
+  path: string;
+  icon: LucideIcon;
+  comingSoon?: boolean;
+};
+
+// Update the navItems array declaration
+const navItems: NavItem[] = [
   { name: 'Welcome', path: '/welcome', icon: Home },
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
-  { name: 'Integrations', path: '/comingsoon', icon: Zap, comingSoon: true },
-  { name: 'BM Points', path: '/comingsoon', icon: Award, comingSoon: true },
-  { name: 'Streamers', path: '/comingsoon', icon: Video, comingSoon: true },
+  // Uncomment and update these items if needed
+  // { name: 'Integrations', path: '/comingsoon', icon: Zap, comingSoon: true },
+  // { name: 'BM Points', path: '/comingsoon', icon: Award, comingSoon: true },
+  // { name: 'Streamers', path: '/comingsoon', icon: Video, comingSoon: true },
 ];
 
 const Sidebar = () => {
@@ -66,7 +77,8 @@ const Sidebar = () => {
     }
   };
 
-  const NavItem = ({ item, isActive }: { item: typeof navItems[number]; isActive: boolean }) => (
+  // Update the NavItem component prop type
+  const NavItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) => (
     <Link
       to={`${item.path}?token=${token}`}
       className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 ${
