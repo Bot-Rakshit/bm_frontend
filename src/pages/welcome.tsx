@@ -6,8 +6,8 @@ import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
-import { getPercentileRanking } from '@/services/chessApi';
 import { FaTrophy, FaBolt, FaCrosshairs, FaChessKnight } from 'react-icons/fa';
+import { useRankingsQuery } from '@/hooks/useRankingsQuery';
 
 interface User {
   chessUsername: string;
@@ -18,21 +18,16 @@ interface User {
   };
 }
 
-interface PercentileRanking {
-  blitzPercentile: number;
-  bulletPercentile: number;
-  rapidPercentile: number;
-}
-
 export default function Welcome() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [chessStats, setChessStats] = useState({ rapid: 0, blitz: 0, bullet: 0 });
-  const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [showSidebar] = useState(true);
+
+  const { data: percentiles, error } = useRankingsQuery(user ? user.chessUsername : null)
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -44,7 +39,6 @@ export default function Welcome() {
         if (decoded && decoded.stats) {
           setUser(decoded);
           setChessStats(decoded.stats);
-          fetchPercentileRanking(decoded.chessUsername);
         } else {
           throw new Error('Invalid user data');
         }
@@ -56,16 +50,6 @@ export default function Welcome() {
       navigate('/blunder');
     }
   }, [location.search, navigate]);
-
-  const fetchPercentileRanking = async (chessUsername: string) => {
-    try {
-      const data = await getPercentileRanking(chessUsername);
-      setPercentiles(data);
-    } catch (err) {
-      setError('Failed to fetch percentile rankings');
-      console.error(err);
-    }
-  };
 
   const handleCommunityStats = () => {
     if (token) {
@@ -187,7 +171,7 @@ export default function Welcome() {
                 </div>
               ) : error ? (
                 <Alert>
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription>{error.message}</AlertDescription>
                 </Alert>
               ) : (
                 <Alert>

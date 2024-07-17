@@ -1,38 +1,18 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import axios from 'axios';
-import Sidebar from '@/components/sidebar';
-import { FaChessKnight, FaExternalLinkAlt } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+
 import chessbaseLogo from '@/assets/cbi.svg';
+import Sidebar from '@/components/sidebar';
+import { useNewsQuery } from '@/hooks/useNewsQuery';
+import { motion } from 'framer-motion';
+import { FaChessKnight, FaExternalLinkAlt } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 
-interface Article {
-  image: string;
-  title: string;
-  summary: string;
-  url: string;
-}
-
 export default function ChessNews() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: articles, isLoading } = useNewsQuery();
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await axios.get('https://api2.bmsamay.com/latest_articles');
-        setArticles(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-
     // Check for token in URL or localStorage
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token') || localStorage.getItem('token');
@@ -68,13 +48,13 @@ export default function ChessNews() {
         </header>
 
         <main className="flex-1 p-6 md:p-10 z-10 overflow-auto">
-          {loading ? (
+          {isLoading ?  (
             <div className="flex justify-center items-center h-full">
               <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-neon-green"></div>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {articles.map((article, index) => (
+              {(articles || []).map((article, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}

@@ -1,3 +1,4 @@
+import { Article } from '@/types';
 import axios from 'axios';
 
 const API_BASE_URL = 'https://api.bmsamay.com/api';
@@ -15,6 +16,14 @@ export const getPercentileRanking = async (chessUsername: string): Promise<Perce
     return response.data;
   } catch (error) {
     console.error('Error fetching percentile ranking:', error);
-    throw error;
+
+    throw new Error('Failed to fetch percentile rankings')
   }
+};
+
+export const getChessNews = async () => {
+  const response = await axios.get<Article[]>(
+    'https://api2.bmsamay.com/latest_articles',
+  );
+  return response.data;
 };

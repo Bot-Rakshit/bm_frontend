@@ -4,6 +4,7 @@ import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
 import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece } from 'react-icons/fa';
+import { useQuery } from '@tanstack/react-query';
 
 interface DashboardData {
   totalUsers: number;
@@ -22,22 +23,37 @@ const CACHE_KEY = 'dashboardData';
 const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 
 export default function Community() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showSidebar, setShowSidebar] = useState(true);
   const location = useLocation();
 
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      const data = await getDashboardStats();
-      setDashboardData(data);
+  const { data: dashboardData } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: async () => {
+      const data = (await getDashboardStats()) as DashboardData;
+
       const now = new Date();
       setLastUpdated(now);
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: now.getTime() }));
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    }
-  }, []);
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ data, timestamp: now.getTime() }),
+      );
+      return data;
+    },
+    initialData: () => {
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        const now = new Date().getTime();
+        if (now - timestamp < UPDATE_INTERVAL) {
+          setLastUpdated(new Date(timestamp));
+
+          return data as DashboardData;
+        }
+      }
+    },
+    refetchInterval: UPDATE_INTERVAL,
+  });
 
   useEffect(() => {
     const checkToken = () => {
@@ -48,27 +64,7 @@ export default function Community() {
     };
 
     setShowSidebar(checkToken());
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    if (cachedData) {
-      const { data, timestamp } = JSON.parse(cachedData);
-      const now = new Date().getTime();
-      if (now - timestamp < UPDATE_INTERVAL) {
-        setDashboardData(data);
-        setLastUpdated(new Date(timestamp));
-      } else {
-        fetchDashboardData();
-      }
-    } else {
-      fetchDashboardData();
-    }
-
-    const intervalId = setInterval(() => {
-      fetchDashboardData();
-    }, UPDATE_INTERVAL);
-
-    return () => clearInterval(intervalId);
-  }, [fetchDashboardData, location.search]);
+  }, [location.search]);
 
   if (!dashboardData) {
     return (
@@ -94,7 +90,7 @@ export default function Community() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
-        
+
         <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <div className="flex items-center">
             <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
@@ -106,9 +102,9 @@ export default function Community() {
             </p>
           )}
         </header>
-        
+
         <div className="flex-1 overflow-y-auto p-6 md:p-10 md:pl-20 z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
