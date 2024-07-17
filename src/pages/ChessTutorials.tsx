@@ -203,32 +203,46 @@ export default function ChessTutorials() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+              className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 sm:p-6 md:p-8"
               onClick={() => setSelectedVideo(null)}
             >
               <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-gray-900 p-4 rounded-xl max-w-3xl w-full mx-4"
+                className="bg-gray-900 rounded-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="aspect-w-16 aspect-h-9 mb-4">
+                <div className="relative pt-[56.25%] w-full">
                   <iframe
                     src={`https://www.youtube.com/embed/${selectedVideo.id}`}
                     title={selectedVideo.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className="w-full h-full rounded-lg"
+                    className="absolute top-0 left-0 w-full h-full"
                   ></iframe>
                 </div>
-                <h2 className="text-xl font-bold mb-2 text-neon-green">{selectedVideo.title}</h2>
-                <button
-                  onClick={() => setSelectedVideo(null)}
-                  className="mt-4 bg-neon-green text-black px-4 py-2 rounded-full hover:bg-white transition-colors duration-300 text-sm font-medium"
-                >
-                  Close
-                </button>
+                <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-2 text-neon-green">{selectedVideo.title}</h2>
+                  <div className="flex justify-between items-center">
+                    <a
+                      href={selectedVideo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center"
+                    >
+                      <FaExternalLinkAlt className="mr-2" />
+                      Watch on YouTube
+                    </a>
+                    <button
+                      onClick={() => setSelectedVideo(null)}
+                      className="bg-neon-green text-black px-4 py-2 rounded-full hover:bg-white transition-colors duration-300 text-sm font-medium flex items-center"
+                    >
+                      <FaPlay className="mr-2" />
+                      Close
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           )}
