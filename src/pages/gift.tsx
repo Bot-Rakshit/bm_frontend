@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaChess, FaRandom, FaExternalLinkAlt, FaDrum } from 'react-icons/fa';
+import { FaChess, FaRandom, FaExternalLinkAlt, FaDrum, FaBolt, FaCrosshairs, FaChessKnight, FaPuzzlePiece } from 'react-icons/fa';
 import { GiDiamonds, GiPartyPopper } from 'react-icons/gi';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
+import { IconType } from 'react-icons';
 
 interface PlayerStats {
   name: string;
@@ -16,6 +17,20 @@ interface PlayerStats {
     puzzle: number;
   };
 }
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: IconType;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon }) => (
+  <div className="bg-gray-700/50 rounded-xl p-4 flex flex-col items-center justify-center">
+    <Icon className="text-3xl text-neon-green mb-2" />
+    <h3 className="text-lg font-semibold text-white mb-1">{title}</h3>
+    <p className="text-2xl font-bold text-neon-green">{value}</p>
+  </div>
+);
 
 const DiamondGift: React.FC = () => {
   const [player, setPlayer] = useState<PlayerStats | null>(null);
@@ -119,19 +134,19 @@ const DiamondGift: React.FC = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="text-center"
               >
-                <h2 className="text-3xl font-bold text-white mb-4">Congratulations!</h2>
-                <div className="bg-gray-700 rounded-lg p-6 mb-6">
-                  <p className="text-2xl font-semibold text-neon-green mb-2">{player.name}</p>
-                  <p className="text-xl text-gray-300 mb-4">Chess.com Username: {player.chessUsername}</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <p className="text-lg text-gray-300">Blitz: {player.ratings.blitz}</p>
-                    <p className="text-lg text-gray-300">Bullet: {player.ratings.bullet}</p>
-                    <p className="text-lg text-gray-300">Rapid: {player.ratings.rapid}</p>
-                    <p className="text-lg text-gray-300">Puzzle: {player.ratings.puzzle}</p>
+                <h2 className="text-4xl font-bold text-white mb-6">Congratulations!</h2>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-8 shadow-lg border border-neon-green/30">
+                  <p className="text-3xl font-semibold text-neon-green mb-4">{player.name}</p>
+                  <p className="text-xl text-gray-300 mb-6">Chess.com Username: {player.chessUsername}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <StatCard title="Blitz" value={player.ratings.blitz} icon={FaBolt} />
+                    <StatCard title="Bullet" value={player.ratings.bullet} icon={FaCrosshairs} />
+                    <StatCard title="Rapid" value={player.ratings.rapid} icon={FaChessKnight} />
+                    <StatCard title="Puzzle" value={player.ratings.puzzle} icon={FaPuzzlePiece} />
                   </div>
                 </div>
-                <p className="text-xl text-white mb-4">You've won a free Diamond Membership!</p>
-                <Button onClick={viewChessProfile} className="bg-neon-green text-gray-900 font-bold py-2 px-4 rounded-full">
+                <p className="text-2xl text-white mb-6">You've won a free Diamond Membership!</p>
+                <Button onClick={viewChessProfile} className="bg-neon-green text-gray-900 font-bold py-3 px-6 rounded-full text-lg hover:bg-white transition-colors duration-300">
                   View Chess.com Profile <FaExternalLinkAlt className="ml-2 inline" />
                 </Button>
               </motion.div>
