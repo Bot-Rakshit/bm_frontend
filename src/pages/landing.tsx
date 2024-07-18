@@ -74,7 +74,7 @@ const Hero = () => {
                 className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
                 asChild
               >
-                <Link to="/signup">Learn More</Link>
+                <Link to="/signup">Predict Now</Link>
               </Button>
             </div>
           </div>
@@ -85,8 +85,10 @@ const Hero = () => {
                 alt="Samay Raina"
                 className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
               />
-              <div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
-                <PredictionCard />
+              <div className="absolute -bottom-36 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
+                <div className="overflow-hidden" style={{ maxHeight: '50%' }}>
+                  <PredictionCard />
+                </div>
               </div>
             </div>
           </div>
