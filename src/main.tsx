@@ -15,6 +15,7 @@ import ComingSoon from './components/comingsoon.tsx';
 import ChessNews from './pages/ChessNews.tsx';
 import ChessTutorials from './pages/ChessTutorials.tsx';
 import Chat from './pages/chat.tsx';
+import DiamondGift from './pages/gift.tsx';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/" element={<LandingPage />} />
           <Route path="/app" element={<App />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/gift" element={<DiamondGift/>} />
           <Route path="/chessnews" element={<ChessNews />} />
           <Route path="/chesstutorials" element={<ChessTutorials />} />
           <Route path="/signup" element={<Signup />} />
