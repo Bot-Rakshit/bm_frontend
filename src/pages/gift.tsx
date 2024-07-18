@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaChess, FaRandom, FaExternalLinkAlt, FaCrown } from 'react-icons/fa';
+import { FaChess, FaRandom, FaExternalLinkAlt, FaCrown, FaUser } from 'react-icons/fa';
 import { GiDiamonds } from 'react-icons/gi';
 import { Button } from '@/components/ui/button';
 import Sidebar from '@/components/sidebar';
@@ -38,7 +38,7 @@ const DiamondGift: React.FC = () => {
     setError(null);
     setPlayer(null);
     try {
-      const response = await axios.get('https://api.bmsamay.com/api/chess/random-player');
+      const response = await axios.get('http://localhost:3000/api/chess/random-player');
       setPlayer(response.data);
       triggerConfetti();
     } catch (error) {
@@ -99,18 +99,28 @@ const DiamondGift: React.FC = () => {
                   exit={{ opacity: 0, y: -20 }}
                   className="text-center"
                 >
-                  <div className="flex items-center justify-center mb-4">
-                    <FaCrown className="text-4xl text-yellow-400 mr-2" />
-                    <h2 className="text-3xl font-bold text-neon-green">{player.name}</h2>
+                  <div className="mb-6 p-4 bg-gray-700/50 rounded-xl">
+                    <div className="flex items-center justify-center mb-2">
+                      <FaCrown className="text-4xl text-yellow-400 mr-2" />
+                      <h2 className="text-3xl font-bold text-neon-green">Winner</h2>
+                    </div>
+                    <div className="flex items-center justify-center mb-2">
+                      <FaUser className="text-xl text-gray-300 mr-2" />
+                      <p className="text-2xl text-white">{player.name}</p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <FaChess className="text-xl text-blue-400 mr-2" />
+                      <p className="text-xl text-blue-400">{player.chessUsername}</p>
+                    </div>
                   </div>
                   <a
                     href={`https://chess.com/member/${player.chessUsername}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xl text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center justify-center mb-6"
+                    className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300 mb-6"
                   >
-                    {player.chessUsername}
-                    <FaExternalLinkAlt className="ml-2" />
+                    <FaExternalLinkAlt className="inline-block mr-2" />
+                    View Chess.com Profile
                   </a>
                   <div className="grid grid-cols-2 gap-6 mb-8">
                     {Object.entries(player.ratings).map(([key, value]) => (
