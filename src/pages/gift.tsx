@@ -38,7 +38,7 @@ const DiamondGift: React.FC = () => {
     setError(null);
     setPlayer(null);
     try {
-      const response = await axios.get('http://localhost:3000/api/chess/random-player');
+      const response = await axios.get('https://api.bmsamay.com/api/chess/random-player');
       setPlayer(response.data);
       triggerConfetti();
     } catch (error) {
