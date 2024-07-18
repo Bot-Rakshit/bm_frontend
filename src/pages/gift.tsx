@@ -1,26 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaChess, FaRandom, FaExternalLinkAlt, FaCrown, FaUser } from 'react-icons/fa';
-import { GiDiamonds } from 'react-icons/gi';
+import { FaChess, FaRandom, FaExternalLinkAlt, FaDrum } from 'react-icons/fa';
+import { GiDiamonds, GiPartyPopper } from 'react-icons/gi';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
 
 interface PlayerStats {
-  name: string;
   chessUsername: string;
-  ratings: {
-    blitz: number;
-    bullet: number;
-    rapid: number;
-    puzzle: number;
-  };
+  rating: number;
+  winRate: number;
+  totalGames: number;
+  country: string;
 }
 
 const DiamondGift: React.FC = () => {
   const [player, setPlayer] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [revealStage, setRevealStage] = useState(0);
+  const [countdown, setCountdown] = useState(3);
 
   const triggerConfetti = useCallback(() => {
     confetti({
@@ -35,17 +34,33 @@ const DiamondGift: React.FC = () => {
     setLoading(true);
     setError(null);
     setPlayer(null);
+    setRevealStage(0);
+    setCountdown(3);
+
     try {
-      const response = await axios.get('https://api.bmsamay.com/api/chess/random-player');
+      const response = await axios.get<PlayerStats>('https://api.bmsamay.com/api/chess/random-player');
       setPlayer(response.data);
-      triggerConfetti();
     } catch (error) {
       console.error('Error fetching random player:', error);
       setError('Failed to fetch a random player. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [triggerConfetti]);
+  }, []);
+
+  useEffect(() => {
+    if (revealStage === 1 && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (revealStage === 1 && countdown === 0) {
+      setRevealStage(2);
+      triggerConfetti();
+    }
+  }, [revealStage, countdown, triggerConfetti]);
+
+  const startReveal = () => {
+    setRevealStage(1);
+  };
 
   return (
     <div className="flex-1 flex flex-col relative overflow-y-auto h-screen">
@@ -87,7 +102,7 @@ const DiamondGift: React.FC = () => {
               >
                 <p>{error}</p>
               </motion.div>
-            ) : player ? (
+            ) : player && revealStage === 2 ? (
               <motion.div
                 key={player.chessUsername}
                 initial={{ opacity: 0, y: 20 }}
@@ -95,37 +110,47 @@ const DiamondGift: React.FC = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="text-center"
               >
-                <div className="mb-6 p-4 bg-gray-700/50 rounded-xl">
-                  <div className="flex items-center justify-center mb-2">
-                    <FaCrown className="text-4xl text-yellow-400 mr-2" />
-                    <h2 className="text-3xl font-bold text-neon-green">Winner</h2>
-                  </div>
-                  <div className="flex items-center justify-center mb-2">
-                    <FaUser className="text-xl text-gray-300 mr-2" />
-                    <p className="text-2xl text-white">{player.name}</p>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <FaChess className="text-xl text-blue-400 mr-2" />
-                    <p className="text-xl text-blue-400">{player.chessUsername}</p>
-                  </div>
+                <h2 className="text-3xl font-bold text-white mb-4">Congratulations!</h2>
+                <div className="bg-gray-700 rounded-lg p-6 mb-6">
+                  <p className="text-2xl font-semibold text-neon-green mb-2">{player.chessUsername}</p>
+                  <p className="text-lg text-gray-300">Rating: {player.rating}</p>
+                  <p className="text-lg text-gray-300">Win Rate: {player.winRate}%</p>
+                  <p className="text-lg text-gray-300">Total Games: {player.totalGames}</p>
+                  <p className="text-lg text-gray-300">Country: {player.country}</p>
                 </div>
-                <a
-                  href={`https://chess.com/member/${player.chessUsername}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300 mb-6"
+                <p className="text-xl text-white mb-4">You've won a free Diamond Membership!</p>
+                <Button className="bg-neon-green text-gray-900 font-bold py-2 px-4 rounded-full">
+                  Claim Your Prize <FaExternalLinkAlt className="ml-2 inline" />
+                </Button>
+              </motion.div>
+            ) : player && revealStage === 1 ? (
+              <motion.div
+                key="countdown"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                className="text-center py-20"
+              >
+                <FaDrum className="text-6xl text-neon-green mx-auto mb-4 animate-bounce" />
+                <h2 className="text-4xl font-bold text-white mb-4">Revealing winner in...</h2>
+                <p className="text-6xl font-bold text-neon-green">{countdown}</p>
+              </motion.div>
+            ) : player ? (
+              <motion.div
+                key="pre-reveal"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-center py-20"
+              >
+                <GiPartyPopper className="text-6xl text-neon-green mx-auto mb-4 animate-pulse" />
+                <h2 className="text-3xl font-bold text-white mb-6">A winner has been selected!</h2>
+                <Button
+                  onClick={startReveal}
+                  className="bg-gradient-to-r from-neon-green to-blue-500 hover:from-neon-green/80 hover:to-blue-500/80 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transform transition duration-300 hover:scale-105"
                 >
-                  <FaExternalLinkAlt className="inline-block mr-2" />
-                  View Chess.com Profile
-                </a>
-                <div className="grid grid-cols-2 gap-6 mb-8">
-                  {Object.entries(player.ratings).map(([key, value]) => (
-                    <div key={key} className="bg-gray-700/50 rounded-xl p-4 transform hover:scale-105 transition-transform duration-300">
-                      <h3 className="text-lg font-semibold mb-2 capitalize text-gray-300">{key}</h3>
-                      <p className="text-3xl font-bold text-neon-green">{value}</p>
-                    </div>
-                  ))}
-                </div>
+                  Reveal Winner
+                </Button>
               </motion.div>
             ) : (
               <motion.div
@@ -141,21 +166,23 @@ const DiamondGift: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex justify-center"
-          >
-            <Button
-              onClick={fetchRandomPlayer}
-              className="bg-gradient-to-r from-neon-green to-blue-500 hover:from-neon-green/80 hover:to-blue-500/80 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transform transition duration-300 hover:scale-105 flex items-center"
-              disabled={loading}
+          {!player && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="flex justify-center"
             >
-              <FaRandom className="mr-2" />
-              {loading ? 'Selecting...' : player ? 'Pick Another Lucky Winner' : 'Select Lucky Winner'}
-            </Button>
-          </motion.div>
+              <Button
+                onClick={fetchRandomPlayer}
+                className="bg-gradient-to-r from-neon-green to-blue-500 hover:from-neon-green/80 hover:to-blue-500/80 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transform transition duration-300 hover:scale-105 flex items-center"
+                disabled={loading}
+              >
+                <FaRandom className="mr-2" />
+                {loading ? 'Selecting...' : 'Select Lucky Winner'}
+              </Button>
+            </motion.div>
+          )}
         </motion.div>
         <motion.div
           initial={{ y: 50, opacity: 0 }}
