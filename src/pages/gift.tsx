@@ -120,7 +120,7 @@ const DiamondGift: React.FC = () => {
                 </div>
                 <p className="text-xl text-white mb-4">You've won a free Diamond Membership!</p>
                 <Button className="bg-neon-green text-gray-900 font-bold py-2 px-4 rounded-full">
-                  Claim Your Prize <FaExternalLinkAlt className="ml-2 inline" />
+                  View Chess.com Profile <FaExternalLinkAlt className="ml-2 inline" />
                 </Button>
               </motion.div>
             ) : player && revealStage === 1 ? (
