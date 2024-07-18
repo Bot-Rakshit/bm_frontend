@@ -71,6 +71,7 @@ const Sidebar = () => {
     if (!isMobile) {
       setIsHovered(false);
       setIsCollapsed(true);
+      setIsDropdownOpen(false);
     }
   };
 
