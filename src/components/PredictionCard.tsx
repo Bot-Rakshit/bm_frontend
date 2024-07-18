@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 type PredictionCardProps = {
   className?: string;
@@ -26,8 +27,8 @@ function MatchPrediction({ players, date }: { players: string; date: string }) {
       <p className="text-sm font-semibold text-white mb-1">{players}</p>
       <p className="text-xs text-gray-400 mb-2">{date}</p>
       <div className="flex items-center justify-between">
-        <Button className="rounded-full px-3 py-1 text-xs font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300">
-          Predict Now
+        <Button className="rounded-full px-3 py-1 text-xs font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
+          <Link to="/signup">Predict Now</Link>
         </Button>
         <div className="text-neon-green font-bold text-sm">+100 BM</div>
       </div>

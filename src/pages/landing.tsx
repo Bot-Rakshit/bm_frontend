@@ -1,67 +1,99 @@
-import { Button } from "@/components/ui/button"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Avatar,  AvatarFallback } from "@/components/ui/avatar"
-import { Navbar } from '@/components/landing/navbar';
+import React, { useState, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-import samayheader from '../assets/samayheader.png';
-import chesscomLogo from '../assets/chesscomlogo.png';
+import { Button } from "@/components/ui/button";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Navbar } from '@/components/landing/navbar';
 import { PredictionCard } from '@/components/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import samayheader from '../assets/samayheader.png';
+import chesscomLogo from '../assets/chesscomlogo.png';
+
+const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, latest => Math.round(latest));
+
+  useEffect(() => {
+    const controls = animate(count, end, { duration: duration });
+    return controls.stop;
+  }, [count, end, duration]);
+
+  return <motion.span>{rounded}</motion.span>;
+};
 
 const Hero = () => {
-	const [ref, inView] = useInView({
-		triggerOnce: true,
-		threshold: 0.1,
-	});
-
-	return (
-		<motion.div
-			ref={ref}
-			initial={{ opacity: 0, y: 50 }}
-			animate={inView ? { opacity: 1, y: 0 } : {}}
-			transition={{ duration: 0.8 }}
-			className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
-		>
-			<div className="container mx-auto px-4 z-10">
-				<div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-					<div className="lg:w-1/2 space-y-6 text-center lg:text-left">
-						<h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-							Join the Ultimate <span className="text-neon-green">Chess Community</span>
-						</h1>
-						<p className="text-base sm:text-lg lg:text-xl text-gray-300">
-							Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
-						</p>
-						<div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-							<Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
-								<Link to="/signup">Early Access (BETA)</Link>
-							</Button>
-							<Button 
-								variant="outline" 
-								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
-								onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
-							>
-								Learn More
-							</Button>
-						</div>
-					</div>
-					<div className="lg:w-1/2 relative mt-12 lg:mt-0">
-						<div className="relative w-full max-w-md mx-auto">
-							<img 
-								src={samayheader}
-								alt="Samay Raina"
-								className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
-							/>
-							<div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
-								<PredictionCard />
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</motion.div>
-	);
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+  
+  const [totalUsers, setTotalUsers] = useState(0);
+  
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await axios.get('https://api.bmsamay.com/api/chess/dashboard');
+        setTotalUsers(response.data.totalUsers);
+      } catch (error) {
+        console.error('Error fetching total users:', error);
+      }
+    };
+  
+    fetchTotalUsers();
+  }, []);
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+      className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
+    >
+      <div className="container mx-auto px-4 z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
+              Join the Ultimate <span className="text-neon-green">Chess Community</span>
+            </h1>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-300">
+              Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
+            </p>
+            <div className="inline-flex items-center bg-neon-green/20 rounded-full px-4 py-2 text-neon-green font-semibold">
+              <Counter end={totalUsers} /> <span className="ml-2">Users</span>
+            </div>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+              <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
+                <Link to="/signup">Early Access (BETA)</Link>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
+                asChild
+              >
+                <Link to="/signup">Learn More</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="lg:w-1/2 relative mt-12 lg:mt-0">
+            <div className="relative w-full max-w-md mx-auto">
+              <img 
+                src={samayheader}
+                alt="Samay Raina"
+                className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
+              />
+              <div className="absolute -bottom-16 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
+                <PredictionCard />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 const Partner = () => (
