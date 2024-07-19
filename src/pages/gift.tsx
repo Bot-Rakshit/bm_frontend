@@ -146,9 +146,17 @@ const DiamondGift: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-2xl text-white mb-6">You've won a free Diamond Membership!</p>
-                <Button onClick={viewChessProfile} className="bg-neon-green text-gray-900 font-bold py-3 px-6 rounded-full text-lg hover:bg-white transition-colors duration-300">
-                  View Chess.com Profile <FaExternalLinkAlt className="ml-2 inline" />
-                </Button>
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                  <Button onClick={viewChessProfile} className="bg-neon-green text-gray-900 font-bold py-3 px-6 rounded-full text-lg hover:bg-white transition-colors duration-300">
+                    View Chess.com Profile <FaExternalLinkAlt className="ml-2 inline" />
+                  </Button>
+                  <Button
+                    onClick={fetchRandomPlayer}
+                    className="bg-blue-500 text-white font-bold py-3 px-6 rounded-full text-lg hover:bg-blue-600 transition-colors duration-300"
+                  >
+                    Pick Another Winner <FaRandom className="ml-2 inline" />
+                  </Button>
+                </div>
               </motion.div>
             ) : player && revealStage === 1 ? (
               <motion.div
