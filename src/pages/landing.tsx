@@ -272,7 +272,6 @@ const Footer = () => (
 			<div>
 				<h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
 				<ul className="space-y-2">
-					<li><Link to="/privacy" className="text-gray-300 hover:text-neon-green">Terms of Service</Link></li>
 					<li><Link to="/privacy" className="text-gray-300 hover:text-neon-green">Privacy Policy</Link></li>
 				</ul>
 			</div>
