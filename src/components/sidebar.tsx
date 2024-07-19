@@ -67,10 +67,12 @@ const Sidebar = () => {
     }
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (event: any) => {
     if (!isMobile) {
-      setIsHovered(false);
-      setIsCollapsed(true);
+      if(event.relatedTarget && event.relatedTarget != window && event.currentTarget != event.relatedTarget){
+        setIsHovered(false);
+        setIsCollapsed(true);
+      }
     }
   };
 
