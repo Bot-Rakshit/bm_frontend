@@ -131,7 +131,7 @@ const Sidebar = () => {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className={`w-full justify-start text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'px-0' : ''}`}
+              className={`w-full text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'justify-center px-0' : 'justify-start'}`}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
@@ -159,7 +159,7 @@ const Sidebar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className={`md:hidden fixed top-4 left-4 z-[60] text-neon-green bg-gray-900/50 backdrop-filter backdrop-blur-sm rounded-full ${isOpen ? 'hidden' : ''}`}
+            className={`md:hidden fixed top-4 left-4 mt-3 ml-2 z-[60] text-neon-green bg-gray-900/50 backdrop-filter backdrop-blur-sm rounded-full ${isOpen ? 'hidden' : ''}`}
             onClick={() => setIsOpen(true)}
           >
             <Menu />
