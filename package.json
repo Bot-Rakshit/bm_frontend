@@ -34,6 +34,7 @@
     "react-icons": "^5.2.1",
     "react-intersection-observer": "^9.10.3",
     "react-router-dom": "^6.23.1",
+    "react-swipeable": "^7.0.1",
     "tailwindcss-animate": "^1.0.6",
     "vite-plugin-pwa": "^0.20.0",
     "youtube-chat": "^2.2.0"
