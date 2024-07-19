@@ -11,6 +11,7 @@ import { PredictionCard } from '@/components/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
 import samayheader from '../assets/samayheader.png';
 import chesscomLogo from '../assets/chesscomlogo.png';
+import { Helmet } from 'react-helmet-async';
 
 const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
   const count = useMotionValue(0);
@@ -283,6 +284,16 @@ const Footer = () => (
 export function LandingPage() {
 	return (
 		<div className="relative bg-black min-h-screen text-white flex flex-col overflow-x-hidden">
+			<Helmet>
+				<title>BM Samay Raina - India's Biggest Chess Community</title>
+				<meta name="description" content="Join BM Samay Raina's ultimate chess community. Connect, compete, and climb the ranks with India's biggest chess streamer and comedian." />
+				<meta name="keywords" content="Samay Raina, chess, community, BM Samay, Indian chess, chess streamer" />
+				<meta property="og:title" content="BM Samay Raina - India's Biggest Chess Community" />
+				<meta property="og:description" content="Join BM Samay Raina's ultimate chess community. Connect, compete, and climb the ranks with India's biggest chess streamer and comedian." />
+				<meta property="og:image" content="/SamayBM.png" />
+				<meta property="og:url" content="https://bmsamay.com" />
+				<meta name="twitter:card" content="summary_large_image" />
+			</Helmet>
 			
 			<div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
 				<div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
