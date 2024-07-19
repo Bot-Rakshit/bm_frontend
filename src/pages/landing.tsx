@@ -8,7 +8,8 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navbar } from '@/components/landing/navbar';
 import { PredictionCard } from '@/components/PredictionCard';
-import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
+import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert";
 import samayheader from '../assets/samayheader.png';
 import chesscomLogo from '../assets/chesscomlogo.png';
 
@@ -281,6 +282,16 @@ const Footer = () => (
 	</footer>
 );
 
+const OutageAlert = () => (
+  <Alert variant="destructive" className="mb-6 bg-red-900 border-red-600">
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>Global Outage</AlertTitle>
+    <AlertDescription>
+      Due to a global outage, our services are currently down. We're working to resolve this issue as quickly as possible. Thank you for your patience.
+    </AlertDescription>
+  </Alert>
+);
+
 export function LandingPage() {
 	return (
 		<div className="relative bg-black min-h-screen text-white flex flex-col overflow-x-hidden">
@@ -297,6 +308,7 @@ export function LandingPage() {
 			<Navbar />
 			<main className="flex-grow px-4 sm:px-6 py-24 mt-15 relative z-10">
 				<div className="max-w-7xl mx-auto">
+					<OutageAlert />
 					<div className="mb-48">
 						<Hero />
 						<Partner />
