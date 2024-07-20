@@ -3,7 +3,20 @@ import { useLocation } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
-import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece } from 'react-icons/fa';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece, FaExternalLinkAlt, FaRegUser } from 'react-icons/fa';
+
+interface User {
+  chessUsername: string;
+}
+
+interface PlayerStats {
+  user: User;
+  bullet?: number;
+  blitz?: number;
+  rapid?: number;
+}
 
 interface DashboardData {
   totalUsers: number;
@@ -12,10 +25,22 @@ interface DashboardData {
   highestBlitz: { rating: number; chessUsername: string };
   highestBullet: { rating: number; chessUsername: string };
   highestPuzzleRush: { rating: number; chessUsername: string };
-  top10Bullet: { user: { chessUsername: string }; bullet: number }[];
-  top10Blitz: { user: { chessUsername: string }; blitz: number }[];
-  top10Rapid: { user: { chessUsername: string }; rapid: number }[];
-  [key: `top10${string}`]: { user: { chessUsername: string }; [key: string]: number | { chessUsername: string } }[];
+  top10Bullet: PlayerStats[];
+  top10Blitz: PlayerStats[];
+  top10Rapid: PlayerStats[];
+  [key: `top10${string}`]: PlayerStats[];
+}
+
+interface PlayerInfo {
+  name: string;
+  username: string;
+  followers: number;
+  country: string;
+  avatar: string;
+  status: string;
+  joined: number;
+  last_online: number;
+  url: string;
 }
 
 const CACHE_KEY = 'dashboardData';
@@ -25,6 +50,8 @@ export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [playerInfo, setPlayerInfo] = useState<Record<string, PlayerInfo | null>>({});
+  const [loadingPlayerInfo, setLoadingPlayerInfo] = useState<Record<string, boolean>>({});
   const location = useLocation();
 
   const fetchDashboardData = useCallback(async () => {
@@ -70,6 +97,29 @@ export default function Community() {
     return () => clearInterval(intervalId);
   }, [fetchDashboardData, location.search]);
 
+  const fetchPlayerInfo = async (username: string): Promise<PlayerInfo> => {
+    const response = await fetch(`https://api.chess.com/pub/player/${username}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  };
+
+  const handleHover = async (username: string) => {
+    if (!playerInfo[username] && !loadingPlayerInfo[username]) {
+      setLoadingPlayerInfo((prev) => ({ ...prev, [username]: true }));
+      try {
+        const info = await fetchPlayerInfo(username);
+        setPlayerInfo((prev) => ({ ...prev, [username]: info }));
+      } catch (error) {
+        console.error('Error fetching player info:', error);
+        setPlayerInfo((prev) => ({ ...prev, [username]: null }));
+      } finally {
+        setLoadingPlayerInfo((prev) => ({ ...prev, [username]: false }));
+      }
+    }
+  };
+
   if (!dashboardData) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-900">
@@ -94,7 +144,7 @@ export default function Community() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
-        
+
         <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
           <div className="flex items-center">
             <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
@@ -106,9 +156,9 @@ export default function Community() {
             </p>
           )}
         </header>
-        
+
         <div className="flex-1 overflow-y-auto p-6 md:p-10 md:pl-20 z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -138,12 +188,35 @@ export default function Community() {
                   </div>
                   <p className="text-4xl font-bold text-neon-green mb-2">{card.value}</p>
                   {card.username && (
-                    <p className="text-sm text-gray-400">{card.username}</p>
+                    <HoverCard>
+                      <HoverCardTrigger>
+                        <p className="text-sm text-gray-400 cursor-pointer" onMouseEnter={() => handleHover(card.username)}>
+                          {card.username}
+                        </p>
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        {loadingPlayerInfo[card.username] ? (
+                          <p className="text-gray-400">Loading...</p>
+                        ) : (
+                          playerInfo[card.username] ? (
+                            <div className="flex items-center space-x-4">
+                              <img src={playerInfo[card.username]?.avatar} alt={`${playerInfo[card.username]?.username}'s avatar`} className="w-16 h-16 rounded-full" />
+                              <div>
+                                <p className="text-gray-300">Name: {playerInfo[card.username]?.name || 'N/A'}</p>
+                                <p className="text-gray-300">Followers: {playerInfo[card.username]?.followers || 'N/A'}</p>
+                                <p className="text-gray-300">Country: {playerInfo[card.username]?.country || 'N/A'}</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-gray-400">No information available</p>
+                          )
+                        )}
+                      </HoverCardContent>
+                    </HoverCard>
                   )}
                 </motion.div>
               ))}
             </div>
-
             <div className="mt-16">
               <h2 className="text-4xl font-bold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-blue-500">
                 Leaderboards
@@ -160,10 +233,69 @@ export default function Community() {
                     <h3 className="text-2xl font-bold text-center mb-6 text-neon-green">Top 10 {category}</h3>
                     <ul className="space-y-3">
                       {dashboardData[`top10${category}`].map((player, i) => (
-                        <li key={i} className="flex justify-between items-center py-2 border-b border-gray-700">
-                          <span className="text-gray-300">{player.user.chessUsername}</span>
-                          <span className="font-semibold text-neon-green">{player[category.toLowerCase()] as number}</span>
-                        </li>
+                        <HoverCard key={i}>
+                          <li className="flex justify-between items-center py-2 border-b border-gray-700 relative">
+                            <HoverCardTrigger>
+                              <span
+                                className="text-gray-300 cursor-pointer"
+                                onMouseEnter={() => handleHover(player.user.chessUsername)}
+                              >
+                                {player.user.chessUsername}
+                              </span>
+                            </HoverCardTrigger>
+                            <span className="font-semibold text-neon-green">{player[category.toLowerCase() as 'bullet' | 'blitz' | 'rapid'] || 'N/A'}</span>
+                          </li>
+                          <HoverCardContent className="bg-gray-800 text-gray-300 p-4 rounded-md shadow-lg border border-gray-700">
+                            {loadingPlayerInfo[player.user.chessUsername] ? (
+                              <p className="text-gray-400">Loading...</p>
+                            ) : (
+                              playerInfo[player.user.chessUsername] ? (
+                                <div className="flex flex-col space-y-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar className="w-16 h-16 rounded-full border-2 border-neon-green">
+                                      <AvatarImage src={playerInfo[player.user.chessUsername]?.avatar} />
+                                      <AvatarFallback><FaRegUser /></AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1">
+                                      <p className="text-gray-300 text-sm">
+                                        Name:
+                                      </p>
+                                      <a
+                                        href={playerInfo[player.user.chessUsername]?.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-400 hover:text-gray-200 block mt-1 font-semibold"
+                                      >
+                                        <span>{playerInfo[player.user.chessUsername]?.name || 'Not Available'}</span>
+                                        <FaExternalLinkAlt className="inline mb-1 ml-1 text-xs text-neon-green" />
+                                      </a>
+                                    </div>
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-gray-300">
+                                      Followers: {playerInfo[player.user.chessUsername]?.followers || 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Status: {playerInfo[player.user.chessUsername]?.status || 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Joined: {playerInfo[player.user.chessUsername]?.joined
+                                        ? new Date(playerInfo[player.user.chessUsername].joined * 1000).toLocaleDateString()
+                                        : 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Last Online: {playerInfo[player.user.chessUsername]?.last_online
+                                        ? new Date(playerInfo[player.user.chessUsername].last_online * 1000).toLocaleString()
+                                        : 'Not Available'}
+                                    </p>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-gray-400">No information available</p>
+                              )
+                            )}
+                          </HoverCardContent>
+                        </HoverCard>
                       ))}
                     </ul>
                   </motion.div>
