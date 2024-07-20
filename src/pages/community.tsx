@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
@@ -138,7 +138,9 @@ export default function Community() {
                   </div>
                   <p className="text-4xl font-bold text-neon-green mb-2">{card.value}</p>
                   {card.username && (
-                    <p className="text-sm text-gray-400">{card.username}</p>
+                      <Link className="text-sm text-gray-400" to={`https://www.chess.com/member/${card.username}`} target="_blank" rel="noopener noreferrer">
+                        {card.username}
+                      </Link>
                   )}
                 </motion.div>
               ))}
@@ -161,7 +163,9 @@ export default function Community() {
                     <ul className="space-y-3">
                       {dashboardData[`top10${category}`].map((player, i) => (
                         <li key={i} className="flex justify-between items-center py-2 border-b border-gray-700">
-                          <span className="text-gray-300">{player.user.chessUsername}</span>
+                          <Link className="text-gray-300" to={`https://www.chess.com/member/${player.user.chessUsername}`} target="_blank" rel="noopener noreferrer">
+                            {player.user.chessUsername}
+                          </Link>
                           <span className="font-semibold text-neon-green">{player[category.toLowerCase()] as number}</span>
                         </li>
                       ))}
