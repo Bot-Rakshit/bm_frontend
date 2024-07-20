@@ -46,6 +46,14 @@ const Hero = () => {
 		fetchTotalUsers();
 	}, []);
 
+  const scrollToHowItWorks = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
 	return (
 		<motion.div
 			ref={ref}
@@ -73,9 +81,9 @@ const Hero = () => {
 							<Button
 								variant="outline"
 								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
-								asChild
+                onClick={scrollToHowItWorks}
 							>
-								<Link to="/signup">Predict Now</Link>
+								Learn more
 							</Button>
 						</div>
 					</div>
