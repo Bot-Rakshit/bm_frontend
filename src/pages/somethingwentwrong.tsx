@@ -3,7 +3,7 @@ import Sidebar from '@/components/sidebar';
 import blunderImage from '@/assets/blunder.webp';
 import { Button } from '@/components/ui/button';
 
-// use samay's gif
+
 export default function SomethingWentWrong() {
   const navigate = useNavigate();
  const handleGoBack = () => {
