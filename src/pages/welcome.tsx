@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import bmuniverse from '@/assets/bmuniverse.jpg';
+import bmuniverse from '@/assets/bmuniverse.webp';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';

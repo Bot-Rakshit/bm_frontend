@@ -1,4 +1,4 @@
-import BMLogo from '@/assets/SamayBM.png';
+import BMLogo from '@/assets/SamayBM.webp';
 import { Badge } from '@/components/ui/badge';
 
 function App() {

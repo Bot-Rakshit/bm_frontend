@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import BMSamayLogo from '../../assets/SamayBM.png';
+import BMSamayLogo from '../../assets/SamayBM.webp';
 import { Youtube, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
