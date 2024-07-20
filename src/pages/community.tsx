@@ -236,10 +236,11 @@ export default function Community() {
                           <li className="flex justify-between items-center py-2 border-b border-gray-700 relative">
                             <HoverCardTrigger>
                               <span
-                                className="text-gray-300 cursor-pointer"
+                                className="text-gray-300 cursor-pointer relative group"
                                 onMouseEnter={() => handleHover(player.user.chessUsername)}
                               >
                                 {player.user.chessUsername}
+                                <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-neon-green scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
                               </span>
                             </HoverCardTrigger>
                             <span className="font-semibold text-neon-green">{player[category.toLowerCase() as 'bullet' | 'blitz' | 'rapid'] || 'N/A'}</span>
