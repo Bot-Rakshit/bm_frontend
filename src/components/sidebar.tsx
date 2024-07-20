@@ -67,9 +67,9 @@ const Sidebar = () => {
     }
   };
 
-  const handleMouseLeave = (event: any) => {
+  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isMobile) {
-      if(event.relatedTarget && event.relatedTarget != window && event.currentTarget != event.relatedTarget){
+      if(event.relatedTarget && event.relatedTarget !== window && event.currentTarget !== event.relatedTarget){
         setIsHovered(false);
         setIsCollapsed(true);
       }
