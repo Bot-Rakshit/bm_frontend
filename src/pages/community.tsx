@@ -190,24 +190,17 @@ export default function Community() {
                   {card.username && (
                     <HoverCard>
                       <HoverCardTrigger>
-                        <a 
-                          href={`https://www.chess.com/member/${card.username}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-sm text-gray-400 cursor-pointer underline hover:text-neon-green flex items-center"
-                          onMouseEnter={() => handleHover(card.username)}
-                        >
+                        <p className="text-sm text-gray-400 cursor-pointer" onMouseEnter={() => handleHover(card.username)}>
                           {card.username}
-                          <FaExternalLinkAlt className="ml-1 text-gray-400 hover:text-neon-green" />
-                        </a>
+                        </p>
                       </HoverCardTrigger>
-                      <HoverCardContent className="bg-gray-900 text-gray-300 p-4 rounded-md shadow-lg border border-gray-700">
+                      <HoverCardContent>
                         {loadingPlayerInfo[card.username] ? (
                           <p className="text-gray-400">Loading...</p>
                         ) : (
                           playerInfo[card.username] ? (
                             <div className="flex items-center space-x-4">
-                              <img src={playerInfo[card.username]?.avatar} alt={`${playerInfo[card.username]?.username}'s avatar`} className="w-16 h-16 rounded-full border-2 border-neon-green" />
+                              <img src={playerInfo[card.username]?.avatar} alt={`${playerInfo[card.username]?.username}'s avatar`} className="w-16 h-16 rounded-full" />
                               <div>
                                 <p className="text-gray-300">Followers: {playerInfo[card.username]?.followers || 'N/A'}</p>
                                 <p className="text-gray-300">Country: {playerInfo[card.username]?.country || 'N/A'}</p>
@@ -263,23 +256,37 @@ export default function Community() {
                                       <AvatarFallback><FaRegUser /></AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1">
-                                      <p className="text-gray-300">
-                                        Followers: {playerInfo[player.user.chessUsername]?.followers || 'Not Available'}
+                                      <p className="text-gray-300 text-sm">
+                                        Name:
                                       </p>
-                                      <p className="text-gray-300">
-                                        Status: {playerInfo[player.user.chessUsername]?.status || 'Not Available'}
-                                      </p>
-                                      <p className="text-gray-300">
-                                        Joined: {playerInfo[player.user.chessUsername]?.joined
-                                          ? new Date((playerInfo[player.user.chessUsername]?.joined ?? 0) * 1000).toLocaleDateString()
-                                          : 'Not Available'}
-                                      </p>
-                                      <p className="text-gray-300">
-                                        Last Online: {playerInfo[player.user.chessUsername]?.last_online
-                                          ? new Date((playerInfo[player.user.chessUsername]?.last_online ?? 0) * 1000).toLocaleString()
-                                          : 'Not Available'}
-                                      </p>
+                                      <a
+                                        href={playerInfo[player.user.chessUsername]?.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-400 hover:text-gray-200 block mt-1 font-semibold"
+                                      >
+                                        <span>{playerInfo[player.user.chessUsername]?.name || 'Not Available'}</span>
+                                        <FaExternalLinkAlt className="inline mb-1 ml-1 text-xs text-neon-green" />
+                                      </a>
                                     </div>
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-gray-300">
+                                      Followers: {playerInfo[player.user.chessUsername]?.followers || 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Status: {playerInfo[player.user.chessUsername]?.status || 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Joined: {playerInfo[player.user.chessUsername]?.joined
+                                        ? new Date((playerInfo[player.user.chessUsername]?.joined ?? 0) * 1000).toLocaleDateString()
+                                        : 'Not Available'}
+                                    </p>
+                                    <p className="text-gray-300">
+                                      Last Online: {playerInfo[player.user.chessUsername]?.last_online
+                                        ? new Date((playerInfo[player.user.chessUsername]?.last_online ?? 0) * 1000).toLocaleString()
+                                        : 'Not Available'}
+                                    </p>
                                   </div>
                                 </div>
                               ) : (
