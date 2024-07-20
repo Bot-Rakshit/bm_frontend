@@ -180,7 +180,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {/* <NavContent /> */}
+          <NavContent />
         </motion.div>
       </AnimatePresence>
     </>
