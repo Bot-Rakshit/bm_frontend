@@ -23,6 +23,7 @@
     "clsx": "^1.2.1",
     "framer-motion": "^11.2.12",
     "install": "^0.13.0",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.244.0",
     "npm": "^10.8.1",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.8.0",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
