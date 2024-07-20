@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.appmaker.krryfs",
+      "sha256_cert_fingerprints": ["50:9B:61:90:35:6C:9D:0F:DA:1B:BC:E3:43:5A:0C:FD:F6:89:76:BE:5D:EE:00:59:14:26:96:1A:2C:64:7C:26"]
+    }
+  }
+]
