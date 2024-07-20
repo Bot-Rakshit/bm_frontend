@@ -13,89 +13,89 @@ import samayheader from '../assets/samayheader.png';
 import chesscomLogo from '../assets/chesscomlogo.png';
 
 const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, latest => Math.round(latest));
+	const count = useMotionValue(0);
+	const rounded = useTransform(count, latest => Math.round(latest));
 
-  useEffect(() => {
-    const controls = animate(count, end, { duration: duration });
-    return controls.stop;
-  }, [count, end, duration]);
+	useEffect(() => {
+		const controls = animate(count, end, { duration: duration });
+		return controls.stop;
+	}, [count, end, duration]);
 
-  return <motion.span>{rounded}</motion.span>;
+	return <motion.span>{rounded}</motion.span>;
 };
 
 const Hero = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-  
-  const [totalUsers, setTotalUsers] = useState(0);
-  
-  useEffect(() => {
-    const fetchTotalUsers = async () => {
-      try {
-        const response = await axios.get('https://api.bmsamay.com/api/chess/dashboard');
-        setTotalUsers(response.data.totalUsers);
-      } catch (error) {
-        console.error('Error fetching total users:', error);
-      }
-    };
-  
-    fetchTotalUsers();
-  }, []);
-  
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8 }}
-      className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
-    >
-      <div className="container mx-auto px-4 z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-          <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-              Join the Ultimate <span className="text-neon-green">Chess Community</span>
-            </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-300">
-              Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
-            </p>
-            <div className="inline-flex items-center bg-neon-green/20 rounded-full px-4 py-2 text-neon-green font-semibold">
-              <Counter end={totalUsers} /> <span className="ml-2">Users</span>
-            </div>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-              <Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
-                <Link to="/signup">Early Access (BETA)</Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
-                asChild
-              >
-                <Link to="/signup">Predict Now</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="lg:w-1/2 relative mt-12 lg:mt-0">
-            <div className="relative w-full max-w-md mx-auto">
-              <img 
-                src={samayheader}
-                alt="Samay Raina"
-                className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
-              />
-              <div className="absolute -bottom-36 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
-                <div className="overflow-hidden" style={{ maxHeight: '50%' }}>
-                  <PredictionCard />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+	const [ref, inView] = useInView({
+		triggerOnce: true,
+		threshold: 0.1,
+	});
+
+	const [totalUsers, setTotalUsers] = useState(0);
+
+	useEffect(() => {
+		const fetchTotalUsers = async () => {
+			try {
+				const response = await axios.get('https://api.bmsamay.com/api/chess/dashboard');
+				setTotalUsers(response.data.totalUsers);
+			} catch (error) {
+				console.error('Error fetching total users:', error);
+			}
+		};
+
+		fetchTotalUsers();
+	}, []);
+
+	return (
+		<motion.div
+			ref={ref}
+			initial={{ opacity: 0, y: 50 }}
+			animate={inView ? { opacity: 1, y: 0 } : {}}
+			transition={{ duration: 0.8 }}
+			className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
+		>
+			<div className="container mx-auto px-4 z-10">
+				<div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+					<div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+						<h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
+							Join the Ultimate <span className="text-neon-green">Chess Community</span>
+						</h1>
+						<p className="text-base sm:text-lg lg:text-xl text-gray-300">
+							Connect, compete, and climb the ranks with BM Samay Raina in India's biggest chess community.
+						</p>
+						<div className="inline-flex items-center bg-neon-green/20 rounded-full px-4 py-2 text-neon-green font-semibold">
+							<Counter end={totalUsers} /> <span className="ml-2">Users</span>
+						</div>
+						<div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+							<Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
+								<Link to="/signup">Early Access (BETA)</Link>
+							</Button>
+							<Button
+								variant="outline"
+								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
+								asChild
+							>
+								<Link to="/signup">Predict Now</Link>
+							</Button>
+						</div>
+					</div>
+					<div className="lg:w-1/2 relative mt-12 lg:mt-0">
+						<div className="relative w-full max-w-md mx-auto">
+							<img
+								src={samayheader}
+								alt="Samay Raina"
+								className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
+							/>
+							<div className="absolute -bottom-36 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
+								<div className="overflow-hidden" style={{ maxHeight: '50%' }}>
+									<PredictionCard />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</motion.div>
+	);
 };
 
 const Partner = () => (
@@ -175,18 +175,18 @@ const Leaderboard = () => (
 );
 
 const Features = () => (
-	<div className="space-y-8">
+	<div className="flex flex-col space-y-8">
 		<FeatureCard
 			title="Interactive Dashboard"
 			description="Explore real-time data and analytics on your chess performance, predictions, and community engagement."
 			icon={<ChartIcon className="w-12 h-12 text-neon-green" />}
-			className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] border border-neon-green/20 shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+			className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] border border-neon-green/20 shadow-lg hover:shadow-neon-green/20 transition-all duration-300 flex-1"
 		/>
 		<FeatureCard
 			title="Make Predictions"
 			description="Predict outcomes of chess matches and events. Win exclusive rewards and climb the leaderboard!"
 			icon={<PredictIcon className="w-12 h-12 text-neon-green" />}
-			className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] border border-neon-green/20 shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+			className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] border border-neon-green/20 shadow-lg hover:shadow-neon-green/20 transition-all duration-300 flex-1"
 		/>
 	</div>
 );
@@ -232,14 +232,14 @@ const CommunityFeatures = () => (
 );
 
 const Footer = () => (
-	<footer className="bg-[#1a2a1a] py-12 rounded-t-3xl relative z-10">
+	<footer className="bg-[#1a2a1a] py-8 md:py-12 rounded-t-3xl relative z-10">
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+			<div className="grid grid-cols-2 md:grid-cols-5 gap-8">
 				<div className="space-y-4">
 					<h3 className="text-xl font-bold text-neon-green">BM Samay Raina</h3>
 					<p className="text-gray-300 text-sm">India's biggest chess community</p>
 					<div className="flex space-x-4">
-						<a href="https://github.com/Bot-Rakshit/bm_frontend/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">
+						<a href="https://github.com/Bot-Rakshit/bm_frontend/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green" aria-label="GitHub">
 							<svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 								<path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
 							</svg>
@@ -256,25 +256,25 @@ const Footer = () => (
 				<div>
 					<h3 className="text-lg font-semibold text-white mb-4">Community</h3>
 					<ul className="space-y-2">
-					<li><a href="https://discord.com/invite/maisamayhoon" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Discord</a></li>
-					<li><a href="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">YouTube</a></li>
-					<li><a href="https://www.chess.com/club/samay-raina-official" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Chess.com</a></li>
+						<li><a href="https://discord.com/invite/maisamayhoon" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Discord</a></li>
+						<li><a href="https://www.youtube.com/channel/UCAov2BBv1ZJav0c_yHEciAw" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">YouTube</a></li>
+						<li><a href="https://www.chess.com/club/samay-raina-official" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Chess.com</a></li>
 					</ul>
 				</div>
 				<div>
 					<h3 className="text-lg font-semibold text-white mb-4">Socials</h3>
 					<ul className="space-y-2">
-					<li><a href="https://x.com/ReheSamay" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Twitter</a></li>
-					<li><a href="https://www.reddit.com/r/SamayRaina/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Reddit</a></li>
-					<li><a href="https://www.instagram.com/maisamayhoon/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Instagram</a></li>
+						<li><a href="https://x.com/ReheSamay" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Twitter</a></li>
+						<li><a href="https://www.reddit.com/r/SamayRaina/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Reddit</a></li>
+						<li><a href="https://www.instagram.com/maisamayhoon/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-neon-green">Instagram</a></li>
 					</ul>
 				</div>
-			<div>
-				<h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
-				<ul className="space-y-2">
-					<li><Link to="/privacy" className="text-gray-300 hover:text-neon-green">Privacy Policy</Link></li>
-				</ul>
-			</div>
+				<div>
+					<h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
+					<ul className="space-y-2">
+						<li><Link to="/privacy" className="text-gray-300 hover:text-neon-green">Privacy Policy</Link></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</footer>
@@ -283,15 +283,15 @@ const Footer = () => (
 export function LandingPage() {
 	return (
 		<div className="relative bg-black min-h-screen text-white flex flex-col overflow-x-hidden">
-			
+
 			<div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
 				<div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
 			</div>
-			
+
 			{/* Depth elements */}
 			<div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
 			<div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-			
+
 			{/* Content */}
 			<Navbar />
 			<main className="flex-grow px-4 sm:px-6 py-24 mt-15 relative z-10">
@@ -304,7 +304,7 @@ export function LandingPage() {
 						initial={{ opacity: 0, y: 50 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, delay: 0.2 }}
-						className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24 mt-32"
+						className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-24 mt-16 md:mt-32"
 					>
 						<Leaderboard />
 						<Features />
