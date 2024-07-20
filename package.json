@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "NODE_ENV=production tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier src --write --log-level warn"
@@ -21,6 +21,7 @@
     "axios": "^1.7.2",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
+    "esbuild": "^0.17.19",
     "framer-motion": "^11.2.12",
     "install": "^0.13.0",
     "js-cookie": "^3.0.5",
