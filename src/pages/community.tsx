@@ -280,12 +280,12 @@ export default function Community() {
                                     </p>
                                     <p className="text-gray-300">
                                       Joined: {playerInfo[player.user.chessUsername]?.joined
-                                        ? new Date(playerInfo[player.user.chessUsername].joined * 1000).toLocaleDateString()
+                                        ? new Date((playerInfo[player.user.chessUsername]?.joined ?? 0) * 1000).toLocaleDateString()
                                         : 'Not Available'}
                                     </p>
                                     <p className="text-gray-300">
                                       Last Online: {playerInfo[player.user.chessUsername]?.last_online
-                                        ? new Date(playerInfo[player.user.chessUsername].last_online * 1000).toLocaleString()
+                                        ? new Date((playerInfo[player.user.chessUsername]?.last_online ?? 0) * 1000).toLocaleString()
                                         : 'Not Available'}
                                     </p>
                                   </div>
