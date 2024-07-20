@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
-import blunderImage from '@/assets/blunder.jpg';
+import blunderImage from '@/assets/blunder.webp';
 import { Button } from '@/components/ui/button';
 
 

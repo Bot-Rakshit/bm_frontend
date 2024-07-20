@@ -9,8 +9,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navbar } from '@/components/landing/navbar';
 import { PredictionCard } from '@/components/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
-import samayheader from '../assets/samayheader.png';
-import chesscomLogo from '../assets/chesscomlogo.png';
+import samayheader from '../assets/samayheader.webp';
+import chesscomLogo from '../assets/chesscomlogo.webp';
 import { Helmet } from 'react-helmet-async';
 
 const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {

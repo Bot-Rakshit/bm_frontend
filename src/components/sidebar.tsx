@@ -12,8 +12,8 @@ import {
 import { Menu, Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import samayBM from '@/assets/SamayBM.png';
-import profileIcon from '@/assets/profile.png';
+import samayBM from '@/assets/SamayBM.webp';
+import profileIcon from '@/assets/profile.webp';
 
 type NavItem = {
   name: string;

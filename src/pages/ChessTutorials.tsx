@@ -4,7 +4,7 @@ import axios from 'axios';
 import Sidebar from '@/components/sidebar';
 import { FaChessKnight, FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaChess, FaPlay } from 'react-icons/fa';
 import chessbaseLogo from '@/assets/cbi.svg';
-import chesscomLogo from '@/assets/chesscomlogo.png';
+import chesscomLogo from '@/assets/chesscomlogo.webp';
 import { useLocation } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
