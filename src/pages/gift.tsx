@@ -87,7 +87,7 @@ const DiamondGift: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col relative overflow-y-auto h-screen">
+    <div className="flex-1 flex flex-col justify-center relative overflow-y-auto min-h-screen ">
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
         <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
       </div>
