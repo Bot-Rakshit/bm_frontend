@@ -155,7 +155,7 @@ export default function Welcome() {
             <div className="text-center mt-12">
               <Button
                 variant="outline"
-                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
+                className="bg-transparent text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
                 onClick={handleCommunityStats}
               >
                 See Community Stats
@@ -216,7 +216,7 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon }: StatCardProps) => (
   <motion.div
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    className="md:w-[120px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
     whileHover={{ scale: 1.05 }}
   >
     <div className="text-4xl text-neon-green mb-4">{icon}</div>
