@@ -36,14 +36,12 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token') || '';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsDropdownOpen(false);
     navigate('/');
   };
 
@@ -127,12 +125,11 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed && !isHovered ? 'flex justify-center' : ''}`}>
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
               className={`w-full text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'justify-center px-0' : 'justify-start'}`}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
                 <AvatarImage src={profileIcon} alt="Profile" />
