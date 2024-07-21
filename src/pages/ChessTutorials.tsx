@@ -210,7 +210,7 @@ export default function ChessTutorials() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-gray-900 rounded-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+                className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col" // Adjusted max-w and max-h
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative pt-[56.25%] w-full">
