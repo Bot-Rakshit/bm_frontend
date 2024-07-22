@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '@/components/sidebar';
+import PlayerHoverCard from '@/components/PlayerHoverCard';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece, FaExternalLinkAlt, FaRegUser } from 'react-icons/fa';
+import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece } from 'react-icons/fa';
 
 interface User {
   chessUsername: string;
@@ -100,10 +99,10 @@ export default function Community() {
   const fetchCountryInfo = async (countryUrl: string): Promise<{ code: string; name: string }> => {
     const response = await fetch(countryUrl);
     if (!response.ok) {
-     throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok');
     }
     const data = await response.json();
-   return { code: data.code, name: data.name };
+    return { code: data.code, name: data.name };
   };
 
   const fetchPlayerInfo = async (username: string): Promise<PlayerInfo> => {
@@ -112,20 +111,19 @@ export default function Community() {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    let countryInfo = {code:'Unknown',name:'Unknown'}
-    if(data.country){
-      try{
+    let countryInfo = { code: 'Unknown', name: 'Unknown' }
+    if (data.country) {
+      try {
         countryInfo = await fetchCountryInfo(data.country)
-      }catch(error){
-        console.error('Error fetching country info: ',error)
+      } catch (error) {
+        console.error('Error fetching country info: ', error)
       }
     }
-    return{
+    return {
       ...data,
       country: countryInfo
     }
   };
-
 
   const handleHover = async (username: string) => {
     if (!playerInfo[username] && !loadingPlayerInfo[username]) {
@@ -209,39 +207,9 @@ export default function Community() {
                     <card.icon className="text-3xl text-neon-green" />
                   </div>
                   <p className="text-4xl font-bold text-neon-green mb-2">{card.value}</p>
-                  {card.username && (
-                    <HoverCard>
-                      <HoverCardTrigger>
-                        <p className="text-sm text-gray-400 cursor-pointer" onMouseEnter={() => handleHover(card.username)}>
-                          {card.username}
-                        </p>
-                      </HoverCardTrigger>
-                      <HoverCardContent>
-                        {loadingPlayerInfo[card.username] ? (
-                          <p className="text-gray-400">Loading...</p>
-                        ) : (
-                          playerInfo[card.username] ? (
-                            <div className="flex items-center space-x-4">
-                              <img src={playerInfo[card.username]?.avatar} alt={`${playerInfo[card.username]?.username}'s avatar`} className="w-16 h-16 rounded-full" />
-                              <div>
-                              <p className="text-gray-300">Followers: {playerInfo[card.username]?.followers || 'N/A'}</p>
-                              <div className="flex items-center pt-2">
-                                <img 
-                                src={`https://flagcdn.com/256x192/${playerInfo[card.username]?.country.code.toLowerCase()}.png`} 
-                                alt={playerInfo[card.username]?.country.name}
-                                className="w-6 h-4 mr-2"
-                                title={playerInfo[card.username]?.country.name}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          ) : (
-                            <p className="text-gray-400">No information available</p>
-                          )
-                        )}
-                      </HoverCardContent>
-                    </HoverCard>
-                  )}
+                  <p className="text-sm text-gray-400 cursor-default">
+                    {card.username}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -260,71 +228,16 @@ export default function Community() {
                   >
                     <h3 className="text-2xl font-bold text-center mb-6 text-neon-green">Top 10 {category}</h3>
                     <ul className="space-y-3">
-                      {dashboardData[`top10${category}`].map((player, i) => (
-                        <HoverCard key={i}>
-                          <li className="flex justify-between items-center py-2 border-b border-gray-700 relative">
-                            <HoverCardTrigger>
-                              <span
-                                className="text-gray-300 cursor-pointer relative group"
-                                onMouseEnter={() => handleHover(player.user.chessUsername)}
-                              >
-                                {player.user.chessUsername}
-                                <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-neon-green scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-                              </span>
-                            </HoverCardTrigger>
-                            <span className="font-semibold text-neon-green">{player[category.toLowerCase() as 'bullet' | 'blitz' | 'rapid'] || 'N/A'}</span>
-                          </li>
-                          <HoverCardContent className="bg-gray-800 text-gray-300 p-4 rounded-md shadow-lg border border-gray-700">
-                            {loadingPlayerInfo[player.user.chessUsername] ? (
-                              <p className="text-gray-400">Loading...</p>
-                            ) : (
-                              playerInfo[player.user.chessUsername] ? (
-                                <div className="flex flex-col space-y-3">
-                                  <div className="flex items-center space-x-4">
-                                    <Avatar className="w-16 h-16 rounded-full border-2 border-neon-green">
-                                      <AvatarImage src={playerInfo[player.user.chessUsername]?.avatar} />
-                                      <AvatarFallback><FaRegUser /></AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1">
-                                      <p className="text-gray-300 text-sm">
-                                        Name:
-                                      </p>
-                                      <a
-                                        href={playerInfo[player.user.chessUsername]?.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-gray-400 hover:text-gray-200 block mt-1 font-semibold"
-                                      >
-                                        <span>{playerInfo[player.user.chessUsername]?.name || 'Not Available'}</span>
-                                        <FaExternalLinkAlt className="inline mb-1 ml-1 text-xs text-neon-green" />
-                                      </a>
-                                    </div>
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-gray-300">
-                                      Followers: {playerInfo[player.user.chessUsername]?.followers || 'Not Available'}
-                                    </p>
-                                    <p className="text-gray-300">
-                                      Status: {playerInfo[player.user.chessUsername]?.status || 'Not Available'}
-                                    </p>
-                                    <p className="text-gray-300">
-                                      Joined: {playerInfo[player.user.chessUsername]?.joined
-                                        ? new Date((playerInfo[player.user.chessUsername]?.joined ?? 0) * 1000).toLocaleDateString()
-                                        : 'Not Available'}
-                                    </p>
-                                    <p className="text-gray-300">
-                                      Last Online: {playerInfo[player.user.chessUsername]?.last_online
-                                        ? new Date((playerInfo[player.user.chessUsername]?.last_online ?? 0) * 1000).toLocaleString()
-                                        : 'Not Available'}
-                                    </p>
-                                  </div>
-                                </div>
-                              ) : (
-                                <p className="text-gray-400">No information available</p>
-                              )
-                            )}
-                          </HoverCardContent>
-                        </HoverCard>
+                      {dashboardData[`top10${category}`].map((player) => (
+                        <li className="flex justify-between items-center py-2 border-b border-gray-700">
+                          <PlayerHoverCard
+                            username={player.user.chessUsername}
+                            playerInfo={playerInfo}
+                            loadingPlayerInfo={loadingPlayerInfo}
+                            handleHover={handleHover}
+                          />
+                          <span className="font-semibold text-neon-green">{player[category.toLowerCase() as 'bullet' | 'blitz' | 'rapid'] || 'N/A'}</span>
+                        </li>
                       ))}
                     </ul>
                   </motion.div>
@@ -333,7 +246,7 @@ export default function Community() {
             </div>
           </motion.div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
