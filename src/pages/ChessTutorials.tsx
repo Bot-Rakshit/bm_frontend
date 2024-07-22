@@ -32,7 +32,7 @@ interface YouTubeApiResponse {
 }
 
 const categories = [
-  { id: 'howto', name: 'How to Play Chess', icon: FaChessBoard, playlistId: 'PL9WYcwsWaJ7o8SmzqSY7q7D4l4XCpFdk_' },
+  { id: 'howto', name: 'How to play', icon: FaChessBoard, playlistId: 'PL9WYcwsWaJ7o8SmzqSY7q7D4l4XCpFdk_' },
   { id: 'tactics', name: 'Tactics', icon: FaPuzzlePiece, playlistId: 'PLUe4-TSKGmsD8DxA8KcmOs4-MzJ8d462O' },
   { id: 'traps', name: 'Traps', icon: FaChess, playlistId: 'PL9WYcwsWaJ7puDxl2aTBiMsnFQ3OR0_Qu' },
 ];
@@ -151,7 +151,7 @@ export default function ChessTutorials() {
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 {categories.map((category) => (
                   <TabsTrigger key={category.id} value={category.id} className="flex items-center justify-center">
-                    <category.icon className="mr-2" />
+                    <category.icon className="mr-2 min-w-[14px]" />
                     {category.name}
                   </TabsTrigger>
                 ))}
