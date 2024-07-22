@@ -35,7 +35,7 @@ interface PlayerInfo {
   name: string;
   username: string;
   followers: number;
-  country: string;
+  country: { code: string; name: string };
   avatar: string;
   status: string;
   joined: number;
@@ -97,13 +97,35 @@ export default function Community() {
     return () => clearInterval(intervalId);
   }, [fetchDashboardData, location.search]);
 
+  const fetchCountryInfo = async (countryUrl: string): Promise<{ code: string; name: string }> => {
+    const response = await fetch(countryUrl);
+    if (!response.ok) {
+     throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+   return { code: data.code, name: data.name };
+  };
+
   const fetchPlayerInfo = async (username: string): Promise<PlayerInfo> => {
     const response = await fetch(`https://api.chess.com/pub/player/${username}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    return response.json();
+    const data = await response.json();
+    let countryInfo = {code:'Unknown',name:'Unknown'}
+    if(data.country){
+      try{
+        countryInfo = await fetchCountryInfo(data.country)
+      }catch(error){
+        console.error('Error fetching country info: ',error)
+      }
+    }
+    return{
+      ...data,
+      country: countryInfo
+    }
   };
+
 
   const handleHover = async (username: string) => {
     if (!playerInfo[username] && !loadingPlayerInfo[username]) {
@@ -202,10 +224,17 @@ export default function Community() {
                             <div className="flex items-center space-x-4">
                               <img src={playerInfo[card.username]?.avatar} alt={`${playerInfo[card.username]?.username}'s avatar`} className="w-16 h-16 rounded-full" />
                               <div>
-                                <p className="text-gray-300">Followers: {playerInfo[card.username]?.followers || 'N/A'}</p>
-                                <p className="text-gray-300">Country: {playerInfo[card.username]?.country || 'N/A'}</p>
+                              <p className="text-gray-300">Followers: {playerInfo[card.username]?.followers || 'N/A'}</p>
+                              <div className="flex items-center pt-2">
+                                <img 
+                                src={`https://flagcdn.com/256x192/${playerInfo[card.username]?.country.code.toLowerCase()}.png`} 
+                                alt={playerInfo[card.username]?.country.name}
+                                className="w-6 h-4 mr-2"
+                                title={playerInfo[card.username]?.country.name}
+                                />
                               </div>
                             </div>
+                          </div>
                           ) : (
                             <p className="text-gray-400">No information available</p>
                           )
