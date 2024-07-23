@@ -25,7 +25,7 @@ const PageNotFound = () => {
           <Link to="/">Return Home</Link>
         </Button>
         <img
-          src="https://media1.tenor.com/m/XgEt0lABiPYAAAAC/samay-raina-samay.gif"
+          src="https://media1.tenor.com/m/1A2eGRwt2ZMAAAAd/samay-samay-raina.gif"
           className="max-w-[90%]"
         />
       </section>
