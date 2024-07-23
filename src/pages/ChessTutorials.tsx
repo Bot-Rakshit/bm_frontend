@@ -4,7 +4,7 @@ import axios from 'axios';
 import Sidebar from '@/components/sidebar';
 import { FaChessKnight, FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaChess, FaPlay } from 'react-icons/fa';
 import chessbaseLogo from '@/assets/cbi.svg';
-import chesscomLogo from '@/assets/chesscomlogo.png';
+import chesscomLogo from '@/assets/chesscomlogo.webp';
 import { useLocation } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -32,7 +32,7 @@ interface YouTubeApiResponse {
 }
 
 const categories = [
-  { id: 'howto', name: 'How to Play Chess', icon: FaChessBoard, playlistId: 'PL9WYcwsWaJ7o8SmzqSY7q7D4l4XCpFdk_' },
+  { id: 'howto', name: 'How to play', icon: FaChessBoard, playlistId: 'PL9WYcwsWaJ7o8SmzqSY7q7D4l4XCpFdk_' },
   { id: 'tactics', name: 'Tactics', icon: FaPuzzlePiece, playlistId: 'PLUe4-TSKGmsD8DxA8KcmOs4-MzJ8d462O' },
   { id: 'traps', name: 'Traps', icon: FaChess, playlistId: 'PL9WYcwsWaJ7puDxl2aTBiMsnFQ3OR0_Qu' },
 ];
@@ -151,7 +151,7 @@ export default function ChessTutorials() {
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 {categories.map((category) => (
                   <TabsTrigger key={category.id} value={category.id} className="flex items-center justify-center">
-                    <category.icon className="mr-2" />
+                    <category.icon className="mr-2 min-w-[14px]" />
                     {category.name}
                   </TabsTrigger>
                 ))}
@@ -210,7 +210,8 @@ export default function ChessTutorials() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-gray-900 rounded-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+                className="bg-gray-900 rounded-xl w-full max-w-4xl overflow-hidden flex flex-col"
+                style={{ maxHeight: 'calc(100vh - 2rem)' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative pt-[56.25%] w-full">
@@ -222,9 +223,9 @@ export default function ChessTutorials() {
                     className="absolute top-0 left-0 w-full h-full"
                   ></iframe>
                 </div>
-                <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800">
+                <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800 overflow-y-auto">
                   <h2 className="text-xl sm:text-2xl font-bold mb-2 text-neon-green">{selectedVideo.title}</h2>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
                     <a
                       href={selectedVideo.url}
                       target="_blank"

@@ -12,8 +12,8 @@ import {
 import { Menu, Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import samayBM from '@/assets/SamayBM.png';
-import profileIcon from '@/assets/profile.png';
+import samayBM from '@/assets/SamayBM.webp';
+import profileIcon from '@/assets/profile.webp';
 
 type NavItem = {
   name: string;
@@ -36,14 +36,12 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token') || '';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsDropdownOpen(false);
     navigate('/');
   };
 
@@ -67,9 +65,9 @@ const Sidebar = () => {
     }
   };
 
-  const handleMouseLeave = (event: any) => {
+  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isMobile) {
-      if(event.relatedTarget && event.relatedTarget != window && event.currentTarget != event.relatedTarget){
+      if(event.relatedTarget && event.relatedTarget !== window && event.currentTarget !== event.relatedTarget){
         setIsHovered(false);
         setIsCollapsed(true);
       }
@@ -127,12 +125,11 @@ const Sidebar = () => {
         ))}
       </nav>
       <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed && !isHovered ? 'flex justify-center' : ''}`}>
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
               className={`w-full text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'justify-center px-0' : 'justify-start'}`}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
                 <AvatarImage src={profileIcon} alt="Profile" />

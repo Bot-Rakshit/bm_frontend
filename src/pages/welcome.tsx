@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import bmuniverse from '@/assets/bmuniverse.jpg';
+import bmuniverse from '@/assets/bmuniverse.webp';
 import Sidebar from '@/components/sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';
@@ -39,6 +39,7 @@ export default function Welcome() {
     const tokenFromQuery = queryParams.get('token');
     if (tokenFromQuery) {
       setToken(tokenFromQuery);
+      localStorage.setItem('token', tokenFromQuery); // Save token to local storage
       try {
         const decoded = decodeJwt(tokenFromQuery) as unknown as User;
         if (decoded && decoded.stats) {
@@ -90,7 +91,6 @@ export default function Welcome() {
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
             <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
           </div>
-
           {/* Depth elements */}
           <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
           <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
@@ -151,17 +151,15 @@ export default function Welcome() {
                 </div>
               </div>
             </div>
-
             <div className="text-center mt-12">
               <Button
                 variant="outline"
-                className="text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
+                className="bg-transparent text-neon-green border-neon-green hover:bg-neon-green hover:text-black transition-colors duration-300"
                 onClick={handleCommunityStats}
               >
                 See Community Stats
               </Button>
             </div>
-
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-neon-green mb-6">Your Chess Prowess</h2>
               {percentiles ? (
@@ -195,7 +193,6 @@ export default function Welcome() {
                 </Alert>
               )}
             </div>
-
             <Alert className="mt-8">
               <AlertDescription>
                 We're currently in beta! While Signups are available, we're still working on exciting new features to enhance your experience. Stay tuned for updates!
@@ -216,7 +213,7 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon }: StatCardProps) => (
   <motion.div
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
+    className="md:w-[120px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 flex flex-col items-center shadow-lg hover:shadow-neon-green/20 transition-all duration-300"
     whileHover={{ scale: 1.05 }}
   >
     <div className="text-4xl text-neon-green mb-4">{icon}</div>
