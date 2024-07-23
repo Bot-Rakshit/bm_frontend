@@ -210,7 +210,8 @@ export default function ChessTutorials() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col" // Adjusted max-w and max-h
+                className="bg-gray-900 rounded-xl w-full max-w-4xl overflow-hidden flex flex-col"
+                style={{ maxHeight: 'calc(100vh - 2rem)' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative pt-[56.25%] w-full">
@@ -222,9 +223,9 @@ export default function ChessTutorials() {
                     className="absolute top-0 left-0 w-full h-full"
                   ></iframe>
                 </div>
-                <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800">
+                <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800 overflow-y-auto">
                   <h2 className="text-xl sm:text-2xl font-bold mb-2 text-neon-green">{selectedVideo.title}</h2>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
                     <a
                       href={selectedVideo.url}
                       target="_blank"

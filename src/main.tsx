@@ -19,6 +19,7 @@ import Chat from './pages/chat.tsx';
 import DiamondGift from './pages/gift.tsx';
 import CookieConsentWrapper from './components/CookieConsentWrapper.tsx';
 import SimpleChessboard from './pages/board.tsx';
+import PageNotFound from './pages/404NotFound.tsx';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -40,7 +41,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <Route path="/blunder" element={<Blunder />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/comingsoon" element={<ComingSoon />} />
-              <Route path="/test" element={<SimpleChessboard/>}/>
+              <Route path="/chessboard" element={<SimpleChessboard/>}/>
+              <Route path="*" element={<PageNotFound />} />
             </Route>
           </Routes>
         </ErrorBoundary>
