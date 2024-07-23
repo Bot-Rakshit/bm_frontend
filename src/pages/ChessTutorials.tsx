@@ -210,7 +210,7 @@ export default function ChessTutorials() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col" // Adjusted max-w and max-h
+                className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative pt-[56.25%] w-full">
@@ -224,12 +224,12 @@ export default function ChessTutorials() {
                 </div>
                 <div className="p-4 sm:p-6 flex-shrink-0 bg-gray-800">
                   <h2 className="text-xl sm:text-2xl font-bold mb-2 text-neon-green">{selectedVideo.title}</h2>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-center">
                     <a
                       href={selectedVideo.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center"
+                      className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center mb-2 sm:mb-0"
                     >
                       <FaExternalLinkAlt className="mr-2" />
                       Watch on YouTube
