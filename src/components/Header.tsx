@@ -5,8 +5,9 @@ import chesscomLogo from '@/assets/chesscomlogo.webp';
 
 export default function Header({headerTitle,lastUpdated,showChessbase,showChesscom}:{headerTitle:string,lastUpdated?:Date,showChessbase?:boolean,showChesscom?:boolean}){
     return (
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
+      <header className="bg-black/50 backdrop-filter backdrop-blur-lg text-white px-2 sm:px-6 md:px-8 py-2 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mt-4 sm:mt-6 mx-4 sm:mx-6 rounded-2xl z-10 border border-neon-green/20">
           <div className="flex items-center">
+            <div className="mr-4 w-4 sm:max-md:w-4 sm:max-md-mr-4"></div>
             <h1 className="text-xl font-bold">{headerTitle}</h1>
           </div>
           {lastUpdated && (
