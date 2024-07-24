@@ -12,6 +12,7 @@ import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-r
 import samayheader from '../assets/samayheader.webp';
 import chesscomLogo from '../assets/chesscomlogo.webp';
 import { Helmet } from 'react-helmet-async';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
 	const count = useMotionValue(0);
@@ -36,7 +37,7 @@ const Hero = () => {
 	useEffect(() => {
 		const fetchTotalUsers = async () => {
 			try {
-				const response = await axios.get('https://api.bmsamay.com/api/chess/dashboard');
+				const response = await axios.get(`${BACKEND_URL}/api/chess/dashboard`);
 				setTotalUsers(response.data.totalUsers);
 			} catch (error) {
 				console.error('Error fetching total users:', error);
