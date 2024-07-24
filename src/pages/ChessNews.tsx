@@ -5,6 +5,7 @@ import Sidebar from '@/components/sidebar';
 import { FaChessKnight, FaExternalLinkAlt } from 'react-icons/fa';
 import chessbaseLogo from '@/assets/cbi.svg';
 import { useLocation } from 'react-router-dom';
+const BACKEND_URL_2 = import.meta.env.VITE_BACKEND_URL_2;
 
 interface Article {
   image: string;
@@ -22,7 +23,7 @@ export default function ChessNews() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('https://api2.bmsamay.com/latest_articles');
+        const response = await axios.get(`${BACKEND_URL_2}/latest_articles`);
         setArticles(response.data);
         setLoading(false);
       } catch (error) {

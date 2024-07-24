@@ -20,6 +20,8 @@ import DiamondGift from './pages/gift.tsx';
 import CookieConsentWrapper from './components/CookieConsentWrapper.tsx';
 import PageNotFound from './pages/404NotFound.tsx';
 import GuessTheElo from './pages/gte.tsx';
+import Learn from './pages/Learn.tsx';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
@@ -43,6 +45,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
               <Route path="/gte" element={<GuessTheElo/>}/>
               <Route path="*" element={<PageNotFound />} />
+              <Route path='/Learn' element={< Learn/>} />
             </Route>
           </Routes>
         </ErrorBoundary>

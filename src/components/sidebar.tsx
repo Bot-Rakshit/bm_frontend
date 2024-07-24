@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu, Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.webp';
@@ -27,6 +27,9 @@ const navItems: NavItem[] = [
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
+  { name: 'Learn', path: '/learn', icon: GraduationCap },
+  { name: 'Guess the Elo', path: '/guesstheelo', icon: Dices, comingSoon: true },
+  { name: 'Share Your Games', path: '/sharegames', icon: Share2, comingSoon: true },
 ];
 
 const Sidebar = () => {
