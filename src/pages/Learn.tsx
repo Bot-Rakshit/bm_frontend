@@ -1,114 +1,183 @@
+import React, { useState } from 'react';
 import ccl from '../assets/chesscomlogo.png';
+import diamondImage from '../assets/diamond.webp';
 import { FaChessKnight, FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaTrophy, FaChartLine, FaAward, FaBan } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import Sidebar from '@/components/sidebar';
 
 const Learn = () => {
+  const [showSidebar] = useState(true);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white p-4 sm:p-8">
-      <header className="bg-black/50 backdrop-filter backdrop-blur-lg px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mb-6 rounded-2xl z-10 border border-neon-green/20">
-        <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center mb-4 sm:mb-0">
-          <FaChessKnight className="text-neon-green mr-2 sm:mr-4 text-4xl sm:text-5xl" />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
-            Chess Learn
-          </span>
-        </h1>
-        <div className="flex items-center bg-white/10 rounded-full px-3 py-1 sm:px-4 sm:py-2">
-          <span className="mr-2 text-xs sm:text-sm font-medium">powered by</span>
-          <img src={ccl} alt="Chess.com" className="h-6 sm:h-8" />
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700">
+      {showSidebar && <Sidebar />}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="relative z-10 min-h-screen text-white overflow-y-auto">
+          <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
+          
+          <header className="sticky top-0 z-20 bg-black/70 backdrop-filter backdrop-blur-lg px-6 py-4 flex items-center justify-between shadow-xl border-b border-neon-green/20">
+            <h1 className="text-3xl font-extrabold flex items-center">
+              <FaChessKnight className="text-neon-green mr-3 text-4xl" />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
+                Chess Learn
+              </span>
+            </h1>
+            <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
+              <span className="mr-2 text-sm font-medium">powered by</span>
+              <img src={ccl} alt="Chess.com" className="h-6" />
+            </div>
+          </header>
+
+          <main className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+            <HeroSection />
+            <FeaturesSection />
+            <CTASection />
+          </main>
         </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-blue-500 mb-6">
-            Elevate Your Chess Game with Chess.com
-          </h1>
-          <p className="text-xl text-gray-300 font-light max-w-3xl mx-auto mt-6">
-            Unlock your full potential with Chess.com's Diamond Membership. Get access to premium features and take your chess skills to the next level!
-          </p>
-          <a 
-            href="https://go.chess.com/samay"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-8 bg-neon-green text-black font-bold py-3 px-6 rounded-full text-lg hover:bg-white transition-all duration-300 transform hover:scale-105"
-          >
-            Get Diamond Membership <FaExternalLinkAlt className="inline ml-2" />
-          </a>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          <FeatureCard
-            icon={FaChessBoard}
-            title="Unlimited Game Analysis"
-            description="Get detailed insights into your games with unlimited access to the Game Review tool. Understand your mistakes and learn from them."
-          />
-          <FeatureCard
-            icon={FaChartLine}
-            title="Unlimited Lessons"
-            description="Access all video lessons and courses from top coaches and grandmasters. Follow structured courses designed for all skill levels."
-          />
-          <FeatureCard
-            icon={FaPuzzlePiece}
-            title="Unlimited Puzzles"
-            description="Improve your tactical skills with unlimited access to Puzzle Rush and Puzzle Battle. Practice without restrictions."
-          />
-          <FeatureCard
-            icon={FaTrophy}
-            title="Advanced Insights"
-            description="Study openings with the extensive explorer tool. Practice specific positions and endgames with tailored exercises."
-          />
-          <FeatureCard
-            icon={FaAward}
-            title="Premium Tournaments"
-            description="Participate in exclusive Diamond member-only tournaments and events."
-          />
-          <FeatureCard
-            icon={FaBan}
-            title="Ad-Free Experience"
-            description="Enjoy an uninterrupted chess experience with no advertisements."
-          />
-        </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center bg-black/40 backdrop-filter backdrop-blur-md rounded-2xl p-8 border border-neon-green/20"
-        >
-          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Chess Journey?</h2>
-          <p className="text-xl text-gray-300 mb-8">
-            Join Chess.com's Diamond Membership today and experience the difference. Samay Raina recommends it!
-          </p>
-          <a 
-            href="https://go.chess.com/samay"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-neon-green text-black font-bold py-3 px-6 rounded-full text-lg hover:bg-white transition-all duration-300 transform hover:scale-105"
-          >
-            Support Samay & Get Diamond Membership <FaExternalLinkAlt className="inline ml-2" />
-          </a>
-        </motion.div>
-      </main>
+      </div>
     </div>
   );
 };
+
+const HeroSection = () => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="text-center mb-24 relative py-24"
+  >
+    <div className="absolute inset-0 overflow-hidden">
+      <motion.div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 pointer-events-none"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+      >
+        <img src={diamondImage} alt="Diamond Background" className="w-full h-full object-contain" />
+      </motion.div>
+    </div>
+    <div className="relative z-10">
+      <motion.h1 
+        className="text-7xl md:text-8xl font-extrabold mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green via-blue-500 to-purple-500">
+          Elevate
+        </span>
+        <br />
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-neon-green">
+          Your Chess Game
+        </span>
+      </motion.h1>
+      <motion.p 
+        className="text-xl text-gray-300 font-light max-w-3xl mx-auto mt-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        Unlock your full potential with Chess.com's Diamond Membership. Get access to premium features and take your chess skills to the next level!
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+      >
+        <DiamondMembershipButton />
+      </motion.div>
+    </div>
+  </motion.div>
+);
+
+const FeaturesSection = () => (
+  <div className="mb-24">
+    <h2 className="text-4xl font-bold text-center mb-12 text-neon-green">Premium Features</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.img 
+          src={diamondImage} 
+          alt="Diamond Membership" 
+          className="w-96 h-96 object-contain opacity-10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+      <FeatureCard
+        icon={FaChessBoard}
+        title="Unlimited Game Analysis"
+        description="Get detailed insights into your games with unlimited access to the Game Review tool."
+      />
+      <FeatureCard
+        icon={FaChartLine}
+        title="Unlimited Lessons"
+        description="Access all video lessons and courses from top coaches and grandmasters."
+      />
+      <FeatureCard
+        icon={FaPuzzlePiece}
+        title="Unlimited Puzzles"
+        description="Improve your tactical skills with unlimited access to Puzzle Rush and Puzzle Battle."
+      />
+      <FeatureCard
+        icon={FaTrophy}
+        title="Advanced Insights"
+        description="Study openings with the extensive explorer tool and practice specific positions."
+      />
+      <FeatureCard
+        icon={FaAward}
+        title="Premium Tournaments"
+        description="Participate in exclusive Diamond member-only tournaments and events."
+      />
+      <FeatureCard
+        icon={FaBan}
+        title="Ad-Free Experience"
+        description="Enjoy an uninterrupted chess experience with no advertisements."
+      />
+    </div>
+  </div>
+);
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description: string }) => (
   <motion.div 
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.3 }}
-    className="bg-black/60 backdrop-filter backdrop-blur-md rounded-xl p-6 border border-neon-green/20 hover:border-neon-green/50 transition-all duration-300 hover:shadow-lg hover:shadow-neon-green/20"
+    whileHover={{ scale: 1.05 }}
+    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-neon-green/20 hover:border-neon-green/50 transition-all duration-300 hover:shadow-lg hover:shadow-neon-green/20 group relative z-10"
   >
-    <Icon className="text-4xl text-neon-green mb-4" />
-    <h3 className="text-2xl font-bold mb-4 text-neon-green">{title}</h3>
-    <p className="text-gray-300">{description}</p>
+    <div className="bg-neon-green/10 rounded-full p-4 inline-block mb-4 group-hover:bg-neon-green/20 transition-all duration-300">
+      <Icon className="text-3xl text-neon-green" />
+    </div>
+    <h3 className="text-2xl font-bold mb-4 text-neon-green group-hover:text-white transition-all duration-300">{title}</h3>
+    <p className="text-gray-300 group-hover:text-white transition-all duration-300">{description}</p>
   </motion.div>
+);
+
+const CTASection = () => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.2 }}
+    className="text-center bg-black/40 backdrop-filter backdrop-blur-md rounded-2xl p-8 border border-neon-green/20"
+  >
+    <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Chess Journey?</h2>
+    <p className="text-xl text-gray-300 mb-8">
+      Join Chess.com's Diamond Membership today and experience the difference. Samay Raina recommends it, and your support through this link helps fuel more great chess content!
+    </p>
+    <DiamondMembershipButton />
+  </motion.div>
+);
+
+const DiamondMembershipButton = () => (
+  <motion.a 
+    href="https://go.chess.com/samay"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block mt-8 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold py-3 px-6 rounded-full text-lg hover:from-white hover:to-gray-200 transition-all duration-300 shadow-lg hover:shadow-neon-green/50"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    Get Diamond Membership <FaExternalLinkAlt className="inline ml-2" />
+  </motion.a>
 );
 
 export default Learn;
