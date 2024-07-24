@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,7 @@ const GuessTheElo: React.FC = () => {
   const [guessedElo, setGuessedElo] = useState(1500);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [actualElo, setActualElo] = useState(0);
-  const [,setScore] = useState(0);
+  const [, setScore] = useState(0);
   const [currentPgn, setCurrentPgn] = useState('');
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
@@ -42,6 +42,20 @@ const GuessTheElo: React.FC = () => {
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token') || localStorage.getItem('token');
     setShowSidebar(!!token);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        handlePreviousMove();
+      } else if (event.key === 'ArrowRight') {
+        handleNextMove();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [location.search]);
 
   const fetchNewGame = () => {
@@ -71,13 +85,13 @@ const GuessTheElo: React.FC = () => {
     fetchNewGame();
   };
 
-  const handlePreviousMove = () => {
-    setCurrentMove(Math.max(0, currentMove - 1));
-  };
+  const handlePreviousMove = useCallback(() => {
+    setCurrentMove(prevMove => Math.max(0, prevMove - 1));
+  }, []);
 
-  const handleNextMove = () => {
-    setCurrentMove(Math.min(game.history().length - 1, currentMove + 1));
-  };
+  const handleNextMove = useCallback(() => {
+    setCurrentMove(prevMove => Math.min(game.history().length - 1, prevMove + 1));
+  }, [game]);
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
@@ -98,15 +112,15 @@ const GuessTheElo: React.FC = () => {
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-              <motion.div 
+              <motion.div
                 className="lg:col-span-2 bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex flex-row items-start justify-center gap-8">
                   <div className="flex-1">
-                    <ChessViewer 
-                      pgn={currentPgn} 
+                    <ChessViewer
+                      pgn={currentPgn}
                       currentMove={currentMove}
                       onMoveChange={handleMoveSelect}
                     />
@@ -120,16 +134,16 @@ const GuessTheElo: React.FC = () => {
                     </div>
                   </div>
                   <div className="w-48">
-                    <MoveTable 
-                      moves={game.history({ verbose: true })} 
-                      currentMove={currentMove} 
-                      onMoveSelect={handleMoveSelect} 
+                    <MoveTable
+                      moves={game.history({ verbose: true })}
+                      currentMove={currentMove}
+                      onMoveSelect={handleMoveSelect}
                     />
                   </div>
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
@@ -153,8 +167,8 @@ const GuessTheElo: React.FC = () => {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                     >
-                      <Button 
-                        onClick={handleGuess} 
+                      <Button
+                        onClick={handleGuess}
                         className="w-full py-3 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold text-lg hover:from-blue-500 hover:to-neon-green transition-all duration-300"
                       >
                         Submit Guess
