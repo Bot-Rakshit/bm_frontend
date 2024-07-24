@@ -31,7 +31,7 @@ const GuessTheElo: React.FC = () => {
   const [guessedElo, setGuessedElo] = useState(1500);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [actualElo, setActualElo] = useState(0);
-  const [,setScore] = useState(0);
+  const [, setScore] = useState(0);
   const [currentPgn, setCurrentPgn] = useState('');
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
@@ -42,6 +42,20 @@ const GuessTheElo: React.FC = () => {
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token') || localStorage.getItem('token');
     setShowSidebar(!!token);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        document.getElementById('previousMoveButton')?.click();
+      } else if (event.key === 'ArrowRight') {
+        document.getElementById('nextMoveButton')?.click();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [location.search]);
 
   const fetchNewGame = () => {
@@ -111,10 +125,10 @@ const GuessTheElo: React.FC = () => {
                       onMoveChange={handleMoveSelect}
                     />
                     <div className="flex justify-center gap-4 mt-4">
-                      <Button onClick={handlePreviousMove} disabled={currentMove === 0}>
+                      <Button id="previousMoveButton" onClick={handlePreviousMove} disabled={currentMove === 0}>
                         <FaArrowLeft className="mr-2" /> Previous
                       </Button>
-                      <Button onClick={handleNextMove} disabled={currentMove === game.history().length - 1}>
+                      <Button id="nextMoveButton" onClick={handleNextMove} disabled={currentMove === game.history().length - 1}>
                         Next <FaArrowRight className="ml-2" />
                       </Button>
                     </div>
@@ -169,7 +183,8 @@ const GuessTheElo: React.FC = () => {
                     >
                       <p className="text-2xl font-semibold">Actual Elo: <span className="text-neon-green">{actualElo}</span></p>
                       <p className="text-xl">
-                        Difference: <span className="text-yellow-400">{Math.abs(guessedElo - actualElo)}</span>
+                        Difference: <span className="text-yellow-400">{Math.abs(
+guessedElo - actualElo)}</span>
                       </p>
                       <Button 
                         onClick={handleNextGame} 
