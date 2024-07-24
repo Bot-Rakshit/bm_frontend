@@ -51,6 +51,8 @@ export default {
         'neon-blue': '#26C6DA',
         'neon-green': '#39FF14',
         'neon-purple': '#B026FF',
+        'chess-light': '#eeeed2',
+        'chess-dark': '#769656',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -71,6 +73,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+
     },
   },
   plugins: [tailwindAnimate],
