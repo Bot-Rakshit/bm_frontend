@@ -21,6 +21,7 @@ import CookieConsentWrapper from './components/CookieConsentWrapper.tsx';
 import PageNotFound from './pages/404NotFound.tsx';
 import GuessTheElo from './pages/gte.tsx';
 import Learn from './pages/Learn.tsx';
+import ShareGamePopup from './components/ShareGamepopup.tsx';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -46,6 +47,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <Route path="/gte" element={<GuessTheElo/>}/>
               <Route path="*" element={<PageNotFound />} />
               <Route path='/Learn' element={< Learn/>} />
+              <Route path="/sharegamepopup" element={<ShareGamePopup/>} />
             </Route>
           </Routes>
         </ErrorBoundary>
