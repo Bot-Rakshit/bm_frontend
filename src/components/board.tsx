@@ -73,7 +73,8 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove}) => {
           areArrowsAllowed={false}
           showBoardNotation={true}
           isDraggablePiece={() => false}
-          customBoardStyle={{'width':'100%'}}
+          customDarkSquareStyle={{ backgroundColor: '#769656' ,'width':'100%'}}
+          customLightSquareStyle={{ backgroundColor: '#eeeed2','width':'100%' }}
         />
       </div>
     </div>
