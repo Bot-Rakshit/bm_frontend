@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
 import { IconType } from 'react-icons';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 interface PlayerStats {
   name: string;
@@ -56,7 +57,7 @@ const DiamondGift: React.FC = () => {
     setCountdown(3);
 
     try {
-      const response = await axios.get<PlayerStats>('https://api.bmsamay.com/api/chess/random-player');
+      const response = await axios.get<PlayerStats>(`${BACKEND_URL}/api/chess/random-player`);
       setPlayer(response.data);
     } catch (error) {
       console.error('Error fetching random player:', error);
