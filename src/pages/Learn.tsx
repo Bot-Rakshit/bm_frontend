@@ -17,14 +17,14 @@ const Learn = () => {
           
           <header className="sticky top-0 z-20 bg-black/70 backdrop-filter backdrop-blur-lg px-6 py-4 flex items-center justify-between shadow-xl border-b border-neon-green/20">
             <h1 className="text-3xl font-extrabold flex items-center">
-              <FaChessKnight className="text-neon-green mr-3 text-4xl" />
+              <FaChessKnight className="text-neon-green mr-3 text-4xl opacity-0 md:opacity-100" />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
                 Chess Learn
               </span>
             </h1>
-            <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
-              <span className="mr-2 text-sm font-medium">powered by</span>
-              <img src={ccl} alt="Chess.com" className="h-6" />
+            <div className="flex flex-col md:flex-row justify-center items-center bg-white/10 rounded-full px-5 py-2">
+              <span className="md:mr-2 text-sm font-medium">powered by</span>
+              <img src={ccl} alt="Chess.com" className="h-5 md:h-6" />
             </div>
           </header>
 
