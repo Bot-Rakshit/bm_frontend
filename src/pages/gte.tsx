@@ -31,7 +31,7 @@ const GuessTheElo: React.FC = () => {
   const [guessedElo, setGuessedElo] = useState(1500);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [actualElo, setActualElo] = useState(0);
-  const [,setScore] = useState(0);
+  const [, setScore] = useState(0);
   const [currentPgn, setCurrentPgn] = useState('');
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
@@ -43,6 +43,27 @@ const GuessTheElo: React.FC = () => {
     const token = searchParams.get('token') || localStorage.getItem('token');
     setShowSidebar(!!token);
   }, [location.search]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+          handlePreviousMove();
+          break;
+        case 'ArrowRight':
+          handleNextMove();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentMove, game]);
 
   const fetchNewGame = () => {
     const randomGame = sampleGames[Math.floor(Math.random() * sampleGames.length)];
