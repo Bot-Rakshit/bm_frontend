@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import Sidebar from '@/components/sidebar';
-import { FaChessKnight, FaExternalLinkAlt } from 'react-icons/fa';
-import chessbaseLogo from '@/assets/cbi.svg';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import Header from '@/components/Header';
 
 interface Article {
   image: string;
@@ -54,18 +54,7 @@ export default function ChessNews() {
           <div className="absolute bottom-20 -right-20 w-96 h-96 bg-blue-500 opacity-10 rounded-full filter blur-3xl"></div>
         </div>
 
-        <header className="bg-black/50 backdrop-filter backdrop-blur-lg text-white px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mt-4 sm:mt-6 mx-4 sm:mx-6 rounded-2xl z-10 border border-neon-green/20">
-          <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center mb-4 sm:mb-0">
-            <FaChessKnight className="text-neon-green mr-2 sm:mr-4 text-4xl sm:text-5xl" />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
-              Chess News
-            </span>
-          </h1>
-          <div className="flex items-center bg-white/10 rounded-full px-3 py-1 sm:px-4 sm:py-2">
-            <span className="mr-2 text-xs sm:text-sm font-medium">powered by</span>
-            <img src={chessbaseLogo} alt="ChessBase India" className="h-6 sm:h-8" />
-          </div>
-        </header>
+        <Header headerTitle='Chess News' showChessbase={true}/>
 
         <main className="flex-1 p-6 md:p-10 z-10 overflow-auto">
           {loading ? (

@@ -5,6 +5,7 @@ import PlayerHoverCard from '@/components/PlayerHoverCard';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
 import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece } from 'react-icons/fa';
+import Header from '@/components/Header';
 
 interface User {
   chessUsername: string;
@@ -47,7 +48,7 @@ const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(undefined);
   const [showSidebar, setShowSidebar] = useState(true);
   const [playerInfo, setPlayerInfo] = useState<Record<string, PlayerInfo | null>>({});
   const [loadingPlayerInfo, setLoadingPlayerInfo] = useState<Record<string, boolean>>({});
@@ -165,17 +166,7 @@ export default function Community() {
           <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
         </div>
 
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <div className="flex items-center">
-            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
-            <h1 className="text-xl font-bold">Community Dashboard</h1>
-          </div>
-          {lastUpdated && (
-            <p className="text-sm text-gray-300">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </p>
-          )}
-        </header>
+        <Header headerTitle='Community Dashboard' lastUpdated={lastUpdated}/>
 
         <div className="flex-1 overflow-y-auto p-6 md:p-10 md:pl-20 z-10">
           <motion.div

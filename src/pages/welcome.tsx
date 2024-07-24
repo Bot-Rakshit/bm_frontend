@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
 import { FaTrophy, FaBolt, FaCrosshairs, FaChessKnight } from 'react-icons/fa';
+import Header from '@/components/Header';
 
 interface User {
   chessUsername: string;
@@ -95,13 +96,7 @@ export default function Welcome() {
           <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
           <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
         </div>
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <div className="flex items-center">
-            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
-            <h1 className="text-xl font-bold">Welcome to BM Samay</h1>
-          </div>
-          <FaChessKnight className="w-8 h-8 text-neon-green" />
-        </header>
+        <Header headerTitle='Welcome to BM Samay'/>
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
