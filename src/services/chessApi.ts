@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://api.bmsamay.com/api';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export interface PercentileRanking {
   blitzPercentile: number;
@@ -10,7 +10,7 @@ export interface PercentileRanking {
 
 export const getPercentileRanking = async (chessUsername: string): Promise<PercentileRanking> => {
   try {
-    const response = await axios.get<PercentileRanking>(`${API_BASE_URL}/chess/percentiles/${chessUsername}`);
+    const response = await axios.get<PercentileRanking>(`${BACKEND_URL}/chess/percentiles/${chessUsername}`);
     console.log('Percentile ranking response:', response.data);
     return response.data;
   } catch (error) {
