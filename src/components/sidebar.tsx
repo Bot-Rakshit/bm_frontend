@@ -28,8 +28,8 @@ const navItems: NavItem[] = [
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
   { name: 'Learn', path: '/learn', icon: GraduationCap },
-  { name: 'Guess the Elo', path: '/guesstheelo', icon: Dices, comingSoon: true },
-  { name: 'Share Your Games', path: '/sharegames', icon: Share2, comingSoon: true },
+  { name: 'Guess the Elo', path: '/', icon: Dices, comingSoon: true },
+  { name: 'Share Your Games', path: '/', icon: Share2, comingSoon: true },
 ];
 
 const Sidebar = () => {
@@ -77,30 +77,37 @@ const Sidebar = () => {
     }
   };
 
-  const NavItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) => (
-    <Link
-      to={`${item.path}?token=${token}`}
-      className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 ${
-        isActive
-          ? 'bg-neon-green/10 text-neon-green font-medium'
-          : 'text-gray-400 hover:bg-neon-green/5 hover:text-neon-green'
-      }`}
-    >
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="flex items-center gap-4"
+  const NavItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) => {
+    const content = (
+      <div
+        className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 ${
+          isActive
+            ? 'bg-neon-green/10 text-neon-green font-medium'
+            : 'text-gray-400 hover:bg-neon-green/5 hover:text-neon-green'
+        } ${item.comingSoon ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
       >
-        <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
-        {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
-      </motion.div>
-      {(!isCollapsed || isHovered) && item.comingSoon && (
-        <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-1 rounded-full ml-auto">
-          Soon
-        </span>
-      )}
-    </Link>
-  );
+        <motion.div
+          whileHover={{ scale: item.comingSoon ? 1 : 1.05 }}
+          whileTap={{ scale: item.comingSoon ? 1 : 0.95 }}
+          className="flex items-center gap-4"
+        >
+          <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
+          {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
+        </motion.div>
+        {(!isCollapsed || isHovered) && item.comingSoon && (
+          <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-1 rounded-full ml-auto">
+            Soon
+          </span>
+        )}
+      </div>
+    );
+
+    return item.comingSoon ? (
+      <div>{content}</div>
+    ) : (
+      <Link to={`${item.path}?token=${token}`}>{content}</Link>
+    );
+  };
 
   const NavContent = () => (
     <div className={`flex flex-col h-full bg-gray-900 ${isCollapsed && !isHovered ? 'w-20' : 'w-64'} shadow-xl transition-all duration-300`}>
