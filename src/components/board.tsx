@@ -66,14 +66,14 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove}) => {
 
   return (
     <div className="flex justify-center items-center">
-      <div style={{ width: '480px' }}>
+      <div style={{ width: '100%' }}>
         <Chessboard
           position={game.fen()}
-          boardWidth={480}
           customPieces={customPieces}
           areArrowsAllowed={false}
           showBoardNotation={true}
           isDraggablePiece={() => false}
+          customBoardStyle={{'width':'100%'}}
         />
       </div>
     </div>

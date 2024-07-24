@@ -103,8 +103,8 @@ const GuessTheElo: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="flex flex-row items-start justify-center gap-8">
-                  <div className="flex-1">
+                <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
+                  <div className="w-full">
                     <ChessViewer 
                       pgn={currentPgn} 
                       currentMove={currentMove}
@@ -119,7 +119,7 @@ const GuessTheElo: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-                  <div className="w-48">
+                  <div className="w-full sm:w-48">
                     <MoveTable 
                       moves={game.history({ verbose: true })} 
                       currentMove={currentMove} 
