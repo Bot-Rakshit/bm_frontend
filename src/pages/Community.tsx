@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import PlayerHoverCard from '@/components/PlayerHoverCard';
 import { getDashboardStats } from '@/services/communityApi';
 import { motion } from 'framer-motion';
 import { FaUsers, FaChessKnight, FaChessQueen, FaChessRook, FaChessPawn, FaPuzzlePiece } from 'react-icons/fa';
+import Background from '@/components/Background';
+import Header from '@/components/sidebar/Header';
 
 interface User {
   chessUsername: string;
@@ -48,7 +50,6 @@ const UPDATE_INTERVAL = 60000; // 1 minute in milliseconds
 export default function Community() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [showSidebar, setShowSidebar] = useState(true);
   const [playerInfo, setPlayerInfo] = useState<Record<string, PlayerInfo | null>>({});
   const [loadingPlayerInfo, setLoadingPlayerInfo] = useState<Record<string, boolean>>({});
   const location = useLocation();
@@ -66,15 +67,6 @@ export default function Community() {
   }, []);
 
   useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('token');
-      const searchParams = new URLSearchParams(location.search);
-      const queryToken = searchParams.get('token');
-      return !!(token || queryToken);
-    };
-
-    setShowSidebar(checkToken());
-
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       const { data, timestamp } = JSON.parse(cachedData);
@@ -159,24 +151,13 @@ export default function Community() {
 
   return (
     <div className="flex h-screen">
-      {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-          <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-        </div>
-
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <div className="flex items-center">
-            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
-            <h1 className="text-xl font-bold">Community Dashboard</h1>
-          </div>
-          {lastUpdated && (
-            <p className="text-sm text-gray-300">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </p>
-          )}
-        </header>
-
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Community Dashboard"
+          lastUpdated={lastUpdated}
+        />
         <div className="flex-1 overflow-y-auto p-6 md:p-10 md:pl-20 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

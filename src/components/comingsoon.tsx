@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import { Button } from '@/components/ui/button';
 
 export default function ComingSoon() {

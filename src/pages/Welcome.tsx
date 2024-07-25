@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.webp';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
-import { FaTrophy, FaBolt, FaCrosshairs, FaChessKnight } from 'react-icons/fa';
+import { FaTrophy, FaBolt, FaCrosshairs } from 'react-icons/fa';
+import Background from '@/components/Background';
+import Header from '@/components/sidebar/Header';
 
 interface User {
   chessUsername: string;
@@ -32,7 +34,6 @@ export default function Welcome() {
   const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [showSidebar] = useState(true);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -86,23 +87,12 @@ export default function Welcome() {
 
   return (
     <div className="flex h-screen">
-      {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative ${!showSidebar ? 'w-full' : ''}`}>
-        <div className='contain-paint h-full w-full absolute'>
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-            <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-          </div>
-          {/* Depth elements */}
-          <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-        </div>
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <div className="flex items-center">
-            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
-            <h1 className="text-xl font-bold">Welcome to BM Samay</h1>
-          </div>
-          <FaChessKnight className="w-8 h-8 text-neon-green" />
-        </header>
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Welcome to BM Samay"
+        />
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

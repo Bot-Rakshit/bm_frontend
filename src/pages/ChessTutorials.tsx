@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import Sidebar from '@/components/sidebar';
-import { FaChessKnight, FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaChess, FaPlay } from 'react-icons/fa';
-import chessbaseLogo from '@/assets/cbi.svg';
-import chesscomLogo from '@/assets/chesscomlogo.webp';
+import Sidebar from '@/components/sidebar/Sidebar';
+import { FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaChess, FaPlay } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Header from '@/components/sidebar/Header';
+import Background from '@/components/Background';
 
 interface Video {
   id: string;
@@ -43,7 +43,6 @@ const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 export default function ChessTutorials() {
   const [videos, setVideos] = useState<{ [key: string]: Video[] }>({});
   const [loading, setLoading] = useState(true);
-  const [showSidebar, setShowSidebar] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const location = useLocation();
 
@@ -104,44 +103,19 @@ export default function ChessTutorials() {
     };
 
     fetchVideos();
-
-    const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get('token') || localStorage.getItem('token');
-    setShowSidebar(!!token);
   }, [location.search]);
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
-      {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
-        <div className='contain-paint h-full w-full fixed'>
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-            <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-          </div>
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-20 -right-20 w-96 h-96 bg-blue-500 opacity-10 rounded-full filter blur-3xl"></div>
-        </div>
-
-        <header className="bg-black/50 backdrop-filter backdrop-blur-lg text-white px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mt-4 sm:mt-6 mx-4 sm:mx-6 rounded-2xl z-10 border border-neon-green/20">
-          <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center mb-4 sm:mb-0">
-            <FaChessKnight className="text-neon-green mr-2 sm:mr-4 text-4xl sm:text-5xl" />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
-              Chess Tutorials
-            </span>
-          </h1>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center bg-white/10 rounded-full px-3 py-1 sm:px-4 sm:py-2">
-              <span className="mr-2 text-xs sm:text-sm font-medium">powered by</span>
-              <img src={chessbaseLogo} alt="ChessBase India" className="h-6 sm:h-8" />
-            </div>
-            <div className="flex items-center bg-white/10 rounded-full px-3 py-1 sm:px-4 sm:py-2">
-              <span className="mr-2 text-xs sm:text-sm font-medium">and</span>
-              <img src={chesscomLogo} alt="Chess.com" className="h-6 sm:h-8" />
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6 md:p-10 z-10">
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Chess Tutorials"
+          showChessbase
+          showChesscom
+        />
+        <main className="flex-1 p-6 md:p-10 z-10 overflow-auto">
           <div className="max-w-7xl mx-auto">
             <p className="text-lg text-gray-300 mb-8">
               Explore this comprehensive collection of instructive chess videos from ChessBase India & ChessKid (Chess.com). Whether you're a beginner learning the basics or an experienced player looking to sharpen your skills, these tutorials cover a wide range of topics to help improve your chess game.

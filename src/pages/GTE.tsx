@@ -4,7 +4,7 @@ import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { FaChessKnight, FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import ChessViewer from '@/components/board';
 import MoveTable from '@/components/movetable';
 import { useLocation } from 'react-router-dom';

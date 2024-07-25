@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import Sidebar from '@/components/sidebar';
-import { FaChessKnight, FaExternalLinkAlt } from 'react-icons/fa';
-import chessbaseLogo from '@/assets/cbi.svg';
+import Sidebar from '@/components/sidebar/Sidebar';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import Background from '@/components/Background';
+import Header from '@/components/sidebar/Header';
 const BACKEND_URL_2 = import.meta.env.VITE_BACKEND_URL_2;
 
 interface Article {
@@ -17,7 +18,6 @@ interface Article {
 export default function ChessNews() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -33,41 +33,17 @@ export default function ChessNews() {
     };
 
     fetchArticles();
-
-    // Check for token in URL or localStorage
-    const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get('token') || localStorage.getItem('token');
-    setShowSidebar(!!token);
   }, [location.search]);
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
-      {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-hidden ${!showSidebar ? 'w-full' : ''}`}>
-
-        <div className='contain-paint h-full w-full absolute'>
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-            <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-          </div>
-
-          {/* Enhanced depth elements */}
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-20 -right-20 w-96 h-96 bg-blue-500 opacity-10 rounded-full filter blur-3xl"></div>
-        </div>
-
-        <header className="bg-black/50 backdrop-filter backdrop-blur-lg text-white px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between shadow-xl mt-4 sm:mt-6 mx-4 sm:mx-6 rounded-2xl z-10 border border-neon-green/20">
-          <h1 className="text-3xl sm:text-4xl font-extrabold flex items-center mb-4 sm:mb-0">
-            <FaChessKnight className="text-neon-green mr-2 sm:mr-4 text-4xl sm:text-5xl" />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
-              Chess News
-            </span>
-          </h1>
-          <div className="flex items-center bg-white/10 rounded-full px-3 py-1 sm:px-4 sm:py-2">
-            <span className="mr-2 text-xs sm:text-sm font-medium">powered by</span>
-            <img src={chessbaseLogo} alt="ChessBase India" className="h-6 sm:h-8" />
-          </div>
-        </header>
-
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Chess News"
+          showChessbase
+        />
         <main className="flex-1 p-6 md:p-10 z-10 overflow-auto">
           {loading ? (
             <div className="flex justify-center items-center h-full">
