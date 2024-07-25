@@ -19,17 +19,17 @@ export function VerificationCodeDisplay({ code }: VerificationCodeDisplayProps) 
   if (!code) return null;
 
   return (
-    <div className="bg-gray-800 p-4 rounded-md text-center">
-      <h3 className="text-lg font-semibold mb-2">Your Verification Code</h3>
+    <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm border border-neon-green/20">
+      <h3 className="text-lg font-semibold mb-2 text-neon-green">Your Verification Code</h3>
       <div className="flex items-center justify-center space-x-2">
-        <code className="bg-gray-700 px-2 py-1 rounded text-green-400 text-lg">
+        <code className="bg-white/10 px-3 py-2 rounded text-neon-green text-lg font-mono">
           {code}
         </code>
         <Button
           variant="outline"
           size="sm"
           onClick={handleCopy}
-          className="text-green-500 hover:text-green-400"
+          className="text-neon-green border-neon-green/30 hover:bg-neon-green hover:text-black transition-all duration-300"
         >
           {copied ? 'Copied!' : 'Copy'}
         </Button>
