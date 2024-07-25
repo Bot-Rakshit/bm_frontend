@@ -39,7 +39,7 @@ export default function Welcome() {
     const tokenFromQuery = queryParams.get('token');
     if (tokenFromQuery) {
       setToken(tokenFromQuery);
-      localStorage.setItem('token', tokenFromQuery); // Save token to local storage
+      localStorage.setItem('token', tokenFromQuery);
       try {
         const decoded = decodeJwt(tokenFromQuery) as unknown as User;
         if (decoded && decoded.stats) {
@@ -51,6 +51,7 @@ export default function Welcome() {
         }
       } catch (err) {
         console.error('Error decoding token:', err);
+        localStorage.removeItem('token');
         navigate('/blunder');
       }
     } else {
@@ -236,11 +237,11 @@ const PercentileItem = ({ title, percentile, description, message }: PercentileI
   >
     <h3 className="text-2xl font-semibold text-neon-green mb-2">{title}</h3>
     <div className="flex items-center mb-4">
-      <div className="w-16 h-16 p-2 rounded-full bg-neon-green/20 flex items-center justify-center mr-4"  
-      style={{
-        border: '2px solid rgba(0, 255, 0, 0.5)',
-        boxShadow: '0 0 5px rgba(0, 255, 0, 0.5)'
-      }}>
+      <div className="w-16 h-16 p-2 rounded-full bg-neon-green/20 flex items-center justify-center mr-4"
+        style={{
+          border: '2px solid rgba(0, 255, 0, 0.5)',
+          boxShadow: '0 0 5px rgba(0, 255, 0, 0.5)'
+        }}>
         <span className="text-2xl font-bold text-neon-green">{percentile}%</span>
       </div>
       <p className="text-white">
