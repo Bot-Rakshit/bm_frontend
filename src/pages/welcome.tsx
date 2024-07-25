@@ -118,7 +118,7 @@ export default function Welcome() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Glad to have you here, {user?.chessUsername || 'Chess Master'}!
+                  Glad to have you here, <span className='md:text-4xl lg:text-5xl'>{user?.chessUsername || 'Chess Master'}!</span>
                 </motion.h1>
                 <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
                   You've just joined the most exciting <span className="text-neon-green font-semibold">BM Samay</span> chess community! We're thrilled to have you here.
