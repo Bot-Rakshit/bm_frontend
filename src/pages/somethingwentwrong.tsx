@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import blunderImage from '@/assets/blunder.webp';
 import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
 
 export default function SomethingWentWrong() {
   const navigate = useNavigate();
+
   const handleGoBack = () => {
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
     navigate('/');
   };
 
@@ -12,6 +19,14 @@ export default function SomethingWentWrong() {
     <div className="dark:bg-black dark:text-white min-h-screen w-full flex flex-col">
       <header className="bg-white text-black px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg">
         <h1 className="text-xl font-bold">Oops!</h1>
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="text-gray-600 hover:text-neon-green hover:bg-neon-green/5 rounded-lg"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Logout</span>
+        </Button>
       </header>
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
