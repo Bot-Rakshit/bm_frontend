@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck } from 'react-icons/fa';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/Alert';

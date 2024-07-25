@@ -1,46 +1,33 @@
-import React, { useState } from 'react';
-import ccl from '../assets/chesscomlogo.png';
+import React from 'react';
 import diamondImage from '../assets/diamond.webp';
-import { FaChessKnight, FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaTrophy, FaChartLine, FaAward, FaBan } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaChessBoard, FaPuzzlePiece, FaTrophy, FaChartLine, FaAward, FaBan } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
+import Background from '@/components/Background';
+import Header from '@/components/sidebar/Header';
 
 const Learn = () => {
-  const [showSidebar] = useState(true);
-
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700">
-      {showSidebar && <Sidebar />}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="relative z-10 min-h-screen text-white overflow-y-auto">
-          <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-          
-          <header className="sticky top-0 z-20 bg-black/70 backdrop-filter backdrop-blur-lg px-6 py-4 flex items-center justify-between shadow-xl border-b border-neon-green/20">
-            <h1 className="text-3xl font-extrabold flex items-center">
-              <FaChessKnight className="text-neon-green mr-3 text-4xl opacity-0 md:opacity-100" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-blue-500">
-                Chess Learn
-              </span>
-            </h1>
-            <div className="flex flex-col md:flex-row justify-center items-center bg-white/10 rounded-full px-5 py-2">
-              <span className="md:mr-2 text-sm font-medium">powered by</span>
-              <img src={ccl} alt="Chess.com" className="h-5 md:h-6" />
-            </div>
-          </header>
-
-          <main className="max-w-7xl mx-auto px-4 py-12 relative z-10">
-            <HeroSection />
-            <FeaturesSection />
-            <CTASection />
-          </main>
-        </div>
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Chess Learn"
+          showChesscom
+        />
+        <main className="flex-1 p-6 md:p-10 z-10 overflow-auto overflow-x-hidden">
+          <HeroSection />
+          <FeaturesSection />
+          <CTASection />
+        </main>
       </div>
     </div>
   );
 };
 
 const HeroSection = () => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
@@ -56,7 +43,7 @@ const HeroSection = () => (
       </motion.div>
     </div>
     <div className="relative z-10">
-      <motion.h1 
+      <motion.h1
         className="text-7xl md:text-8xl font-extrabold mb-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -70,7 +57,7 @@ const HeroSection = () => (
           Your Chess Game
         </span>
       </motion.h1>
-      <motion.p 
+      <motion.p
         className="text-xl text-gray-300 font-light max-w-3xl mx-auto mt-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,9 +81,9 @@ const FeaturesSection = () => (
     <h2 className="text-4xl font-bold text-center mb-12 text-neon-green">Premium Features</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <motion.img 
-          src={diamondImage} 
-          alt="Diamond Membership" 
+        <motion.img
+          src={diamondImage}
+          alt="Diamond Membership"
           className="w-96 h-96 object-contain opacity-10"
           animate={{ rotate: 360 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
@@ -137,7 +124,7 @@ const FeaturesSection = () => (
 );
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description: string }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.3 }}
@@ -153,7 +140,7 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementTy
 );
 
 const CTASection = () => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.2 }}
@@ -168,7 +155,7 @@ const CTASection = () => (
 );
 
 const DiamondMembershipButton = () => (
-  <motion.a 
+  <motion.a
     href="https://go.chess.com/samay"
     target="_blank"
     rel="noopener noreferrer"
