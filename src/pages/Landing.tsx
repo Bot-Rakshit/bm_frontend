@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navbar } from '@/components/landing/navbar';
-import { PredictionCard } from '@/components/PredictionCard';
+import { PredictionCard } from '@/components/landing/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
 import samayheader from '../assets/samayheader.webp';
 import chesscomLogo from '../assets/chesscomlogo.webp';

@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { FaChessKnight, FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
 import Sidebar from '@/components/sidebar/Sidebar';
-import ChessViewer from '@/components/board';
-import MoveTable from '@/components/movetable';
+import ChessViewer from '@/components/pgn-viewer/board';
+import MoveTable from '@/components/pgn-viewer/movetable';
 import { useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Timer from '@/components/timer';
+import Timer from '@/components/pgn-viewer/timer'
 
 // Sample PGNs with corresponding Elo ratings
 const sampleGames = [

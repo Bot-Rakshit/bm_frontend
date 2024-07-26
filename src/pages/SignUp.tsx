@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import signupimage from '@/assets/signup.webp';
-import { GoogleSignUpButton } from '@/components/GoogleSignUpButton';
+import { GoogleSignUpButton } from '@/components/signup/GoogleSignUpButton';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 import { BarChart2, Zap, Award, Users } from 'lucide-react';
 import { motion } from 'framer-motion';

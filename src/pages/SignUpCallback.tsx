@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import signupimage from '@/assets/signup.webp';
-import { VerificationCodeDisplay } from '@/components/VerificationCodeDisplay';
+import { VerificationCodeDisplay } from '@/components/signup/VerificationCodeDisplay';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { verifyChessAccount, initiateChessVerification } from '@/services/auth';
 import { motion } from 'framer-motion';
