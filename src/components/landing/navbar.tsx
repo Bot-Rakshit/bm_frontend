@@ -1,13 +1,37 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import BMSamayLogo from '../../assets/SamayBM.webp';
 import { Youtube, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const token = localStorage.getItem('token'); // Check for token in local storage
+  const [token, setToken] = useState<string | null>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const getToken = () => {
+      const storedToken = localStorage.getItem('token');
+      const urlParams = new URLSearchParams(location.search);
+      const urlToken = urlParams.get('token');
+      
+      if (urlToken) {
+        localStorage.setItem('token', urlToken);
+        return urlToken;
+      }
+      return storedToken;
+    };
+
+    const currentToken = getToken();
+    setToken(currentToken);
+  }, [location.search]);
+
+  const handleGoToApp = () => {
+    if (token) {
+      window.location.href = `/welcome?token=${token}`;
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-4 py-6">
@@ -18,8 +42,11 @@ export function Navbar() {
           </Link>
           <div className="hidden md:flex items-center space-x-6">
             {token ? (
-              <Button className="bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full px-6 py-2 font-semibold text-sm flex items-center">
-                <Link to={`/welcome?token=${token}`}>Go to App</Link>
+              <Button 
+                className="bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full px-6 py-2 font-semibold text-sm flex items-center"
+                onClick={handleGoToApp}
+              >
+                Go to App
               </Button>
             ) : (
               <Button variant="outline" className="border-2 border-neon-green/50 text-white hover:bg-neon-green/20 hover:border-neon-green transition-all duration-300 rounded-full px-6 py-2 font-semibold text-sm" asChild>
@@ -53,8 +80,11 @@ export function Navbar() {
           >
             <div className="p-6 space-y-4">
               {token ? (
-                <Button className="w-full bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full py-3 font-semibold text-base flex items-center">
-                  <Link to={`/welcome?token=${token}`}>Go to App</Link>
+                <Button 
+                  className="w-full bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full py-3 font-semibold text-base flex items-center justify-center"
+                  onClick={handleGoToApp}
+                >
+                  Go to App
                 </Button>
               ) : (
                 <Button variant="outline" className="w-full border-2 border-neon-green/50 text-white hover:bg-neon-green/20 hover:border-neon-green transition-all duration-300 rounded-full py-3 font-semibold text-base" asChild>

@@ -165,4 +165,3 @@ export default function SignUpCallback() {
     </div>
   );
 }
-

@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { FaChessKnight, FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import Sidebar from '@/components/sidebar';
+import { FaChessKnight, FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
+import Sidebar from '@/components/sidebar/Sidebar';
 import ChessViewer from '@/components/board';
 import MoveTable from '@/components/movetable';
 import { useLocation } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Timer from '@/components/timer';
 
 // Sample PGNs with corresponding Elo ratings
 const sampleGames = [
@@ -31,10 +33,21 @@ const GuessTheElo: React.FC = () => {
   const [guessedElo, setGuessedElo] = useState(1500);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [actualElo, setActualElo] = useState(0);
-  const [,setScore] = useState(0);
+  const [, setScore] = useState(0);
   const [currentPgn, setCurrentPgn] = useState('');
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
+  const [whitePlayer, setWhitePlayer] = useState('');
+  const [blackPlayer, setBlackPlayer] = useState('');
+  const [gameLink, setGameLink] = useState('');
+
+  const handlePreviousMove = useCallback(() => {
+    setCurrentMove(prevMove => Math.max(0, prevMove - 1));
+  }, []);
+
+  const handleNextMove = useCallback(() => {
+    setCurrentMove(prevMove => Math.min(game.history().length - 1, prevMove + 1));
+  }, [game]);
 
   useEffect(() => {
     fetchNewGame();
@@ -43,6 +56,27 @@ const GuessTheElo: React.FC = () => {
     const token = searchParams.get('token') || localStorage.getItem('token');
     setShowSidebar(!!token);
   }, [location.search]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+          handlePreviousMove();
+          break;
+        case 'ArrowRight':
+          handleNextMove();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handlePreviousMove, handleNextMove]);
 
   const fetchNewGame = () => {
     const randomGame = sampleGames[Math.floor(Math.random() * sampleGames.length)];
@@ -54,6 +88,9 @@ const GuessTheElo: React.FC = () => {
     setCurrentPgn(randomGame.pgn);
     setHasGuessed(false);
     setGuessedElo(1500);
+    setWhitePlayer('Random Player');
+    setBlackPlayer('BM Member');
+    setGameLink(`https://lichess.org/game/export/${randomGame.pgn}`);
   };
 
   const handleMoveSelect = (moveIndex: number) => {
@@ -69,14 +106,6 @@ const GuessTheElo: React.FC = () => {
 
   const handleNextGame = () => {
     fetchNewGame();
-  };
-
-  const handlePreviousMove = () => {
-    setCurrentMove(Math.max(0, currentMove - 1));
-  };
-
-  const handleNextMove = () => {
-    setCurrentMove(Math.min(game.history().length - 1, currentMove + 1));
   };
 
   return (
@@ -103,23 +132,43 @@ const GuessTheElo: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="flex flex-row items-start justify-center gap-8">
-                  <div className="flex-1">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col items-center">
+                    <span className="font-semibold text-lg">{blackPlayer}</span>
+                    <Timer initialTime={600} isRunning={currentMove % 2 !== 0} />
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
+                  <div className="w-full">
                     <ChessViewer 
                       pgn={currentPgn} 
                       currentMove={currentMove}
                       onMoveChange={handleMoveSelect}
                     />
-                    <div className="flex justify-center gap-4 mt-4">
-                      <Button onClick={handlePreviousMove} disabled={currentMove === 0}>
-                        <FaArrowLeft className="mr-2" /> Previous
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="flex flex-col items-center">
+                        <span className="font-semibold text-lg">{whitePlayer}</span>
+                        <Timer initialTime={600} isRunning={currentMove % 2 === 0} />
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center mt-4 space-x-4">
+                      <Button 
+                        onClick={handlePreviousMove} 
+                        disabled={currentMove === 0}
+                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        <FaArrowLeft />
                       </Button>
-                      <Button onClick={handleNextMove} disabled={currentMove === game.history().length - 1}>
-                        Next <FaArrowRight className="ml-2" />
+                      <Button 
+                        onClick={handleNextMove} 
+                        disabled={currentMove === game.history().length - 1}
+                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        <FaArrowRight />
                       </Button>
                     </div>
                   </div>
-                  <div className="w-48">
+                  <div className="w-full sm:w-48">
                     <MoveTable 
                       moves={game.history({ verbose: true })} 
                       currentMove={currentMove} 
@@ -135,6 +184,25 @@ const GuessTheElo: React.FC = () => {
                 transition={{ duration: 0.2 }}
               >
                 <h2 className="text-2xl font-semibold mb-4 text-neon-green">Guess the Elo</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col items-center">
+                    <Avatar className="w-24 h-24 mb-2">
+                      <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${whitePlayer}`} />
+                      <AvatarFallback>{whitePlayer[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-semibold text-lg">{hasGuessed ? 'Player 1' : 'Random Player'}</span>
+                    <span className="text-sm text-gray-400">(White)</span>
+                  </div>
+                  <div className="text-4xl font-bold text-neon-green">VS</div>
+                  <div className="flex flex-col items-center">
+                    <Avatar className="w-24 h-24 mb-2">
+                      <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${blackPlayer}`} />
+                      <AvatarFallback>{blackPlayer[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-semibold text-lg">{hasGuessed ? 'Player 2' : 'BM Member'}</span>
+                    <span className="text-sm text-gray-400">(Black)</span>
+                  </div>
+                </div>
                 <div className="mb-4">
                   <Slider
                     value={[guessedElo]}
@@ -146,6 +214,14 @@ const GuessTheElo: React.FC = () => {
                   />
                   <p className="text-center mt-2">Guessed Elo: {guessedElo}</p>
                 </div>
+                {hasGuessed && (
+                  <div className="mt-4 flex items-center justify-center">
+                    <FaLink className="mr-2 text-neon-green" />
+                    <a href={gameLink} target="_blank" rel="noopener noreferrer" className="text-neon-green hover:underline">
+                      View full game
+                    </a>
+                  </div>
+                )}
                 <AnimatePresence>
                   {!hasGuessed ? (
                     <motion.div

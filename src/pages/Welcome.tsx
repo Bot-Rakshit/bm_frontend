@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import bmuniverse from '@/assets/bmuniverse.webp';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { getPercentileRanking } from '@/services/chessApi';
-import { FaTrophy, FaBolt, FaCrosshairs, FaChessKnight } from 'react-icons/fa';
+import { FaTrophy, FaBolt, FaCrosshairs } from 'react-icons/fa';
+import Background from '@/components/Background';
+import Header from '@/components/sidebar/Header';
 
 interface User {
   chessUsername: string;
@@ -32,14 +34,13 @@ export default function Welcome() {
   const [percentiles, setPercentiles] = useState<PercentileRanking | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [showSidebar] = useState(true);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tokenFromQuery = queryParams.get('token');
     if (tokenFromQuery) {
       setToken(tokenFromQuery);
-      localStorage.setItem('token', tokenFromQuery); // Save token to local storage
+      localStorage.setItem('token', tokenFromQuery);
       try {
         const decoded = decodeJwt(tokenFromQuery) as unknown as User;
         if (decoded && decoded.stats) {
@@ -51,6 +52,7 @@ export default function Welcome() {
         }
       } catch (err) {
         console.error('Error decoding token:', err);
+        localStorage.removeItem('token');
         navigate('/blunder');
       }
     } else {
@@ -85,23 +87,12 @@ export default function Welcome() {
 
   return (
     <div className="flex h-screen">
-      {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative ${!showSidebar ? 'w-full' : ''}`}>
-        <div className='contain-paint h-full w-full absolute'>
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 z-0">
-            <div className="absolute inset-0 opacity-10 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
-          </div>
-          {/* Depth elements */}
-          <div className="absolute top-20 -left-20 w-64 h-64 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-20 -right-20 w-80 h-80 bg-neon-green opacity-10 rounded-full filter blur-3xl"></div>
-        </div>
-        <header className="bg-white/10 backdrop-filter backdrop-blur-lg text-white px-4 lg:px-6 h-16 flex items-center justify-between shadow-md mt-4 mx-4 rounded-lg z-10">
-          <div className="flex items-center">
-            <div className="w-8 mr-4"></div> {/* Spacer for hamburger menu */}
-            <h1 className="text-xl font-bold">Welcome to BM Samay</h1>
-          </div>
-          <FaChessKnight className="w-8 h-8 text-neon-green" />
-        </header>
+      <Sidebar />
+      <div className="flex-1 flex flex-col relative w-full">
+        <Background />
+        <Header
+          headerTitle="Welcome to BM Samay"
+        />
         <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -117,7 +108,7 @@ export default function Welcome() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Glad to have you here, {user?.chessUsername || 'Chess Master'}!
+                  Glad to have you here, <span className='md:text-4xl lg:text-5xl'>{user?.chessUsername || 'Chess Master'}!</span>
                 </motion.h1>
                 <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-4">
                   You've just joined the most exciting <span className="text-neon-green font-semibold">BM Samay</span> chess community! We're thrilled to have you here.
@@ -236,11 +227,11 @@ const PercentileItem = ({ title, percentile, description, message }: PercentileI
   >
     <h3 className="text-2xl font-semibold text-neon-green mb-2">{title}</h3>
     <div className="flex items-center mb-4">
-      <div className="w-16 h-16 p-2 rounded-full bg-neon-green/20 flex items-center justify-center mr-4"  
-      style={{
-        border: '2px solid rgba(0, 255, 0, 0.5)',
-        boxShadow: '0 0 5px rgba(0, 255, 0, 0.5)'
-      }}>
+      <div className="w-16 h-16 p-2 rounded-full bg-neon-green/20 flex items-center justify-center mr-4"
+        style={{
+          border: '2px solid rgba(0, 255, 0, 0.5)',
+          boxShadow: '0 0 5px rgba(0, 255, 0, 0.5)'
+        }}>
         <span className="text-2xl font-bold text-neon-green">{percentile}%</span>
       </div>
       <p className="text-white">

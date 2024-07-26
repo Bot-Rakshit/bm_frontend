@@ -10,7 +10,7 @@ export interface PercentileRanking {
 
 export const getPercentileRanking = async (chessUsername: string): Promise<PercentileRanking> => {
   try {
-    const response = await axios.get<PercentileRanking>(`${BACKEND_URL}/chess/percentiles/${chessUsername}`);
+    const response = await axios.get<PercentileRanking>(`${BACKEND_URL}/api/chess/percentiles/${chessUsername}`);
     console.log('Percentile ranking response:', response.data);
     return response.data;
   } catch (error) {
