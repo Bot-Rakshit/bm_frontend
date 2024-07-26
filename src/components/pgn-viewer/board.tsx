@@ -1,24 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
-import bb from '../assets/pieces/bb.png';
-import bk from '../assets/pieces/bk.png';
-import bn from '../assets/pieces/bn.png';
-import bp from '../assets/pieces/bp.png';
-import bq from '../assets/pieces/bq.png';
-import br from '../assets/pieces/br.png';
-import wb from '../assets/pieces/wb.png';
-import wk from '../assets/pieces/wk.png';
-import wn from '../assets/pieces/wn.png';
-import wp from '../assets/pieces/wp.png';
-import wq from '../assets/pieces/wq.png';
-import wr from '../assets/pieces/wr.png';
+import bb from '../../assets/pieces/bb.png';
+import bk from '../../assets/pieces/bk.png';
+import bn from '../../assets/pieces/bn.png';
+import bp from '../../assets/pieces/bp.png';
+import bq from '../../assets/pieces/bq.png';
+import br from '../../assets/pieces/br.png';
+import wb from '../../assets/pieces/wb.png';
+import wk from '../../assets/pieces/wk.png';
+import wn from '../../assets/pieces/wn.png';
+import wp from '../../assets/pieces/wp.png';
+import wq from '../../assets/pieces/wq.png';
+import wr from '../../assets/pieces/wr.png';
 
-import moveSound from '../assets/sounds/move-self.mp3';
-import captureSound from '../assets/sounds/move-capture.mp3';
-import castleSound from '../assets/sounds/move-castle.mp3';
-import checkSound from '../assets/sounds/move-check.mp3';
-import promoteSound from '../assets/sounds/move-promote.mp3'
+import moveSound from '../../assets/sounds/move-self.mp3';
+import captureSound from '../../assets/sounds/move-capture.mp3';
+import castleSound from '../../assets/sounds/move-castle.mp3';
+import checkSound from '../../assets/sounds/move-check.mp3';
+import promoteSound from '../../assets/sounds/move-promote.mp3'
 
 interface ChessViewerProps {
   pgn: string;
