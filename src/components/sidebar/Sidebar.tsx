@@ -87,10 +87,10 @@ const Sidebar = () => {
         <motion.div
           whileHover={{ scale: item.comingSoon ? 1 : 1.05 }}
           whileTap={{ scale: item.comingSoon ? 1 : 0.95 }}
-          className="flex items-center gap-4"
+          className={`flex items-center gap-4 w-full ${isCollapsed ? 'justify-center' : 'justify-start'}`}
         >
-          <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
-          {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
+          <item.icon className={`h-5 w-5`} />
+          {!isCollapsed && <span className="text-sm whitespace-nowrap">{item.name}</span>}
           {item.comingSoon && !isCollapsed && !isHovered && (
             <span className="text-xs text-gray-400 ml-auto">(Coming Soon)</span>
           )}
