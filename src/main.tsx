@@ -22,7 +22,7 @@ import PageNotFound from './pages/404NotFound.tsx';
 import GuessTheElo from './pages/GTE.tsx';
 import Learn from './pages/Learn.tsx';
 import ShareGamePopup from './components/ShareGamepopup.tsx';
-import BulletinBoard from './pages/BulletinBoard.tsx';
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -47,7 +47,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <Route path="/gte" element={<GuessTheElo />} />
               <Route path="/learn" element={<Learn />} />
               <Route path="/sharegamepopup" element={<ShareGamePopup />} />
-              <Route path="/bulletinboard" element={<BulletinBoard />} />
               <Route path="*" element={<PageNotFound />} />
             </Route>
           </Routes>
