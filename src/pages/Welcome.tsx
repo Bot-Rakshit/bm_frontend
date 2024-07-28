@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import bmuniverse from '@/assets/bmuniverse.webp';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { decodeJwt } from '@/lib/jwtDecoder';
 import { motion } from 'framer-motion';
@@ -128,17 +127,30 @@ export default function Welcome() {
                 </div>
               </div>
               <div className="w-full md:w-1/2 md:pl-8">
-                <div className="relative" style={{ paddingBottom: '120%' }}>
-                  <img
-                    src={bmuniverse}
-                    alt="BM Samay"
-                    className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                    style={{
-                      objectPosition: 'center 20%',
-                      border: '2px solid rgba(0, 255, 0, 0.5)',
-                      boxShadow: '0 0 20px rgba(0, 255, 0, 0.5)'
-                    }}
-                  />
+              <div className="relative" style={{ paddingBottom: '120%' }}>
+                <img
+                src="https://wallpapercave.com/wp/wp4220653.jpg"
+                alt="BM Samay"
+                className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                style={{
+                  objectPosition: 'center 20%',
+                  border: '2px solid rgba(0, 255, 0, 0.5)', 
+                  boxShadow: '0 0 20px rgba(0, 255, 0, 0.5)', 
+                  zIndex: 1,
+                }}
+                />
+                <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0, 0, 128, 0.2)',
+                  borderRadius: 'inherit',
+                  zIndex: 2,
+                }}
+                />
                 </div>
               </div>
             </div>

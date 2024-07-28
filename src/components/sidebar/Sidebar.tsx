@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
+import { Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Dices, Share2, MessageSquare } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.webp';
@@ -26,6 +26,7 @@ export const navItems: NavItem[] = [
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
+  { name: 'Bulletin Board', path: '/bulletinboard', icon: MessageSquare },
   { name: 'Learn', path: '/learn', icon: GraduationCap },
   { name: 'Guess the Elo', path: '/', icon: Dices, comingSoon: true },
   { name: 'Share Your Games', path: '/', icon: Share2, comingSoon: true },

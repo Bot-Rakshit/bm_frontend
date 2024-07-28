@@ -22,6 +22,7 @@ import PageNotFound from './pages/404NotFound.tsx';
 import GuessTheElo from './pages/GTE.tsx';
 import Learn from './pages/Learn.tsx';
 import ShareGamePopup from './components/ShareGamepopup.tsx';
+import BulletinBoard from './pages/BulletinBoard.tsx';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -33,7 +34,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <Route path="/" element={<LandingPage />} />
               <Route path="/app" element={<App />} />
               <Route path="/chat" element={<Chat />} />
-              <Route path="/gift" element={<DiamondGift/>} />
+              <Route path="/gift" element={<DiamondGift />} />
               <Route path="/chessnews" element={<ChessNews />} />
               <Route path="/chesstutorials" element={<ChessTutorials />} />
               <Route path="/signup" element={<Signup />} />
@@ -43,11 +44,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <Route path="/blunder" element={<Blunder />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/comingsoon" element={<ComingSoon />} />
-
-              <Route path="/gte" element={<GuessTheElo/>}/>
+              <Route path="/gte" element={<GuessTheElo />} />
+              <Route path="/learn" element={<Learn />} />
+              <Route path="/sharegamepopup" element={<ShareGamePopup />} />
+              <Route path="/bulletinboard" element={<BulletinBoard />} />
               <Route path="*" element={<PageNotFound />} />
-              <Route path='/Learn' element={< Learn/>} />
-              <Route path="/sharegamepopup" element={<ShareGamePopup/>} />
             </Route>
           </Routes>
         </ErrorBoundary>
