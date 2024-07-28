@@ -87,76 +87,67 @@ const Sidebar = () => {
         <motion.div
           whileHover={{ scale: item.comingSoon ? 1 : 1.05 }}
           whileTap={{ scale: item.comingSoon ? 1 : 0.95 }}
-          className={`flex items-center gap-4 w-full ${isCollapsed ? 'justify-center' : 'justify-start'}`}
+          className="flex items-center gap-4"
         >
-          <item.icon className={`h-5 w-5`} />
-          {!isCollapsed && <span className="text-sm whitespace-nowrap">{item.name}</span>}
-          {item.comingSoon && !isCollapsed && !isHovered && (
-            <span className="text-xs text-gray-400 ml-auto">(Coming Soon)</span>
-          )}
+          <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
+          {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
         </motion.div>
+        {(!isCollapsed || isHovered) && item.comingSoon && (
+          <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-1 rounded-full ml-auto">
+            Soon
+          </span>
+        )}
       </div>
     );
 
     return item.comingSoon ? (
-      <div className="opacity-50 cursor-not-allowed">{content}</div>
+      <div>{content}</div>
     ) : (
-      <Link to={item.path}>{content}</Link>
+      <Link to={`${item.path}?token=${token}`}>{content}</Link>
     );
   };
 
-  return (
-    <div
-      className={`h-full ${isCollapsed ? 'w-20' : 'w-64'} bg-sidebar-blue text-white flex flex-col justify-between transition-all duration-300 ${isHovered ? 'shadow-lg' : ''
-        }`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div>
-        <div className="flex items-center justify-between p-4">
-          {!isCollapsed && (
-            <img
-              src={samayBM}
-              alt="Samay BM"
-              className="h-12 w-auto transition-all duration-300"
-            />
-          )}
-          <button
+  const NavContent = () => (
+    <div className={`flex flex-col h-full bg-gray-900 ${isCollapsed && !isHovered ? 'w-20' : 'w-64'} shadow-xl transition-all duration-300`}>
+      <div className={`flex items-center ${isCollapsed && !isHovered ? 'justify-center' : 'justify-between'} px-4 py-6 border-b border-gray-800`}>
+        {(!isCollapsed || isHovered) && (
+          <div className="flex items-center gap-3">
+            <img src={samayBM} alt="BM Samay Logo" className="h-8 w-8 object-contain" />
+            <span className="text-lg font-bold text-neon-green">BM Samay</span>
+          </div>
+        )}
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="focus:outline-none"
+            className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
           >
-            <ChevronLeft
-              className={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : 'rotate-0'
-                }`}
-            />
-          </button>
-        </div>
-        <nav className="flex flex-col space-y-2 mt-8">
-          {navItems.map((item) => (
-            <NavItem
-              key={item.name}
-              item={item}
-              isActive={location.pathname === item.path}
-            />
-          ))}
-        </nav>
+            {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </Button>
+        )}
       </div>
-      <div className="p-4 border-t border-gray-800">
+      <nav className="flex-1 py-6 space-y-1 px-3">
+        {navItems.map((item) => (
+          <NavItem key={item.name} item={item} isActive={location.pathname === item.path} />
+        ))}
+      </nav>
+      <div className={`px-3 py-4 border-t border-gray-800 ${isCollapsed && !isHovered ? 'flex justify-center' : ''}`}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full flex justify-between items-center">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={profileIcon} alt="User profile" />
-                <AvatarFallback>U</AvatarFallback>
+            <Button
+              variant="ghost"
+              className={`w-full text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-lg ${isCollapsed && !isHovered ? 'justify-center px-0' : 'justify-start'}`}
+            >
+              <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
+                <AvatarImage src={profileIcon} alt="Profile" />
+                <AvatarFallback>BM</AvatarFallback>
               </Avatar>
-              {!isCollapsed && (
-                <span className="ml-2 flex-1 text-left text-sm">User Name</span>
-              )}
-              <ChevronRight className="h-4 w-4" />
+              {(!isCollapsed || isHovered) && <span className="text-sm">Profile</span>}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleLogout}>
+          <DropdownMenuContent align="end" className="w-56 bg-gray-800 border border-gray-700">
+            <DropdownMenuItem onClick={handleLogout} className="text-gray-300 hover:text-neon-green hover:bg-neon-green/5 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
@@ -164,6 +155,22 @@ const Sidebar = () => {
         </DropdownMenu>
       </div>
     </div>
+  );
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ width: 80 }}
+        animate={{ width: isCollapsed && !isHovered ? 80 : 256 }}
+        exit={{ width: 80 }}
+        transition={{ duration: 0.3 }}
+        className="hidden md:block h-screen"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <NavContent />
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
