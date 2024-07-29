@@ -10,6 +10,7 @@ import MoveTable from '@/components/pgn-viewer/movetable';
 import { useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Timer from '@/components/pgn-viewer/timer'
+import Header from '@/components/sidebar/Header';
 
 // Sample PGNs with corresponding Elo ratings
 const sampleGames = [
@@ -110,19 +111,21 @@ const GuessTheElo: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      {showSidebar && <Sidebar />}
+    <Sidebar />
       <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-auto ${!showSidebar ? 'w-full' : ''}`}>
         <main className="flex-1 p-6 md:p-10 z-10">
+        <Header
+        headerTitle="Guess The Elo"
+        showChesscom
+      />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-7xl mx-auto"
           >
-            <h1 className="text-5xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-blue-500 flex items-center justify-center">
-              <FaChessKnight className="mr-4" /> Guess the Elo
-            </h1>
-            <p className="text-center text-gray-300 mb-8">
+            
+            <p className="text-center text-gray-300 mb-8 pt-10">
               Test your skills by guessing the Elo rating of rapid games played by our community members!
             </p>
 
