@@ -34,12 +34,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ navItems, token }) => {
                     <Menu />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 bg-gray-900">
+            <SheetContent side="left" className="p-0 w-64 bg-gray-900 flex flex-col">
                 <div className="flex items-center gap-3 px-4 py-6 border-b border-gray-800">
                     <img src={samayBM} alt="BM Samay Logo" className="h-8 w-8 object-contain" />
                     <span className="text-lg font-bold text-neon-green">BM Samay</span>
                 </div>
-                <nav className="flex-1 py-6 space-y-1 px-3">
+                <nav className="flex-1 py-6 space-y-1 px-3 overflow-auto">
                     {navItems.map((item) => (
                         <Link
                             key={item.name}
