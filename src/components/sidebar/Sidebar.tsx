@@ -28,7 +28,7 @@ export const navItems: NavItem[] = [
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
   { name: 'Learn', path: '/learn', icon: GraduationCap },
   { name: 'Guess the Elo', path: '/', icon: Dices, comingSoon: true },
-  { name: 'Share Your Games', path: '/', icon: Share2, comingSoon: true },
+  { name: 'Share Your Games', path: '/', icon: Share2, comingSoon: true }
 ];
 
 const Sidebar = () => {
@@ -75,6 +75,10 @@ const Sidebar = () => {
     }
   };
 
+  const handleToggleCollapse = () => {
+    setIsCollapsed(prev => !prev);
+  };
+
   const NavItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) => {
     const content = (
       <div
@@ -119,14 +123,20 @@ const Sidebar = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={handleToggleCollapse}
             className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
           >
-            {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            {isCollapsed ? (
+              // Only show the ChevronRight icon when collapsed
+              <ChevronRight size={20} />
+            ) : (
+              // Hide the ChevronLeft icon when collapsed
+              <ChevronLeft size={30} className="hidden" />
+            )}
           </Button>
         )}
       </div>
-      <nav className="flex-1 py-6 space-y-1 px-3">
+      <nav className="flex-1 py-10 space-y px-3">
         {navItems.map((item) => (
           <NavItem key={item.name} item={item} isActive={location.pathname === item.path} />
         ))}
