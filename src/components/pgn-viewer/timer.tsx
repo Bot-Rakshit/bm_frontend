@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface TimerProps {
-  initialTime: number; // in seconds
-  isRunning: boolean;
+  clockTime: string;
 }
 
-const Timer: React.FC<TimerProps> = ({ initialTime, isRunning }) => {
-  const [time, setTime] = useState(initialTime);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isRunning && time > 0) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
-      }, 1000);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRunning, time]);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+const Timer: React.FC<TimerProps> = ({ clockTime }) => {
+  const formatTime = (timeString: string) => {
+    const [minutes, seconds] = timeString.split(':');
+    const formattedMinutes = minutes.padStart(2, '0');
+    const formattedSeconds = seconds.padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
   };
 
   return (
     <div className="text-2xl font-bold text-neon-green">
-      {formatTime(time)}
+      {formatTime(clockTime)}
     </div>
   );
 };
