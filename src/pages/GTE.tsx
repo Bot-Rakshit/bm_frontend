@@ -120,22 +120,28 @@ const GuessTheElo: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       {showSidebar && <Sidebar />}
-      <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-auto ${showSidebar ? 'md:ml-64' : ''}`}>
+      <div className={`flex-1 flex flex-col relative h-full min-h-full ${showSidebar ? 'md:ml-64' : ''}`}>
         <Background />
-        <main className="flex-1 p-6 md:p-10 z-10">
-          <Header
-            headerTitle="Guess The Elo"
-            showChesscom
-          />
+        <Header
+          headerTitle="Guess The Elo"
+          showChesscom
+          className="sticky top-0 z-20 bg-gray-900/80 backdrop-filter backdrop-blur-sm"
+        />
+        <main className="flex-1 overflow-y-auto p-6 md:p-10 z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-7xl mx-auto"
           >
-            <p className="text-center text-gray-300 mb-8 pt-10">
-              Test your skills by guessing the Elo rating of rapid games played by our community members!
-            </p>
+            <div className="text-center mb-12">
+              <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-blue-500 mb-6">
+                Guess The Elo
+              </h1>
+              <p className="text-xl text-gray-300 font-light max-w-3xl mx-auto">
+                Test your skills by guessing the Elo rating of rapid games played by our community members!
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
               <motion.div 
@@ -143,12 +149,11 @@ const GuessTheElo: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="flex justify-between items-center mb-4 ml-4">
+                <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                       <span className="font-semibold">{blackPlayer}</span>
                     </div>
-                    
                     <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                       <Timer initialTime={600} isRunning={currentMove % 2 === 0} />
                     </div>
@@ -156,7 +161,7 @@ const GuessTheElo: React.FC = () => {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
-                  <div className="w-full">
+                  <div className="w-full sm:w-auto">
                     <motion.div
                       className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                       whileHover={{ scale: 1.02 }}
@@ -168,12 +173,11 @@ const GuessTheElo: React.FC = () => {
                         onMoveChange={handleMoveSelect}
                       />
                     </motion.div>
-                    <div className="flex justify-between items-center mt-4 ml-4">
+                    <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                           <span className="font-semibold">{whitePlayer}</span>
                         </div>
-                        
                         <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                           <Timer initialTime={600} isRunning={currentMove % 2 !== 0} />
                         </div>
@@ -197,9 +201,7 @@ const GuessTheElo: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-                  <div
-                    className="w-full sm:w-48 hidden sm:block"
-                  >
+                  <div className="w-full sm:w-48 hidden sm:block">
                     <MoveTable 
                       moves={game.history({ verbose: true })} 
                       currentMove={currentMove} 
