@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Timer from '@/components/pgn-viewer/timer'
 import Header from '@/components/sidebar/Header';
-
+import Background from '@/components/Background';
 
 const sampleGames = [
   {
@@ -34,7 +34,7 @@ const GuessTheElo: React.FC = () => {
   const [guessedElo, setGuessedElo] = useState(1500);
   const [hasGuessed, setHasGuessed] = useState(false);
   const [actualElo, setActualElo] = useState(0);
-  const [, setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [currentPgn, setCurrentPgn] = useState('');
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
@@ -43,12 +43,26 @@ const GuessTheElo: React.FC = () => {
   const [gameLink, setGameLink] = useState('');
   const [showMobileGuess, setShowMobileGuess] = useState(false);
 
-  const handleNextGameWithReset = () => {
-   
-    handleNextGame();
+  const fetchNewGame = useCallback(() => {
+    const randomGame = sampleGames[Math.floor(Math.random() * sampleGames.length)];
+    const newGame = new Chess();
+    newGame.loadPgn(randomGame.pgn);
+    setGame(newGame);
+    setCurrentMove(0);
+    setActualElo(randomGame.elo);
+    setCurrentPgn(randomGame.pgn);
+    setHasGuessed(false);
+    setGuessedElo(1500);
+    setWhitePlayer('Random Player');
+    setBlackPlayer('BM Member');
+    setGameLink(`https://lichess.org/game/export/${randomGame.pgn}`);
+  }, []);
 
-  };
-  
+  const handleNextGameWithReset = useCallback(() => {
+    setHasGuessed(false);
+    setGuessedElo(1500);
+    fetchNewGame();
+  }, [fetchNewGame]);
 
   const handlePreviousMove = useCallback(() => {
     setCurrentMove(prevMove => Math.max(0, prevMove - 1));
@@ -64,7 +78,7 @@ const GuessTheElo: React.FC = () => {
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token') || localStorage.getItem('token');
     setShowSidebar(!!token);
-  }, [location.search]);
+  }, [location.search, fetchNewGame]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -87,133 +101,112 @@ const GuessTheElo: React.FC = () => {
     };
   }, [handlePreviousMove, handleNextMove]);
 
-  const fetchNewGame = () => {
-    const randomGame = sampleGames[Math.floor(Math.random() * sampleGames.length)];
-    const newGame = new Chess();
-    newGame.loadPgn(randomGame.pgn);
-    setGame(newGame);
-    setCurrentMove(0);
-    setActualElo(randomGame.elo);
-    setCurrentPgn(randomGame.pgn);
-    setHasGuessed(false);
-    setGuessedElo(1500);
-    setWhitePlayer('Random Player');
-    setBlackPlayer('BM Member');
-    setGameLink(`https://lichess.org/game/export/${randomGame.pgn}`);
-  };
-
-  const handleMoveSelect = (moveIndex: number) => {
+  const handleMoveSelect = useCallback((moveIndex: number) => {
     setCurrentMove(moveIndex);
-  };
+  }, []);
 
-  const handleGuess = () => {
+  const handleGuess = useCallback(() => {
     setHasGuessed(true);
     const difference = Math.abs(guessedElo - actualElo);
     const points = Math.max(0, 100 - Math.floor(difference / 30));
     setScore(prevScore => prevScore + points);
     setShowMobileGuess(false);
-  };
+  }, [guessedElo, actualElo]);
 
-  const handleNextGame = () => {
-    fetchNewGame();
-  };
-
-  const toggleMobileGuess = () => {
-    setShowMobileGuess(!showMobileGuess);
-  };
+  const toggleMobileGuess = useCallback(() => {
+    setShowMobileGuess(prev => !prev);
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-    <Sidebar />
-    <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-auto `}>
-      <main className="flex-1 p-6 md:p-10 z-10">
-        <Header
-          headerTitle="Guess The Elo"
-          showChesscom
-        />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-7xl mx-auto"
-        >
-          <p className="text-center text-gray-300 mb-8 pt-10">
-            Test your skills by guessing the Elo rating of rapid games played by our community members!
-          </p>
+      {showSidebar && <Sidebar />}
+      <div className={`flex-1 flex flex-col relative h-full min-h-full overflow-y-auto ${showSidebar ? 'md:ml-64' : ''}`}>
+        <Background />
+        <main className="flex-1 p-6 md:p-10 z-10">
+          <Header
+            headerTitle="Guess The Elo"
+            showChesscom
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto"
+          >
+            <p className="text-center text-gray-300 mb-8 pt-10">
+              Test your skills by guessing the Elo rating of rapid games played by our community members!
+            </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
-            <motion.div 
-              className="lg:col-span-2 bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-            <div className="flex justify-between items-center mb-4 ml-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                <span className="font-semibold">{blackPlayer}</span>
-              </div>
-              
-              <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                <Timer initialTime={600} isRunning={currentMove % 2 === 0} />
-              </div>
-            </div>
-          </div>
-          
-              <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
-                <div className="w-full">
-                <motion.div
-                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
+              <motion.div 
+                className="lg:col-span-2 bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-               
-                  <ChessViewer 
-                    pgn={currentPgn} 
-                    currentMove={currentMove}
-                    onMoveChange={handleMoveSelect}
-                  />
-                
-               
-              </motion.div>
-              <div className="flex justify-between items-center mt-4 ml-4">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                  <span className="font-semibold">{whitePlayer}</span>
-                </div>
-                
-                <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                  <Timer initialTime={600} isRunning={currentMove % 2 === 0} />
-                </div>
-              </div>
-            </div>
-           
-                  <div className="flex justify-center items-center mt-4 space-x-4">
-                    <Button 
-                      onClick={handlePreviousMove} 
-                      disabled={currentMove === 0}
-                      className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
-                    >
-                      <FaArrowLeft />
-                    </Button>
-                    <Button 
-                      onClick={handleNextMove} 
-                      disabled={currentMove === game.history().length - 1}
-                      className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
-                    >
-                      <FaArrowRight />
-                    </Button>
+                <div className="flex justify-between items-center mb-4 ml-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                      <span className="font-semibold">{blackPlayer}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                      <Timer initialTime={600} isRunning={currentMove % 2 === 0} />
+                    </div>
                   </div>
                 </div>
-               <div
-                className="w-full sm:w-48 hidden sm:block"
-              >
-                <MoveTable 
-                  moves={game.history({ verbose: true })} 
-                  currentMove={currentMove} 
-                  onMoveSelect={handleMoveSelect} 
-                />
-              </div>
-              </div>
+                
+                <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
+                  <div className="w-full">
+                    <motion.div
+                      className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChessViewer 
+                        pgn={currentPgn} 
+                        currentMove={currentMove}
+                        onMoveChange={handleMoveSelect}
+                      />
+                    </motion.div>
+                    <div className="flex justify-between items-center mt-4 ml-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                          <span className="font-semibold">{whitePlayer}</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                          <Timer initialTime={600} isRunning={currentMove % 2 !== 0} />
+                        </div>
+                      </div>
+                    </div>
+                   
+                    <div className="flex justify-center items-center mt-4 space-x-4">
+                      <Button 
+                        onClick={handlePreviousMove} 
+                        disabled={currentMove === 0}
+                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        <FaArrowLeft />
+                      </Button>
+                      <Button 
+                        onClick={handleNextMove} 
+                        disabled={currentMove === game.history().length - 1}
+                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        <FaArrowRight />
+                      </Button>
+                    </div>
+                  </div>
+                  <div
+                    className="w-full sm:w-48 hidden sm:block"
+                  >
+                    <MoveTable 
+                      moves={game.history({ verbose: true })} 
+                      currentMove={currentMove} 
+                      onMoveSelect={handleMoveSelect} 
+                    />
+                  </div>
+                </div>
               </motion.div>
 
               <motion.div 
@@ -221,11 +214,7 @@ const GuessTheElo: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-             
-              
                 <div className="flex items-center justify-between mb-4">
-               
-                
                   <div className="flex flex-col items-center">
                     <Avatar className="w-24 h-24 mb-2">
                       <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${whitePlayer}`} />
@@ -239,12 +228,9 @@ const GuessTheElo: React.FC = () => {
                     <Avatar className="w-24 h-24 mb-2">
                       <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${blackPlayer}`} />
                       <AvatarFallback>{blackPlayer[0]}</AvatarFallback>
-                      
                     </Avatar>
                     <span className="font-semibold text-lg">{hasGuessed ? 'Player 2' : 'BM Member'}</span>
-                    
                     <span className="text-sm text-gray-400">(Black)</span>
-                    
                   </div>
                 </div>
                 <div className="mb-4">
@@ -260,71 +246,67 @@ const GuessTheElo: React.FC = () => {
                 </div>
                 {hasGuessed && (
                   <div className="mt-4 py-4 flex items-center justify-center">
-                  <FaLink className="mr-2 text-neon-green" />
-                  <a 
-                   href={gameLink}
-                   target="_blank"
+                    <FaLink className="mr-2 text-neon-green" />
+                    <a 
+                      href={gameLink}
+                      target="_blank"
                       rel="noopener noreferrer"
-                    className="inline-block px-4 py-2 text-black bg-neon-green rounded hover:bg-green-700 transition duration-300"
-                          >
-                        View full game
-                        </a>
-                      </div>
-                    )}
-                <AnimatePresence>
-                {!hasGuessed ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <Button 
-                      onClick={handleGuess} 
-                      className="w-full py-3 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold text-lg hover:from-blue-500 hover:to-neon-green transition-all duration-300"
+                      className="inline-block px-4 py-2 text-black bg-neon-green rounded hover:bg-green-700 transition duration-300"
                     >
-                      Submit Guess
-                    </Button>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
-                        <p className="text-2xl font-semibold text-neon-green">
-                          Actual Elo: {actualElo}
-                        </p>
-                      </div>
-                      
-               
-                      <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
-                        <p className="text-2xl font-semibold">
-                          Difference: <span className="text-yellow-400">{Math.abs(guessedElo - actualElo)}</span>
-                        </p>
-                      </div>
-      
-                      <div className="flex flex-col items-center space-y-2">
-                        <p className={`text-xl font-semibold ${Math.abs(guessedElo - actualElo) === 0 ? 'text-green-500' : 'text-red-500'}`}>
-                          {Math.abs(guessedElo - actualElo) === 0 ? "Yeah, you made it!" : "Nice try!!! You're pretty close!"}
-                        </p>
-                        <p className="text-sm text-gray-400">
-                          {Math.abs(guessedElo - actualElo) === 0 ? "Well done on your accurate guess!" : "Keep practicing to improve your guesses!"}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                    onClick={handleNextGameWithReset}
-                    className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg hover:from-purple-500 hover:to-blue-500 transition-all duration-300"
-                  >
-                    Next Game
-                  </Button>
-                  </motion.div>
+                      View full game
+                    </a>
+                  </div>
                 )}
-              </AnimatePresence>
-              
+                <AnimatePresence>
+                  {!hasGuessed ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Button 
+                        onClick={handleGuess} 
+                        className="w-full py-3 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold text-lg hover:from-blue-500 hover:to-neon-green transition-all duration-300"
+                      >
+                        Submit Guess
+                      </Button>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
+                          <p className="text-2xl font-semibold text-neon-green">
+                            Actual Elo: {actualElo}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
+                          <p className="text-2xl font-semibold">
+                            Difference: <span className="text-yellow-400">{Math.abs(guessedElo - actualElo)}</span>
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-center space-y-2">
+                          <p className={`text-xl font-semibold ${Math.abs(guessedElo - actualElo) === 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {Math.abs(guessedElo - actualElo) === 0 ? "Yeah, you made it!" : "Nice try!!! You're pretty close!"}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {Math.abs(guessedElo - actualElo) === 0 ? "Well done on your accurate guess!" : "Keep practicing to improve your guesses!"}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={handleNextGameWithReset}
+                        className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg hover:from-purple-500 hover:to-blue-500 transition-all duration-300"
+                      >
+                        Next Game
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </div>
 
@@ -388,7 +370,7 @@ const GuessTheElo: React.FC = () => {
               )}
             </AnimatePresence>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
               <motion.div 
                 className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
@@ -397,10 +379,7 @@ const GuessTheElo: React.FC = () => {
                 <h3 className="text-2xl font-semibold mb-4 flex items-center text-neon-green">
                   <FaTrophy className="mr-3 text-yellow-400" /> Your Score
                 </h3>
-                <div className="flex items-center justify-center">
-                  <FaLock className="text-4xl text-gray-500 mr-4" />
-                  <p className="text-xl text-gray-400">Coming Soon</p>
-                </div>
+                <p className="text-3xl font-bold">{score}</p>
               </motion.div>
 
               <motion.div 
@@ -423,6 +402,5 @@ const GuessTheElo: React.FC = () => {
     </div>
   );
 };
-
 
 export default GuessTheElo;
