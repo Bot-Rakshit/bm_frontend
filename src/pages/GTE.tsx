@@ -4,14 +4,13 @@ import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import {  FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
-import Sidebar from '@/components/sidebar/Sidebar';
+
 import ChessViewer from '@/components/pgn-viewer/board';
 import MoveTable from '@/components/pgn-viewer/movetable';
 import { useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Timer from '@/components/pgn-viewer/timer'
 import Header from '@/components/sidebar/Header';
-import Background from '@/components/Background';
 
 const sampleGames = [
   {
@@ -41,7 +40,6 @@ const GuessTheElo: React.FC = () => {
   const [whitePlayer, setWhitePlayer] = useState('');
   const [blackPlayer, setBlackPlayer] = useState('');
   const [gameLink, setGameLink] = useState('');
-  const [showMobileGuess, setShowMobileGuess] = useState(false);
   const handleNextGameWithReset = () => {
    
     handleNextGame();
