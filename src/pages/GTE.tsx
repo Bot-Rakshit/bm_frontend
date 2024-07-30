@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import {  FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink } from 'react-icons/fa';
 import Sidebar from '@/components/sidebar/Sidebar';
 import ChessViewer from '@/components/pgn-viewer/board';
 import MoveTable from '@/components/pgn-viewer/movetable';
@@ -41,6 +41,7 @@ const GuessTheElo: React.FC = () => {
   const [whitePlayer, setWhitePlayer] = useState('');
   const [blackPlayer, setBlackPlayer] = useState('');
   const [gameLink, setGameLink] = useState('');
+  const [showMobileGuess, setShowMobileGuess] = useState(false);
 
   const handleNextGameWithReset = () => {
    
@@ -110,11 +111,15 @@ const GuessTheElo: React.FC = () => {
     const difference = Math.abs(guessedElo - actualElo);
     const points = Math.max(0, 100 - Math.floor(difference / 30));
     setScore(prevScore => prevScore + points);
-    
+    setShowMobileGuess(false);
   };
 
   const handleNextGame = () => {
     fetchNewGame();
+  };
+
+  const toggleMobileGuess = () => {
+    setShowMobileGuess(!showMobileGuess);
   };
 
   return (
@@ -136,9 +141,9 @@ const GuessTheElo: React.FC = () => {
             Test your skills by guessing the Elo rating of rapid games played by our community members!
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3   gap-8 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
             <motion.div 
-              className={`lg:col-span-2 l bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20 `}
+              className="lg:col-span-2 bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
@@ -154,10 +159,10 @@ const GuessTheElo: React.FC = () => {
             </div>
           </div>
           
-              <div className="flex flex-col  sm:flex-row items-start justify-center gap-8">
-                <div className={`w-full ${showSidebar ? 'hidden' : 'block'}`}>
+              <div className="flex flex-col sm:flex-row items-start justify-center gap-8">
+                <div className="w-full">
                 <motion.div
-                className={`lg:col-span-2 bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border  border-neon-green/20 `}
+                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -200,7 +205,7 @@ const GuessTheElo: React.FC = () => {
                   </div>
                 </div>
                <div
-                className={`w-full  sm:w-48 hidden sm:block`}
+                className="w-full sm:w-48 hidden sm:block"
               >
                 <MoveTable 
                   moves={game.history({ verbose: true })} 
@@ -212,7 +217,7 @@ const GuessTheElo: React.FC = () => {
               </motion.div>
 
               <motion.div 
-                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
+                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20 hidden lg:block"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -256,7 +261,7 @@ const GuessTheElo: React.FC = () => {
                 {hasGuessed && (
                   <div className="mt-4 py-4 flex items-center justify-center">
                     <FaLink className="mr-2 text-neon-green" />
-                    <a
+                    
                     href={gameLink}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -289,7 +294,6 @@ const GuessTheElo: React.FC = () => {
                     className="space-y-4"
                   >
                     <div className="flex flex-col items-center space-y-4">
-                      {/* Box for Actual Elo */}
                       <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
                         <p className="text-2xl font-semibold text-neon-green">
                           Actual Elo: {actualElo}
@@ -322,12 +326,68 @@ const GuessTheElo: React.FC = () => {
                 )}
               </AnimatePresence>
               
-
-              
-              
-              
               </motion.div>
             </div>
+
+            {/* Mobile Guess Button */}
+            <div className="lg:hidden mt-4">
+              <Button 
+                onClick={toggleMobileGuess}
+                className="w-full py-3 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold text-lg hover:from-blue-500 hover:to-neon-green transition-all duration-300"
+              >
+                {showMobileGuess ? "Hide Guess" : "Make Your Guess"}
+              </Button>
+            </div>
+
+            {/* Mobile Guess Popup */}
+            <AnimatePresence>
+              {showMobileGuess && (
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 50 }}
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                >
+                  <motion.div 
+                    className="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-neon-green/20 w-full max-w-md"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h3 className="text-2xl font-semibold mb-4 text-neon-green">Make Your Guess</h3>
+                    <div className="mb-4">
+                      <Slider
+                        value={[guessedElo]}
+                        onValueChange={(value) => setGuessedElo(value[0])}
+                        min={500}
+                        max={3000}
+                        step={50}
+                        disabled={hasGuessed}
+                      />
+                      <p className="text-center mt-2">Guessed Elo: {guessedElo}</p>
+                    </div>
+                    {!hasGuessed ? (
+                      <Button 
+                        onClick={handleGuess} 
+                        className="w-full py-3 bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold text-lg hover:from-blue-500 hover:to-neon-green transition-all duration-300"
+                      >
+                        Submit Guess
+                      </Button>
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="text-2xl font-semibold text-neon-green">Actual Elo: {actualElo}</p>
+                        <p className="text-xl">Difference: <span className="text-yellow-400">{Math.abs(guessedElo - actualElo)}</span></p>
+                        <Button
+                          onClick={handleNextGameWithReset}
+                          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg hover:from-purple-500 hover:to-blue-500 transition-all duration-300"
+                        >
+                          Next Game
+                        </Button>
+                      </div>
+                    )}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <motion.div 
