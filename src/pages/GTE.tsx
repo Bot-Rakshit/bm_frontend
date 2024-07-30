@@ -260,18 +260,17 @@ const GuessTheElo: React.FC = () => {
                 </div>
                 {hasGuessed && (
                   <div className="mt-4 py-4 flex items-center justify-center">
-                    <FaLink className="mr-2 text-neon-green" />
-                    
-                    href={gameLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <FaLink className="mr-2 text-neon-green" />
+                  <a 
+                   href={gameLink}
+                   target="_blank"
+                      rel="noopener noreferrer"
                     className="inline-block px-4 py-2 text-black bg-neon-green rounded hover:bg-green-700 transition duration-300"
-                  >
-                    View full game
-                  </a>
-
-                 </div>
-                )}
+                          >
+                        View full game
+                        </a>
+                      </div>
+                    )}
                 <AnimatePresence>
                 {!hasGuessed ? (
                   <motion.div
