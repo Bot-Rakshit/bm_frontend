@@ -36,9 +36,12 @@ const GuessTheElo: React.FC = () => {
   const [timeControl, setTimeControl] = useState('');
   const [currentClockIndex, setCurrentClockIndex] = useState(0);
   const [gameTermination, setGameTermination] = useState<string>('');
+  const [gameStage, setGameStage] = useState<'initial' | 'guessing' | 'revealed'>('initial');
+  const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
 
   const handleNextGameWithReset = () => {
     handleNextGame();
+    setGameStage('guessing');
   };
 
   const handlePreviousMove = useCallback(() => {
@@ -103,6 +106,7 @@ const GuessTheElo: React.FC = () => {
       setBlackPlayer(randomGame.blackPlayer.username);
       setGameLink(randomGame.gameLink);
       setBMMemberColor(randomGame.whitePlayer.isBMMember ? 'white' : 'black');
+      setBoardOrientation(randomGame.whitePlayer.isBMMember ? 'white' : 'black');
       setGameStarted(true);
       setClockTimes(randomGame.clockTimes);
       
@@ -153,6 +157,7 @@ const GuessTheElo: React.FC = () => {
 
   const handleGuess = () => {
     setHasGuessed(true);
+    setGameStage('revealed');
   };
 
   const handleNextGame = () => {
@@ -161,6 +166,7 @@ const GuessTheElo: React.FC = () => {
 
   const handleStartGuessing = () => {
     fetchNewGame();
+    setGameStage('guessing');
   };
 
   const handleOpenGuessPopup = () => {
@@ -180,8 +186,15 @@ const GuessTheElo: React.FC = () => {
     return clockTimes[index] || '00:00';
   };
 
-  const getPlayerDisplayName = (_username: string, isBMMember: boolean) => {
-    return isBMMember ? "BM Member" : "Random Player";
+  const getPlayerDisplayName = (color: 'white' | 'black') => {
+    const isBMMember = bmMemberColor === color;
+    if (gameStage === 'initial') {
+      return isBMMember ? 'BM Member' : 'Random Noob';
+    } else if (gameStage === 'guessing') {
+      return isBMMember ? 'BM Member' : 'Random Player';
+    } else {
+      return isBMMember ? (color === 'white' ? whitePlayer : blackPlayer) : (color === 'white' ? whitePlayer : blackPlayer);
+    }
   };
 
   return (
@@ -201,10 +214,8 @@ const GuessTheElo: React.FC = () => {
                 className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
               >
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                      <span className="font-semibold">{hasGuessed ? getPlayerDisplayName(blackPlayer, bmMemberColor === 'black') : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
-                    </div>
+                  <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                    <span className="font-semibold">{getPlayerDisplayName('black')}</span>
                   </div>
                   <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                     <Timer clockTime={getCurrentClockTime('black')} />
@@ -220,13 +231,12 @@ const GuessTheElo: React.FC = () => {
                         pgn={currentPgn} 
                         currentMove={currentMove}
                         onMoveChange={handleMoveSelect}
+                        boardOrientation={boardOrientation}
                       />
                     </motion.div>
                     <div className="flex justify-between items-center mt-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                          <span className="font-semibold">{hasGuessed ? getPlayerDisplayName(whitePlayer, bmMemberColor === 'white') : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
-                        </div>
+                      <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                        <span className="font-semibold">{getPlayerDisplayName('white')}</span>
                       </div>
                       <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                         <Timer clockTime={getCurrentClockTime('white')} />
@@ -243,7 +253,7 @@ const GuessTheElo: React.FC = () => {
                       <Button 
                         onClick={handleNextMove} 
                         disabled={currentMove === game.history().length - 1}
-                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
+                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold text-lg py-2 px-4 rounded"
                       >
                         <FaArrowRight />
                       </Button>
@@ -252,6 +262,12 @@ const GuessTheElo: React.FC = () => {
                         className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
+                      </Button>
+                      <Button
+                        onClick={() => setBoardOrientation(prev => prev === 'white' ? 'black' : 'white')}
+                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        Flip Board
                       </Button>
                     </div>
                   </div>
@@ -278,7 +294,7 @@ const GuessTheElo: React.FC = () => {
                       alt={bmMemberColor === 'white' ? "BM Member" : "Random Player"}
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{hasGuessed ? getPlayerDisplayName(whitePlayer, bmMemberColor === 'white') : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
+                    <span className="font-semibold text-lg">{getPlayerDisplayName('white')}</span>
                     <span className="text-sm text-gray-400">(White)</span>
                   </div>
                   <div className="text-4xl font-bold text-neon-green">VS</div>
@@ -288,7 +304,7 @@ const GuessTheElo: React.FC = () => {
                       alt={bmMemberColor === 'black' ? "BM Member" : "Random Player"}
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{hasGuessed ? getPlayerDisplayName(blackPlayer, bmMemberColor === 'black') : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
+                    <span className="font-semibold text-lg">{getPlayerDisplayName('black')}</span>
                     <span className="text-sm text-gray-400">(Black)</span>
                   </div>
                 </div>

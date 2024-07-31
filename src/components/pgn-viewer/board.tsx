@@ -24,9 +24,10 @@ interface ChessViewerProps {
   pgn: string;
   currentMove: number;
   onMoveChange: (moveIndex: number) => void;
+  boardOrientation: 'white' | 'black';
 }
 
-const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove}) => {
+const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove, onMoveChange, boardOrientation }) => {
   const [game, setGame] = useState(new Chess());
 
   const customPieces = useMemo(() => {
@@ -108,6 +109,14 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove}) => {
           isDraggablePiece={() => false}
           customDarkSquareStyle={{ backgroundColor: '#769656' ,'width':'100%'}}
           customLightSquareStyle={{ backgroundColor: '#eeeed2','width':'100%' }}
+          boardOrientation={boardOrientation}
+          onSquareClick={(square) => {
+            const moves = game.history({ verbose: true });
+            const clickedMoveIndex = moves.findIndex(move => move.to === square || move.from === square);
+            if (clickedMoveIndex !== -1) {
+              onMoveChange(clickedMoveIndex);
+            }
+          }}
         />
       </div>
     </div>
