@@ -212,7 +212,7 @@ const GuessTheElo: React.FC = () => {
               >
                 <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
                   <div className={`w-full ${showMoveTable ? 'xl:w-2/3' : 'xl:w-full'}`}>
-                    <div className="max-w-[480px] mx-auto">
+                    <div className="max-w-[640px] w-full mx-auto">
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
                           <span className="font-semibold">{getPlayerDisplayName(boardOrientation === 'white' ? 'top' : 'bottom')}</span>
