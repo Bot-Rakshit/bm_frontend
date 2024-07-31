@@ -161,7 +161,7 @@ const GuessTheElo: React.FC = () => {
                 </div>
                 
                 <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
-                  <div className="w-full">
+                  <div className={`w-full ${showMoveTable ? 'xl:w-2/3' : 'xl:w-full'}`}>
                     <motion.div
                       className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20"
                     >
