@@ -91,7 +91,6 @@ const GuessTheElo: React.FC = () => {
     setIsLoading(true);
     try {
       const randomGame = await fetchRandomGame();
-      console.log('Fetched PGN:', randomGame.pgn);
       const newGame = new Chess();
       newGame.loadPgn(randomGame.pgn);
       
@@ -145,12 +144,7 @@ const GuessTheElo: React.FC = () => {
     return timeControl; // Return original if not in seconds format
   };
 
-  useEffect(() => {
-    console.log('Clock times updated:', clockTimes);
-  }, [clockTimes]);
-
   const handleMoveSelect = (moveIndex: number) => {
-    console.log('Move selected:', moveIndex);
     setCurrentMove(moveIndex);
     setCurrentClockIndex(Math.floor(moveIndex / 2));
   };
@@ -182,18 +176,20 @@ const GuessTheElo: React.FC = () => {
   };
 
   const getCurrentClockTime = (color: 'white' | 'black') => {
-    const index = currentClockIndex * 2 + (color === 'white' ? 0 : 1);
+    const adjustedColor = boardOrientation === 'white' ? color : (color === 'white' ? 'black' : 'white');
+    const index = currentClockIndex * 2 + (adjustedColor === 'white' ? 0 : 1);
     return clockTimes[index] || '00:00';
   };
 
   const getPlayerDisplayName = (color: 'white' | 'black') => {
-    const isBMMember = bmMemberColor === color;
+    const adjustedColor = boardOrientation === 'white' ? color : (color === 'white' ? 'black' : 'white');
+    const isBMMember = bmMemberColor === adjustedColor;
     if (gameStage === 'initial') {
       return isBMMember ? 'BM Member' : 'Random Noob';
     } else if (gameStage === 'guessing') {
       return isBMMember ? 'BM Member' : 'Random Player';
     } else {
-      return isBMMember ? (color === 'white' ? whitePlayer : blackPlayer) : (color === 'white' ? whitePlayer : blackPlayer);
+      return isBMMember ? (adjustedColor === 'white' ? whitePlayer : blackPlayer) : (adjustedColor === 'white' ? whitePlayer : blackPlayer);
     }
   };
 
@@ -264,7 +260,9 @@ const GuessTheElo: React.FC = () => {
                         {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
                       </Button>
                       <Button
-                        onClick={() => setBoardOrientation(prev => prev === 'white' ? 'black' : 'white')}
+                        onClick={() => {
+                          setBoardOrientation(prev => prev === 'white' ? 'black' : 'white'); 
+                        }}
                         className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         Flip Board
