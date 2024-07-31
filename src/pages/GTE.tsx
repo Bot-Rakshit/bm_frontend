@@ -96,7 +96,7 @@ const GuessTheElo: React.FC = () => {
       
       setGame(newGame);
       setCurrentMove(0);
-      setCurrentClockIndex(0); // Reset clock index
+      setCurrentClockIndex(0);
       setActualElo(Math.round((randomGame.whitePlayer.rating + randomGame.blackPlayer.rating) / 2));
       setCurrentPgn(randomGame.pgn);
       setHasGuessed(false);
@@ -104,8 +104,9 @@ const GuessTheElo: React.FC = () => {
       setWhitePlayer(randomGame.whitePlayer.username);
       setBlackPlayer(randomGame.blackPlayer.username);
       setGameLink(randomGame.gameLink);
-      setBMMemberColor(randomGame.whitePlayer.isBMMember ? 'white' : 'black');
-      setBoardOrientation(randomGame.whitePlayer.isBMMember ? 'white' : 'black');
+      const newBmMemberColor = randomGame.whitePlayer.isBMMember ? 'white' : 'black';
+      setBMMemberColor(newBmMemberColor);
+      setBoardOrientation(newBmMemberColor);
       setGameStarted(true);
       setClockTimes(randomGame.clockTimes);
       
@@ -176,22 +177,26 @@ const GuessTheElo: React.FC = () => {
   };
 
   const getCurrentClockTime = (position: 'top' | 'bottom') => {
-    const isTopWhite = (boardOrientation === 'white');
-    const isPositionWhite = (position === 'top') === isTopWhite;
-    const index = currentClockIndex * 2 + (isPositionWhite ? 0 : 1);
+    const isWhiteBottom = boardOrientation === 'white';
+    const index = currentClockIndex * 2 + ((position === 'bottom') === isWhiteBottom ? 0 : 1);
     return clockTimes[index] || '00:00';
   };
 
   const getPlayerDisplayName = (position: 'top' | 'bottom') => {
+    const isBmMemberBottom = boardOrientation === bmMemberColor;
     if (gameStage === 'initial') {
-      return position === 'top' ? 'BM Member' : 'Random Noob';
+      return position === 'bottom' === isBmMemberBottom ? 'BM Member' : 'Random Noob';
     } else if (gameStage === 'guessing') {
-      return position === 'top' ? 'BM Member' : 'Random Player';
+      return position === 'bottom' === isBmMemberBottom ? 'BM Member' : 'Random Player';
     } else {
-      return position === 'top' ? 
+      return position === 'bottom' === isBmMemberBottom ? 
         (bmMemberColor === 'white' ? whitePlayer : blackPlayer) : 
         (bmMemberColor === 'white' ? blackPlayer : whitePlayer);
     }
+  };
+
+  const handleFlipBoard = () => {
+    setBoardOrientation(prev => prev === 'white' ? 'black' : 'white');
   };
 
   return (
@@ -215,7 +220,7 @@ const GuessTheElo: React.FC = () => {
                     <div className="max-w-[640px] w-full mx-auto">
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <span className="font-semibold">{getPlayerDisplayName(boardOrientation === 'white' ? 'top' : 'bottom')}</span>
+                          <span className="font-semibold">{getPlayerDisplayName('top')}</span>
                         </div>
                         <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
                           <Timer clockTime={getCurrentClockTime('top')} />
@@ -237,7 +242,7 @@ const GuessTheElo: React.FC = () => {
                       
                       <div className="flex justify-between items-center mt-2">
                         <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <span className="font-semibold">{getPlayerDisplayName(boardOrientation === 'white' ? 'bottom' : 'top')}</span>
+                          <span className="font-semibold">{getPlayerDisplayName('bottom')}</span>
                         </div>
                         <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
                           <Timer clockTime={getCurrentClockTime('bottom')} />
@@ -267,9 +272,7 @@ const GuessTheElo: React.FC = () => {
                         {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
                       </Button>
                       <Button
-                        onClick={() => {
-                          setBoardOrientation(prev => prev === 'white' ? 'black' : 'white'); 
-                        }}
+                        onClick={handleFlipBoard}
                         className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         Flip Board
@@ -299,8 +302,8 @@ const GuessTheElo: React.FC = () => {
                       alt="BM Member"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{getPlayerDisplayName('top')}</span>
-                    <span className="text-sm text-gray-400">({bmMemberColor === 'white' ? 'White' : 'Black'})</span>
+                    <span className="font-semibold text-lg">BM Member</span>
+                    <span className="text-sm text-gray-400">{bmMemberColor === 'white' ? 'White' : 'Black'}</span>
                   </div>
                   <div className="text-4xl font-bold text-neon-green">VS</div>
                   <div className="flex flex-col items-center">
@@ -309,8 +312,8 @@ const GuessTheElo: React.FC = () => {
                       alt="Random Player"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{getPlayerDisplayName('bottom')}</span>
-                    <span className="text-sm text-gray-400">({bmMemberColor === 'white' ? 'Black' : 'White'})</span>
+                    <span className="font-semibold text-lg">Random Player</span>
+                    <span className="text-sm text-gray-400">{bmMemberColor === 'white' ? 'Black' : 'White'}</span>
                   </div>
                 </div>
                 {isLoading ? (
