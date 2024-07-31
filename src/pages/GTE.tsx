@@ -12,7 +12,7 @@ import Sidebar from '@/components/sidebar/Sidebar';
 import { fetchRandomGame } from '@/services/gamefetcher';
 import noobAvatar from '@/assets/noob.jpg';
 import bmAvatar from '@/assets/bm.jpg';
-import Header from '@/components/sidebar/Header';
+
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -167,10 +167,7 @@ const GuessTheElo: React.FC = () => {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col relative w-full">
-      <Header
-      headerTitle="Guess The Elo"
-      showChesscom
-    />
+      
         <Background />
         <main className="flex-1 p-6 md:p-10 z-10 overflow-y-auto">
           <motion.div
