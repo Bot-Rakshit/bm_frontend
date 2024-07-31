@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 export function PGNClockStripper(pgn: string): { strippedPgn: string; clockTimes: string[] } {
   const lines = pgn.split('\n');
   const newStrippedPgn: string[] = [];

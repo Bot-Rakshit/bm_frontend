@@ -125,7 +125,7 @@ const GuessTheElo: React.FC = () => {
   };
 
   const toggleMoveTable = () => {
-    setShowMoveTable(!showMoveTable);
+    setShowMoveTable(prevState => !prevState);
   };
 
   const getCurrentClockTime = (playerColor: 'white' | 'black') => {
@@ -197,7 +197,7 @@ const GuessTheElo: React.FC = () => {
                         <FaArrowRight />
                       </Button>
                       <Button
-                        onClick={() => setShowMoveTable(!showMoveTable)}
+                        onClick={toggleMoveTable}
                         className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
