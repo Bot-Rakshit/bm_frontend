@@ -525,9 +525,9 @@ const GuessTheElo: React.FC = () => {
               <Slider
                 value={[guessedElo]}
                 onValueChange={(value) => setGuessedElo(value[0])}
-                min={500}
-                max={3000}
-                step={50}
+                min={100}
+                max={3100}
+                step={25}
                 disabled={hasGuessed}
               />
               <p className="text-center mt-2">Guessed Elo: {guessedElo}</p>
