@@ -12,6 +12,7 @@ import Sidebar from '@/components/sidebar/Sidebar';
 import { fetchRandomGame } from '@/services/gamefetcher';
 import noobAvatar from '@/assets/noob.jpg';
 import bmAvatar from '@/assets/bm.jpg';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -250,7 +251,7 @@ const GuessTheElo: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="flex justify-center items-center mt-4 space-x-4">
+                    <div className="flex justify-center items-center mt-6 space-x-4">
                       <Button 
                         onClick={handlePreviousMove} 
                         disabled={currentMove === 0}
@@ -269,7 +270,10 @@ const GuessTheElo: React.FC = () => {
                         onClick={toggleMoveTable}
                         className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
-                        {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
+                      {isMobile 
+                        ? (showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />)
+                        : (showMoveTable ? <FaExpandAlt /> : <FaCompressAlt />)
+                      }
                       </Button>
                       <Button
                         onClick={handleFlipBoard}
@@ -331,8 +335,28 @@ const GuessTheElo: React.FC = () => {
                     <div className="mt-4 p-4 bg-gray-700 rounded-lg shadow-lg">
                       <h3 className="text-xl font-bold text-neon-green mb-2">What is Guess the Elo?</h3>
                       <p className="text-white">
-                        Guess the Elo is a fun game where you try to guess the average Elo rating of two chess players based on their gameplay. One player is a BM Member, and the other is a random player. Can you accurately estimate their skill level?
+                        Guess the Elo is a fun game where you try to guess the average Elo rating of two chess players based on their gameplay.  Can you accurately estimate their skill level?
                       </p>
+                      </div>
+                      <div className="mt-8 p-6 bg-gray-700 rounded-lg shadow-xl">
+         <h3 className="text-xl font-bold text-neon-green mb-4">Unlock Your Full Potential!</h3>
+         <p className="text-white mb-4">
+           Upgrade to Chess.com Diamond Membership to access exclusive features and
+           Take your game to the next level today!
+         </p>
+        
+         <motion.a
+         href="https://go.chess.com/samay"
+         target="_blank"
+         rel="noopener noreferrer"
+         className="inline-block bg-gradient-to-r from-neon-green to-blue-500 text-black font-bold py-3 px-6 rounded-full text-lg hover:from-white hover:to-gray-200 transition-all duration-300 shadow-lg hover:shadow-neon-green/50"
+         whileHover={{ scale: 1.05 }}
+         whileTap={{ scale: 0.95 }}
+       >
+         Get Diamond Membership <FaExternalLinkAlt className="inline ml-2" />
+       </motion.a>
+         
+       
                     </div>
                   </div>
                 ) : (
@@ -356,9 +380,9 @@ const GuessTheElo: React.FC = () => {
                               <Slider
                                 value={[guessedElo]}
                                 onValueChange={(value) => setGuessedElo(value[0])}
-                                min={500}
-                                max={3000}
-                                step={50}
+                                min={100}
+                                max={3100}
+                                step={25}
                                 disabled={hasGuessed}
                               />
                               <p className="text-center mt-2">Guessed Elo: {guessedElo}</p>
@@ -422,6 +446,7 @@ const GuessTheElo: React.FC = () => {
                             <p className={`text-xl font-semibold ${Math.abs(guessedElo - actualElo) <= 100 ? 'text-green-500' : 'text-red-500'}`}>
                               {Math.abs(guessedElo - actualElo) <= 100 ? "Great guess!" : "Nice try, but not quite!"}
                             </p>
+                            
                             <p className="text-sm text-gray-400">
                               {Math.abs(guessedElo - actualElo) <= 100 ? "You're getting good at this!" : "Keep practicing to improve your guesses!"}
                             </p>
