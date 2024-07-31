@@ -21,13 +21,14 @@ export type NavItem = {
   comingSoon?: boolean;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const navItems: NavItem[] = [
   { name: 'Welcome', path: '/welcome', icon: Home },
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Chess News', path: '/chessnews', icon: Newspaper },
   { name: 'Chess Tutorials', path: '/chesstutorials', icon: BookOpen },
+  { name: 'Guess the Elo', path: '/gte', icon: Dices},
   { name: 'Learn', path: '/learn', icon: GraduationCap },
-  { name: 'Guess the Elo', path: '/', icon: Dices, comingSoon: true },
   { name: 'Share Your Games', path: '/', icon: Share2, comingSoon: true }
 ];
 
