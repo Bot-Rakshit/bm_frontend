@@ -3,14 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink, FaExpandAlt, FaCompressAlt, FaCalendarAlt, FaClock, FaChessBoard } from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink, FaExpandAlt, FaCompressAlt, FaCalendarAlt, FaClock} from 'react-icons/fa';
 import ChessViewer from '@/components/pgn-viewer/board';
 import MoveTable from '@/components/pgn-viewer/movetable';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Timer from '@/components/pgn-viewer/timer';
 import Background from '@/components/Background';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { fetchRandomGame } from '@/services/gamefetcher';
+import noobAvatar from '@/assets/noob.jpg';
+import bmAvatar from '@/assets/bm.jpg';
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -30,11 +31,11 @@ const GuessTheElo: React.FC = () => {
   const [gameResult, setGameResult] = useState<string>('');
   const [showGuessPopup, setShowGuessPopup] = useState(false);
   const [showMoveTable, setShowMoveTable] = useState(false);
-  const [currentClockIndex, setCurrentClockIndex] = useState(0);
   const [gameDate, setGameDate] = useState('');
   const [gameTime, setGameTime] = useState('');
-  const [openingName, setOpeningName] = useState('');
   const [timeControl, setTimeControl] = useState('');
+  const [currentClockIndex, setCurrentClockIndex] = useState(0);
+  const [gameTermination, setGameTermination] = useState<string>('');
 
   const handleNextGameWithReset = () => {
     handleNextGame();
@@ -42,13 +43,15 @@ const GuessTheElo: React.FC = () => {
 
   const handlePreviousMove = useCallback(() => {
     setCurrentMove(prevMove => Math.max(0, prevMove - 1));
-    setCurrentClockIndex(prevIndex => Math.max(0, prevIndex - 1));
-  }, []);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setCurrentClockIndex(_prevIndex => Math.max(0, Math.floor((currentMove - 1) / 2)));
+  }, [currentMove]);
 
   const handleNextMove = useCallback(() => {
     setCurrentMove(prevMove => Math.min(game.history().length - 1, prevMove + 1));
-    setCurrentClockIndex(prevIndex => Math.min(clockTimes.length - 1, prevIndex + 1));
-  }, [game, clockTimes]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setCurrentClockIndex(_prevIndex => Math.min(Math.floor(clockTimes.length / 2) - 1, Math.floor((currentMove + 1) / 2)));
+  }, [game, clockTimes, currentMove]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -69,6 +72,7 @@ const GuessTheElo: React.FC = () => {
       
       setGame(newGame);
       setCurrentMove(0);
+      setCurrentClockIndex(0); // Reset clock index
       setActualElo(Math.round((randomGame.whitePlayer.rating + randomGame.blackPlayer.rating) / 2));
       setCurrentPgn(randomGame.pgn);
       setHasGuessed(false);
@@ -79,19 +83,40 @@ const GuessTheElo: React.FC = () => {
       setBMMemberColor(randomGame.whitePlayer.isBMMember ? 'white' : 'black');
       setGameStarted(true);
       setClockTimes(randomGame.clockTimes);
-      setGameResult(randomGame.result);
       
       // Extract additional PGN information
       const header = newGame.header();
       setGameDate(header['Date'] || '');
       setGameTime(header['StartTime'] || '');
-      setOpeningName(header['Opening'] ? header['Opening'].split(' ').slice(0, 2).join(' ') : '');
-      setTimeControl(header['TimeControl'] || '');
+      setTimeControl(convertTimeControlToMinutes(header['TimeControl'] || ''));
+      setGameResult(header['Result'] || '');
+      
+      // Extract termination information
+      const terminationMatch = randomGame.pgn.match(/Termination\s+"(.+?)"/);
+      let terminationMessage = terminationMatch ? terminationMatch[1] : '';
+
+      // Replace usernames with "BM Member" or "Random Player"
+      const bmMemberUsername = randomGame.whitePlayer.isBMMember ? randomGame.whitePlayer.username : randomGame.blackPlayer.username;
+      const randomPlayerUsername = randomGame.whitePlayer.isBMMember ? randomGame.blackPlayer.username : randomGame.whitePlayer.username;
+
+      terminationMessage = terminationMessage.replace(bmMemberUsername, "BM Member");
+      terminationMessage = terminationMessage.replace(randomPlayerUsername, "Random Player");
+
+      setGameTermination(terminationMessage);
     } catch (error) {
       console.error('Error fetching new game:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const convertTimeControlToMinutes = (timeControl: string): string => {
+    const seconds = parseInt(timeControl);
+    if (!isNaN(seconds)) {
+      const minutes = Math.floor(seconds / 60);
+      return `${minutes} min`;
+    }
+    return timeControl; // Return original if not in seconds format
   };
 
   useEffect(() => {
@@ -101,7 +126,7 @@ const GuessTheElo: React.FC = () => {
   const handleMoveSelect = (moveIndex: number) => {
     console.log('Move selected:', moveIndex);
     setCurrentMove(moveIndex);
-    setCurrentClockIndex(moveIndex);
+    setCurrentClockIndex(Math.floor(moveIndex / 2));
   };
 
   const handleGuess = () => {
@@ -128,9 +153,13 @@ const GuessTheElo: React.FC = () => {
     setShowMoveTable(prevState => !prevState);
   };
 
-  const getCurrentClockTime = (playerColor: 'white' | 'black') => {
-    const index = playerColor === 'white' ? currentClockIndex : currentClockIndex + 1;
+  const getCurrentClockTime = (color: 'white' | 'black') => {
+    const index = currentClockIndex * 2 + (color === 'white' ? 0 : 1);
     return clockTimes[index] || '00:00';
+  };
+
+  const getPlayerDisplayName = (_username: string, isBMMember: boolean) => {
+    return isBMMember ? "BM Member" : "Random Player";
   };
 
   return (
@@ -152,7 +181,7 @@ const GuessTheElo: React.FC = () => {
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                      <span className="font-semibold">{hasGuessed ? blackPlayer : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
+                      <span className="font-semibold">{hasGuessed ? getPlayerDisplayName(blackPlayer, bmMemberColor === 'black') : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
@@ -174,7 +203,7 @@ const GuessTheElo: React.FC = () => {
                     <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                          <span className="font-semibold">{hasGuessed ? whitePlayer : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
+                          <span className="font-semibold">{hasGuessed ? getPlayerDisplayName(whitePlayer, bmMemberColor === 'white') : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
@@ -222,20 +251,22 @@ const GuessTheElo: React.FC = () => {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex flex-col items-center">
-                    <Avatar className="w-24 h-24 mb-2">
-                      <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${whitePlayer}`} />
-                      <AvatarFallback>{whitePlayer[0]}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-semibold text-lg">{hasGuessed ? whitePlayer : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
+                    <img
+                      src={bmMemberColor === 'white' ? bmAvatar : noobAvatar}
+                      alt={bmMemberColor === 'white' ? "BM Member" : "Random Player"}
+                      className="w-24 h-24 rounded-full mb-2"
+                    />
+                    <span className="font-semibold text-lg">{hasGuessed ? getPlayerDisplayName(whitePlayer, bmMemberColor === 'white') : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
                     <span className="text-sm text-gray-400">(White)</span>
                   </div>
                   <div className="text-4xl font-bold text-neon-green">VS</div>
                   <div className="flex flex-col items-center">
-                    <Avatar className="w-24 h-24 mb-2">
-                      <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${blackPlayer}`} />
-                      <AvatarFallback>{blackPlayer[0]}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-semibold text-lg">{hasGuessed ? blackPlayer : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
+                    <img
+                      src={bmMemberColor === 'black' ? bmAvatar : noobAvatar}
+                      alt={bmMemberColor === 'black' ? "BM Member" : "Random Player"}
+                      className="w-24 h-24 rounded-full mb-2"
+                    />
+                    <span className="font-semibold text-lg">{hasGuessed ? getPlayerDisplayName(blackPlayer, bmMemberColor === 'black') : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
                     <span className="text-sm text-gray-400">(Black)</span>
                   </div>
                 </div>
@@ -298,19 +329,15 @@ const GuessTheElo: React.FC = () => {
                           <h3 className="text-xl font-bold text-neon-green mb-2">Game Info</h3>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="flex items-center">
-                              <FaCalendarAlt className="text-neon-green mr-2" />
+                              <FaCalendarAlt className="text-neon-green mr-3" />
                               <span className="text-white">{gameDate}</span>
                             </div>
                             <div className="flex items-center">
-                              <FaClock className="text-neon-green mr-2" />
+                              <FaClock className="text-neon-green mr-3" />
                               <span className="text-white">{gameTime}</span>
                             </div>
                             <div className="flex items-center">
-                              <FaChessBoard className="text-neon-green mr-2" />
-                              <span className="text-white">{openingName}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <FaClock className="text-neon-green mr-2" />
+                              <FaClock className="text-neon-green mr-3" />
                               <span className="text-white">{timeControl}</span>
                             </div>
                           </div>
@@ -321,6 +348,11 @@ const GuessTheElo: React.FC = () => {
                         <p className="text-center text-neon-green mt-2">
                           Game Result: {gameResult}
                         </p>
+                        {gameTermination && (
+                          <p className="text-center text-gray-300 mt-1">
+                            Termination: {gameTermination}
+                          </p>
+                        )}
                       </motion.div>
                     ) : (
                       <motion.div

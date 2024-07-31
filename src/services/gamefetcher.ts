@@ -10,6 +10,7 @@ interface Player {
 
 interface Game {
   pgn: string;
+  strippedPgn: string;
   elo: number;
   whitePlayer: Player;
   blackPlayer: Player;
@@ -36,10 +37,37 @@ interface ChessComGame {
 
 const API_BASE_URL = 'https://api.bmsamay.com/api/chess';
 
+const frequentUsers = [
+  'samayraina',
+  'sagar_raina',
+  'beaststats',
+  'chessbrahs',
+  'GMHikaru',
+  'DanielNaroditsky',
+  'GothamChess',
+  'chessbrah',
+  'RaunakSadhwani2005',
+  'nihalsarin2004',
+  'Firouzja2003',
+  'MagnusCarlsen',
+  'DavidHowell',
+  'LevonAronian',
+];
+
 export async function fetchRandomGame(): Promise<Game> {
   try {
-    const playerResponse = await axios.get(`${API_BASE_URL}/random-player`);
-    const { chessUsername, ratings } = playerResponse.data;
+    let chessUsername: string;
+    let ratings: { rapid: number };
+
+    // 10% chance to use a frequent user
+    if (Math.random() < 0.1) {
+      chessUsername = frequentUsers[Math.floor(Math.random() * frequentUsers.length)];
+      // For frequent users, we'll assume they have enough rapid games
+      ratings = { rapid: 10 };
+    } else {
+      const playerResponse = await axios.get(`${API_BASE_URL}/random-player`);
+      ({ chessUsername, ratings } = playerResponse.data);
+    }
 
     if (ratings.rapid < 10) {
       throw new Error('Player does not have enough rapid games');
@@ -53,13 +81,19 @@ export async function fetchRandomGame(): Promise<Game> {
     );
 
     if (validArchives.length === 0) {
-      throw new Error('No games found from 2022, 2023, or 2024');
+      throw new Error('No games found');
     }
 
-    let randomGame: ChessComGame;
-    let chess: Chess;
+    let randomGame: ChessComGame | null = null;
+    let chess: Chess | null = null;
+    let attempts = 0;
+    const maxAttempts = 10;
 
-    do {
+    while (!randomGame || !chess || chess.history().length < 8) {
+      if (attempts >= maxAttempts) {
+        throw new Error('Failed to find a suitable game after multiple attempts');
+      }
+
       const randomArchive = validArchives[Math.floor(Math.random() * validArchives.length)];
       const gamesResponse = await axios.get(randomArchive);
       const games = gamesResponse.data.games;
@@ -71,22 +105,42 @@ export async function fetchRandomGame(): Promise<Game> {
       );
 
       if (rapidGames.length === 0) {
-        throw new Error('No completed rapid games found in the selected archive');
+        attempts++;
+        continue;
       }
 
       randomGame = rapidGames[Math.floor(Math.random() * rapidGames.length)];
       chess = new Chess();
-      chess.loadPgn(randomGame.pgn);
-    } while (chess.history().length < 8); // Ensure at least 4 moves (8 half-moves)
+      
+      try {
+        if (randomGame && randomGame.pgn) {
+          chess.loadPgn(randomGame.pgn);
+          if (chess.history().length < 8) {
+            throw new Error('Game too short');
+          }
+        } else {
+          throw new Error('Invalid game data');
+        }
+      } catch (error) {
+        randomGame = null;
+        chess = null;
+        attempts++;
+        continue;
+      }
+    }
+
+    if (!randomGame || !chess) {
+      throw new Error('Failed to find a suitable game');
+    }
 
     const isBMMemberWhite = randomGame.white.username.toLowerCase() === chessUsername.toLowerCase();
     const playerRating = isBMMemberWhite ? randomGame.white.rating : randomGame.black.rating;
 
-    // Use PGNClockStripper to extract clock times
     const { strippedPgn, clockTimes } = PGNClockStripper(randomGame.pgn);
 
     return {
-      pgn: strippedPgn,
+      pgn: randomGame.pgn,
+      strippedPgn: strippedPgn,
       elo: playerRating,
       whitePlayer: {
         username: randomGame.white.username,
