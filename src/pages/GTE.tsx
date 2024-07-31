@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { fetchRandomGame } from '@/services/gamefetcher';
 import noobAvatar from '@/assets/noob.jpg';
 import bmAvatar from '@/assets/bm.jpg';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import EvaluationBar from '@/components/EvaluationBar';
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -39,6 +40,9 @@ const GuessTheElo: React.FC = () => {
   const [gameTermination, setGameTermination] = useState<string>('');
   const [gameStage, setGameStage] = useState<'initial' | 'guessing' | 'revealed'>('initial');
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
+  const [currentFen, setCurrentFen] = useState('');
+  const [boardHeight, setBoardHeight] = useState(640);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   const handleNextGameWithReset = () => {
     handleNextGame();
@@ -149,6 +153,16 @@ const GuessTheElo: React.FC = () => {
   const handleMoveSelect = (moveIndex: number) => {
     setCurrentMove(moveIndex);
     setCurrentClockIndex(Math.floor(moveIndex / 2));
+    const newGame = new Chess();
+    newGame.loadPgn(currentPgn);
+    const moves = newGame.history({ verbose: true });
+    if (moveIndex > 0) {
+      newGame.loadPgn(currentPgn);
+      for (let i = 0; i < moveIndex; i++) {
+        newGame.move(moves[i]);
+      }
+    }
+    setCurrentFen(newGame.fen());
   };
 
   const handleGuess = () => {
@@ -200,6 +214,14 @@ const GuessTheElo: React.FC = () => {
     setBoardOrientation(prev => prev === 'white' ? 'black' : 'white');
   };
 
+  const handleFenChange = useCallback((fen: string) => {
+    setCurrentFen(fen);
+  }, []);
+
+  const handleBoardHeightChange = useCallback((height: number) => {
+    setBoardHeight(height);
+  }, []);
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -228,15 +250,22 @@ const GuessTheElo: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="aspect-square w-full">
+                      <div ref={boardRef} className="aspect-square w-full flex">
+                        <EvaluationBar 
+                          fen={currentFen} 
+                          height={boardHeight} 
+                          isGameFetched={gameStarted}
+                        />
                         <motion.div
-                          className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20 h-full"
+                          className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20 h-full flex-grow"
                         >
                           <ChessViewer 
                             pgn={currentPgn} 
                             currentMove={currentMove}
                             onMoveChange={handleMoveSelect}
                             boardOrientation={boardOrientation}
+                            onFenChange={handleFenChange}
+                            onBoardHeightChange={handleBoardHeightChange}
                           />
                         </motion.div>
                       </div>
@@ -306,7 +335,9 @@ const GuessTheElo: React.FC = () => {
                       alt="BM Member"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">BM Member</span>
+                    <span className="font-semibold text-lg">
+                      {gameStage === 'revealed' ? (bmMemberColor === 'white' ? whitePlayer : blackPlayer) : 'BM Member'}
+                    </span>
                     <span className="text-sm text-gray-400">{bmMemberColor === 'white' ? 'White' : 'Black'}</span>
                   </div>
                   <div className="text-4xl font-bold text-neon-green">VS</div>
@@ -316,7 +347,9 @@ const GuessTheElo: React.FC = () => {
                       alt="Random Player"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">Random Player</span>
+                    <span className="font-semibold text-lg">
+                      {gameStage === 'revealed' ? (bmMemberColor === 'white' ? blackPlayer : whitePlayer) : 'Random Player'}
+                    </span>
                     <span className="text-sm text-gray-400">{bmMemberColor === 'white' ? 'Black' : 'White'}</span>
                   </div>
                 </div>

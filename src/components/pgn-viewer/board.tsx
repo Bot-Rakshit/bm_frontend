@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import bb from '../../assets/pieces/bb.png';
@@ -25,10 +25,21 @@ interface ChessViewerProps {
   currentMove: number;
   onMoveChange: (moveIndex: number) => void;
   boardOrientation: 'white' | 'black';
+  onFenChange: (fen: string) => void;
+  onBoardHeightChange: (height: number) => void;
 }
 
-const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove, onMoveChange, boardOrientation }) => {
+const ChessViewer: React.FC<ChessViewerProps> = ({
+  pgn,
+  currentMove,
+  onMoveChange,
+  boardOrientation,
+  onFenChange,
+  onBoardHeightChange,
+}) => {
   const [game, setGame] = useState(new Chess());
+  const boardRef = useRef<HTMLDivElement>(null);
+  const prevMoveRef = useRef<number>(-1);
 
   const customPieces = useMemo(() => {
     const pieceComponents: { [piece: string]: React.FC<{ squareWidth: number }> } = {};
@@ -53,33 +64,45 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove, onMoveChang
     return pieceComponents;
   }, []);
 
-  const playMoveSound = (move:string) => {
-    if(move.includes("+") || move.includes("#")){
-      let audio = new Audio(checkSound);
-      audio.muted = false;
-      audio.play();
+  const playMoveSound = useCallback((move: string) => {
+    let audio: HTMLAudioElement;
+    if (move.includes("+") || move.includes("#")) {
+      audio = new Audio(checkSound);
+    } else if (move.includes("=")) {
+      audio = new Audio(promoteSound);
+    } else if (move.includes("x")) {
+      audio = new Audio(captureSound);
+    } else if (move === 'O-O' || move === 'O-O-O') {
+      audio = new Audio(castleSound);
+    } else {
+      audio = new Audio(moveSound);
     }
-    else if(move.includes("=")){
-      let audio = new Audio(promoteSound);
-      audio.muted = false;
-      audio.play();
+    audio.play().catch(error => console.error("Error playing sound:", error));
+  }, []);
+
+  const updateBoardInfo = useCallback(() => {
+    onFenChange(game.fen());
+    if (boardRef.current) {
+      onBoardHeightChange(boardRef.current.clientHeight);
     }
-    else if(move.includes("x")){
-      let audio = new Audio(captureSound);
-      audio.muted = false;
-      audio.play();
+  }, [game, onFenChange, onBoardHeightChange]);
+
+  useEffect(() => {
+    if (boardRef.current) {
+      const resizeObserver = new ResizeObserver(() => {
+        if (boardRef.current) {
+          onBoardHeightChange(boardRef.current.clientHeight);
+        }
+      });
+
+      resizeObserver.observe(boardRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
     }
-    else if(move === 'O-O' || move ==='O-O-O'){
-      let audio = new Audio(castleSound);
-      audio.muted = false;
-      audio.play();
-    }
-    else{
-      let audio = new Audio(moveSound);
-      audio.muted = false;
-      audio.play();
-    }
-  }
+  }, [onBoardHeightChange]);
+
   useEffect(() => {
     const newGame = new Chess();
     if (pgn) {
@@ -90,16 +113,20 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove, onMoveChang
         for (let i = 0; i <= currentMove; i++) {
           tempGame.move(moves[i]);
         }
-        playMoveSound(moves[currentMove]);
+        if (currentMove !== prevMoveRef.current) {
+          playMoveSound(moves[currentMove]);
+          prevMoveRef.current = currentMove;
+        }
         setGame(tempGame);
       } else {
         setGame(newGame);
       }
+      updateBoardInfo();
     }
-  }, [pgn, currentMove]);
+  }, [pgn, currentMove, updateBoardInfo, playMoveSound]);
 
   return (
-    <div className="flex justify-center items-center">
+    <div ref={boardRef} className="flex justify-center items-center">
       <div style={{ width: '100%' }}>
         <Chessboard
           position={game.fen()}
@@ -107,8 +134,8 @@ const ChessViewer: React.FC<ChessViewerProps> = ({ pgn, currentMove, onMoveChang
           areArrowsAllowed={false}
           showBoardNotation={true}
           isDraggablePiece={() => false}
-          customDarkSquareStyle={{ backgroundColor: '#769656' ,'width':'100%'}}
-          customLightSquareStyle={{ backgroundColor: '#eeeed2','width':'100%' }}
+          customDarkSquareStyle={{ backgroundColor: '#769656', 'width': '100%' }}
+          customLightSquareStyle={{ backgroundColor: '#eeeed2', 'width': '100%' }}
           boardOrientation={boardOrientation}
           onSquareClick={(square) => {
             const moves = game.history({ verbose: true });
