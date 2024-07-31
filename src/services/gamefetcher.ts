@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Chess } from 'chess.js';
+import { PGNClockStripper } from './getclock';
 
 interface Player {
   username: string;
@@ -13,8 +14,8 @@ interface Game {
   whitePlayer: Player;
   blackPlayer: Player;
   gameLink: string;
-  clockTimes: string[];
   result: string;
+  clockTimes: string[];
 }
 
 interface ChessComGame {
@@ -34,31 +35,6 @@ interface ChessComGame {
 }
 
 const API_BASE_URL = 'https://api.bmsamay.com/api/chess';
-
-function formatClockTime(time: string): string {
-  const [hours, minutes, seconds] = time.split(':').map(Number);
-  const totalSeconds = (hours || 0) * 3600 + minutes * 60 + Math.floor(seconds);
-  const formattedMinutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-  const formattedSeconds = (totalSeconds % 60).toString().padStart(2, '0');
-  return `${formattedMinutes}:${formattedSeconds}`;
-}
-
-function extractClockTimes(pgn: string): string[] {
-  const clockTimes: string[] = [];
-  const moves = pgn.split(/\d+\./).slice(1); // Split by move numbers and remove the first empty element
-  moves.forEach(move => {
-    const clockMatches = move.match(/\[%clk (\d+:\d+:\d+(?:\.\d+)?)\]/g);
-    if (clockMatches) {
-      clockMatches.forEach(match => {
-        const timeMatch = match.match(/\d+:\d+:\d+(?:\.\d+)?/);
-        if (timeMatch && timeMatch[0]) {
-          clockTimes.push(formatClockTime(timeMatch[0]));
-        }
-      });
-    }
-  });
-  return clockTimes;
-}
 
 export async function fetchRandomGame(): Promise<Game> {
   try {
@@ -103,13 +79,14 @@ export async function fetchRandomGame(): Promise<Game> {
       chess.loadPgn(randomGame.pgn);
     } while (chess.history().length < 8); // Ensure at least 4 moves (8 half-moves)
 
-    const clockTimes = extractClockTimes(randomGame.pgn);
-
     const isBMMemberWhite = randomGame.white.username.toLowerCase() === chessUsername.toLowerCase();
     const playerRating = isBMMemberWhite ? randomGame.white.rating : randomGame.black.rating;
 
+    // Use PGNClockStripper to extract clock times
+    const { strippedPgn, clockTimes } = PGNClockStripper(randomGame.pgn);
+
     return {
-      pgn: randomGame.pgn,
+      pgn: strippedPgn,
       elo: playerRating,
       whitePlayer: {
         username: randomGame.white.username,
@@ -122,8 +99,8 @@ export async function fetchRandomGame(): Promise<Game> {
         isBMMember: !isBMMemberWhite
       },
       gameLink: randomGame.url,
-      clockTimes: clockTimes,
-      result: randomGame.result
+      result: randomGame.result,
+      clockTimes: clockTimes
     };
   } catch (error) {
     console.error('Error fetching random game:', error);

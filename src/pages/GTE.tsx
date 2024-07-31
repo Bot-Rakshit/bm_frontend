@@ -3,11 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink} from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink, FaExpandAlt, FaCompressAlt, FaCalendarAlt, FaClock, FaChessBoard } from 'react-icons/fa';
 import ChessViewer from '@/components/pgn-viewer/board';
 import MoveTable from '@/components/pgn-viewer/movetable';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Timer from '@/components/pgn-viewer/timer'
+import Timer from '@/components/pgn-viewer/timer';
 import Background from '@/components/Background';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { fetchRandomGame } from '@/services/gamefetcher';
@@ -29,6 +29,12 @@ const GuessTheElo: React.FC = () => {
   const [clockTimes, setClockTimes] = useState<string[]>([]);
   const [gameResult, setGameResult] = useState<string>('');
   const [showGuessPopup, setShowGuessPopup] = useState(false);
+  const [showMoveTable, setShowMoveTable] = useState(false);
+  const [currentClockIndex, setCurrentClockIndex] = useState(0);
+  const [gameDate, setGameDate] = useState('');
+  const [gameTime, setGameTime] = useState('');
+  const [openingName, setOpeningName] = useState('');
+  const [timeControl, setTimeControl] = useState('');
 
   const handleNextGameWithReset = () => {
     handleNextGame();
@@ -36,11 +42,13 @@ const GuessTheElo: React.FC = () => {
 
   const handlePreviousMove = useCallback(() => {
     setCurrentMove(prevMove => Math.max(0, prevMove - 1));
+    setCurrentClockIndex(prevIndex => Math.max(0, prevIndex - 1));
   }, []);
 
   const handleNextMove = useCallback(() => {
     setCurrentMove(prevMove => Math.min(game.history().length - 1, prevMove + 1));
-  }, [game]);
+    setCurrentClockIndex(prevIndex => Math.min(clockTimes.length - 1, prevIndex + 1));
+  }, [game, clockTimes]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -58,9 +66,10 @@ const GuessTheElo: React.FC = () => {
       console.log('Fetched PGN:', randomGame.pgn);
       const newGame = new Chess();
       newGame.loadPgn(randomGame.pgn);
+      
       setGame(newGame);
       setCurrentMove(0);
-      setActualElo(randomGame.elo);
+      setActualElo(Math.round((randomGame.whitePlayer.rating + randomGame.blackPlayer.rating) / 2));
       setCurrentPgn(randomGame.pgn);
       setHasGuessed(false);
       setGuessedElo(1500);
@@ -71,9 +80,15 @@ const GuessTheElo: React.FC = () => {
       setGameStarted(true);
       setClockTimes(randomGame.clockTimes);
       setGameResult(randomGame.result);
+      
+      // Extract additional PGN information
+      const header = newGame.header();
+      setGameDate(header['Date'] || '');
+      setGameTime(header['StartTime'] || '');
+      setOpeningName(header['Opening'] ? header['Opening'].split(' ').slice(0, 2).join(' ') : '');
+      setTimeControl(header['TimeControl'] || '');
     } catch (error) {
       console.error('Error fetching new game:', error);
-      // Handle the error appropriately, maybe show an error message to the user
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +101,7 @@ const GuessTheElo: React.FC = () => {
   const handleMoveSelect = (moveIndex: number) => {
     console.log('Move selected:', moveIndex);
     setCurrentMove(moveIndex);
+    setCurrentClockIndex(moveIndex);
   };
 
   const handleGuess = () => {
@@ -108,6 +124,15 @@ const GuessTheElo: React.FC = () => {
     setShowGuessPopup(false);
   };
 
+  const toggleMoveTable = () => {
+    setShowMoveTable(!showMoveTable);
+  };
+
+  const getCurrentClockTime = (playerColor: 'white' | 'black') => {
+    const index = playerColor === 'white' ? currentClockIndex : currentClockIndex + 1;
+    return clockTimes[index] || '00:00';
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -122,27 +147,23 @@ const GuessTheElo: React.FC = () => {
           >
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-6">
               <motion.div 
-                className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
+                className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
               >
-                <div className="flex justify-between items-center mb-4 ml-4">
+                <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                       <span className="font-semibold">{hasGuessed ? blackPlayer : (bmMemberColor === 'black' ? 'BM Member' : 'Random Player')}</span>
                     </div>
-                    <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                      <Timer clockTime={clockTimes[currentMove * 2 + 1] || '00:00'} />
-                    </div>
+                  </div>
+                  <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                    <Timer clockTime={getCurrentClockTime('black')} />
                   </div>
                 </div>
                 
                 <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
-                  <div className="w-full xl:w-2/3">
+                  <div className="w-full">
                     <motion.div
-                      className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-4 rounded-2xl shadow-2xl border border-neon-green/20"
-                      whileHover={{ scale: 1.01 }}
-                      transition={{ duration: 0.2 }}
+                      className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20"
                     >
                       <ChessViewer 
                         pgn={currentPgn} 
@@ -150,34 +171,40 @@ const GuessTheElo: React.FC = () => {
                         onMoveChange={handleMoveSelect}
                       />
                     </motion.div>
-                    <div className="flex justify-between items-center mt-4 ml-4">
+                    <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center space-x-4">
-                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
                           <span className="font-semibold">{hasGuessed ? whitePlayer : (bmMemberColor === 'white' ? 'BM Member' : 'Random Player')}</span>
                         </div>
-                        <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-800 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                          <Timer clockTime={clockTimes[currentMove * 2] || '00:00'} />
-                        </div>
+                      </div>
+                      <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
+                        <Timer clockTime={getCurrentClockTime('white')} />
                       </div>
                     </div>
                     <div className="flex justify-center items-center mt-4 space-x-4">
                       <Button 
                         onClick={handlePreviousMove} 
                         disabled={currentMove === 0}
-                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         <FaArrowLeft />
                       </Button>
                       <Button 
                         onClick={handleNextMove} 
                         disabled={currentMove === game.history().length - 1}
-                        className="bg-transparent hover:bg-gray-700 text-neon-green font-bold py-2 px-4 rounded"
+                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
                       >
                         <FaArrowRight />
                       </Button>
+                      <Button
+                        onClick={() => setShowMoveTable(!showMoveTable)}
+                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
+                      >
+                        {showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />}
+                      </Button>
                     </div>
                   </div>
-                  {!isMobile && (
+                  {showMoveTable && (
                     <div className="w-full xl:w-1/3 mt-4 xl:mt-0">
                       <MoveTable 
                         moves={gameStarted ? game.history({ verbose: true }) : []} 
@@ -190,8 +217,7 @@ const GuessTheElo: React.FC = () => {
               </motion.div>
 
               <motion.div 
-                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20 xl:col-span-1"
-                whileHover={{ scale: 1.01 }}
+                className="bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20 xl:col-span-1"
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex items-center justify-between mb-4">
@@ -225,9 +251,12 @@ const GuessTheElo: React.FC = () => {
                     >
                       Start Guessing
                     </Button>
-                    <p className="text-center text-gray-300 mt-4">
-                      Test your skills by guessing the average Elo rating of rapid and blitz games played by our community members! You'll see a game between a BM Member and a random player. Can you guess their average rating?
-                    </p>
+                    <div className="mt-4 p-4 bg-gray-700 rounded-lg shadow-lg">
+                      <h3 className="text-xl font-bold text-neon-green mb-2">What is Guess the Elo?</h3>
+                      <p className="text-white">
+                        Guess the Elo is a fun game where you try to guess the average Elo rating of two chess players based on their gameplay. One player is a BM Member, and the other is a random player. Can you accurately estimate their skill level?
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <AnimatePresence>
@@ -265,8 +294,29 @@ const GuessTheElo: React.FC = () => {
                             </Button>
                           </>
                         )}
+                        <div className="mt-4 p-4 bg-gray-700 rounded-lg shadow-lg">
+                          <h3 className="text-xl font-bold text-neon-green mb-2">Game Info</h3>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="flex items-center">
+                              <FaCalendarAlt className="text-neon-green mr-2" />
+                              <span className="text-white">{gameDate}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <FaClock className="text-neon-green mr-2" />
+                              <span className="text-white">{gameTime}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <FaChessBoard className="text-neon-green mr-2" />
+                              <span className="text-white">{openingName}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <FaClock className="text-neon-green mr-2" />
+                              <span className="text-white">{timeControl}</span>
+                            </div>
+                          </div>
+                        </div>
                         <p className="text-center text-gray-300 mt-4">
-                          Guess the average Elo rating of the two players in this rapid or blitz game. One player is a BM Member, and the other is a random player.
+                          Guess the average Elo rating of the two players in this game. One player is a BM Member, and the other is a random player.
                         </p>
                         <p className="text-center text-neon-green mt-2">
                           Game Result: {gameResult}
@@ -280,22 +330,22 @@ const GuessTheElo: React.FC = () => {
                         className="space-y-4"
                       >
                         <div className="flex flex-col items-center space-y-4">
-                          <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
+                          <div className="p-4 bg-gray-700 rounded-lg shadow-lg w-full flex items-center justify-center">
                             <p className="text-2xl font-semibold text-neon-green">
-                              Actual Elo: {actualElo}
+                              Average Elo: {actualElo}
                             </p>
                           </div>
-                          <div className="p-4 bg-gray-800 rounded-lg shadow-lg w-80 h-20 flex items-center justify-center">
+                          <div className="p-4 bg-gray-700 rounded-lg shadow-lg w-full flex items-center justify-center">
                             <p className="text-2xl font-semibold">
                               Difference: <span className="text-yellow-400">{Math.abs(guessedElo - actualElo)}</span>
                             </p>
                           </div>
                           <div className="flex flex-col items-center space-y-2">
-                            <p className={`text-xl font-semibold ${Math.abs(guessedElo - actualElo) === 0 ? 'text-green-500' : 'text-red-500'}`}>
-                              {Math.abs(guessedElo - actualElo) === 0 ? "Yeah, you made it!" : "Nice try!!! You're pretty close!"}
+                            <p className={`text-xl font-semibold ${Math.abs(guessedElo - actualElo) <= 100 ? 'text-green-500' : 'text-red-500'}`}>
+                              {Math.abs(guessedElo - actualElo) <= 100 ? "Great guess!" : "Nice try, but not quite!"}
                             </p>
                             <p className="text-sm text-gray-400">
-                              {Math.abs(guessedElo - actualElo) === 0 ? "Well done on your accurate guess!" : "Keep practicing to improve your guesses!"}
+                              {Math.abs(guessedElo - actualElo) <= 100 ? "You're getting good at this!" : "Keep practicing to improve your guesses!"}
                             </p>
                           </div>
                         </div>
@@ -327,7 +377,7 @@ const GuessTheElo: React.FC = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:col-span-3 mt-8">
               <motion.div 
-                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
+                className="bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -341,7 +391,7 @@ const GuessTheElo: React.FC = () => {
               </motion.div>
 
               <motion.div 
-                className="bg-gray-800/50 backdrop-filter backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-neon-green/20"
+                className="bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
