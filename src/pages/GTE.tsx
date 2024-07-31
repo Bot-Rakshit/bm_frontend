@@ -42,16 +42,20 @@ const GuessTheElo: React.FC = () => {
   };
 
   const handlePreviousMove = useCallback(() => {
-    setCurrentMove(prevMove => Math.max(0, prevMove - 1));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setCurrentClockIndex(_prevIndex => Math.max(0, Math.floor((currentMove - 1) / 2)));
-  }, [currentMove]);
+    setCurrentMove(prevMove => {
+      const newMove = Math.max(0, prevMove - 1);
+      setCurrentClockIndex(Math.max(0, Math.floor((newMove - 1) / 2)));
+      return newMove;
+    });
+  }, []);
 
   const handleNextMove = useCallback(() => {
-    setCurrentMove(prevMove => Math.min(game.history().length - 1, prevMove + 1));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setCurrentClockIndex(_prevIndex => Math.min(Math.floor(clockTimes.length / 2) - 1, Math.floor((currentMove + 1) / 2)));
-  }, [game, clockTimes, currentMove]);
+    setCurrentMove(prevMove => {
+      const newMove = Math.min(game.history().length - 1, prevMove + 1);
+      setCurrentClockIndex(Math.min(Math.floor(clockTimes.length / 2) - 1, Math.floor((newMove + 1) / 2)));
+      return newMove;
+    });
+  }, [game, clockTimes]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -61,6 +65,24 @@ const GuessTheElo: React.FC = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        handlePreviousMove();
+      } else if (event.key === 'ArrowRight') {
+        handleNextMove();
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handlePreviousMove, handleNextMove]);
+  
+  
+
+
 
   const fetchNewGame = async () => {
     setIsLoading(true);
