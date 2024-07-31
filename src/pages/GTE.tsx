@@ -175,21 +175,22 @@ const GuessTheElo: React.FC = () => {
     setShowMoveTable(prevState => !prevState);
   };
 
-  const getCurrentClockTime = (color: 'white' | 'black') => {
-    const adjustedColor = boardOrientation === 'white' ? color : (color === 'white' ? 'black' : 'white');
-    const index = currentClockIndex * 2 + (adjustedColor === 'white' ? 0 : 1);
+  const getCurrentClockTime = (position: 'top' | 'bottom') => {
+    const isTopWhite = (boardOrientation === 'white');
+    const isPositionWhite = (position === 'top') === isTopWhite;
+    const index = currentClockIndex * 2 + (isPositionWhite ? 0 : 1);
     return clockTimes[index] || '00:00';
   };
 
-  const getPlayerDisplayName = (color: 'white' | 'black') => {
-    const adjustedColor = boardOrientation === 'white' ? color : (color === 'white' ? 'black' : 'white');
-    const isBMMember = bmMemberColor === adjustedColor;
+  const getPlayerDisplayName = (position: 'top' | 'bottom') => {
     if (gameStage === 'initial') {
-      return isBMMember ? 'BM Member' : 'Random Noob';
+      return position === 'top' ? 'BM Member' : 'Random Noob';
     } else if (gameStage === 'guessing') {
-      return isBMMember ? 'BM Member' : 'Random Player';
+      return position === 'top' ? 'BM Member' : 'Random Player';
     } else {
-      return isBMMember ? (adjustedColor === 'white' ? whitePlayer : blackPlayer) : (adjustedColor === 'white' ? whitePlayer : blackPlayer);
+      return position === 'top' ? 
+        (bmMemberColor === 'white' ? whitePlayer : blackPlayer) : 
+        (bmMemberColor === 'white' ? blackPlayer : whitePlayer);
     }
   };
 
@@ -209,35 +210,41 @@ const GuessTheElo: React.FC = () => {
               <motion.div 
                 className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
               >
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                    <span className="font-semibold">{getPlayerDisplayName('black')}</span>
-                  </div>
-                  <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                    <Timer clockTime={getCurrentClockTime('black')} />
-                  </div>
-                </div>
-                
                 <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
                   <div className={`w-full ${showMoveTable ? 'xl:w-2/3' : 'xl:w-full'}`}>
-                    <motion.div
-                      className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20"
-                    >
-                      <ChessViewer 
-                        pgn={currentPgn} 
-                        currentMove={currentMove}
-                        onMoveChange={handleMoveSelect}
-                        boardOrientation={boardOrientation}
-                      />
-                    </motion.div>
-                    <div className="flex justify-between items-center mt-4">
-                      <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                        <span className="font-semibold">{getPlayerDisplayName('white')}</span>
+                    <div className="max-w-[480px] mx-auto">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
+                          <span className="font-semibold">{getPlayerDisplayName(boardOrientation === 'white' ? 'top' : 'bottom')}</span>
+                        </div>
+                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
+                          <Timer clockTime={getCurrentClockTime('top')} />
+                        </div>
                       </div>
-                      <div className="flex items-center justify-center h-8 sm:h-12 p-2 sm:p-3 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-lg">
-                        <Timer clockTime={getCurrentClockTime('white')} />
+                      
+                      <div className="aspect-square w-full">
+                        <motion.div
+                          className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20 h-full"
+                        >
+                          <ChessViewer 
+                            pgn={currentPgn} 
+                            currentMove={currentMove}
+                            onMoveChange={handleMoveSelect}
+                            boardOrientation={boardOrientation}
+                          />
+                        </motion.div>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mt-2">
+                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
+                          <span className="font-semibold">{getPlayerDisplayName(boardOrientation === 'white' ? 'bottom' : 'top')}</span>
+                        </div>
+                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
+                          <Timer clockTime={getCurrentClockTime('bottom')} />
+                        </div>
                       </div>
                     </div>
+                    
                     <div className="flex justify-center items-center mt-4 space-x-4">
                       <Button 
                         onClick={handlePreviousMove} 
@@ -288,22 +295,22 @@ const GuessTheElo: React.FC = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex flex-col items-center">
                     <img
-                      src={bmMemberColor === 'white' ? bmAvatar : noobAvatar}
-                      alt={bmMemberColor === 'white' ? "BM Member" : "Random Player"}
+                      src={bmAvatar}
+                      alt="BM Member"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{getPlayerDisplayName('white')}</span>
-                    <span className="text-sm text-gray-400">(White)</span>
+                    <span className="font-semibold text-lg">{getPlayerDisplayName('top')}</span>
+                    <span className="text-sm text-gray-400">({bmMemberColor === 'white' ? 'White' : 'Black'})</span>
                   </div>
                   <div className="text-4xl font-bold text-neon-green">VS</div>
                   <div className="flex flex-col items-center">
                     <img
-                      src={bmMemberColor === 'black' ? bmAvatar : noobAvatar}
-                      alt={bmMemberColor === 'black' ? "BM Member" : "Random Player"}
+                      src={noobAvatar}
+                      alt="Random Player"
                       className="w-24 h-24 rounded-full mb-2"
                     />
-                    <span className="font-semibold text-lg">{getPlayerDisplayName('black')}</span>
-                    <span className="text-sm text-gray-400">(Black)</span>
+                    <span className="font-semibold text-lg">{getPlayerDisplayName('bottom')}</span>
+                    <span className="text-sm text-gray-400">({bmMemberColor === 'white' ? 'Black' : 'White'})</span>
                   </div>
                 </div>
                 {isLoading ? (
