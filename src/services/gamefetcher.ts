@@ -41,17 +41,9 @@ const frequentUsers = [
   'samayraina',
   'sagar_raina',
   'beaststats',
-  'chessbrahs',
-  'GMHikaru',
-  'DanielNaroditsky',
-  'GothamChess',
-  'chessbrah',
-  'RaunakSadhwani2005',
-  'nihalsarin2004',
-  'Firouzja2003',
-  'MagnusCarlsen',
-  'DavidHowell',
-  'LevonAronian',
+  'dq_555',
+  'adg5',
+  'anishnaik12'
 ];
 
 export async function fetchRandomGame(): Promise<Game> {
