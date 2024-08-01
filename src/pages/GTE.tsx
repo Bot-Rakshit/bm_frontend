@@ -207,33 +207,33 @@ const GuessTheElo: React.FC = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col relative w-full">
         <Background />
-        <main className="flex-1 p-6 md:p-10 z-10 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-10 z-10 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-7xl mx-auto"
           >
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-8 mb-6">
               <motion.div 
-                className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
+                className="col-span-1 xl:col-span-2 bg-gray-800/50 p-4 md:p-6 rounded-2xl shadow-2xl border border-neon-green/20"
               >
-                <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
+                <div className="flex flex-col xl:flex-row items-start justify-center gap-4 md:gap-8">
                   <div className="w-full">
-                    <div className="max-w-[640px] w-full mx-auto">
+                    <div className="max-w-[95vw] sm:max-w-[80vw] md:max-w-[640px] w-full mx-auto">
                       <div className="w-full">
                         <div className="relative w-full" style={{ paddingTop: '100%' }}>
                           <div className="absolute inset-0 flex flex-col">
-                            <div className="h-10 flex justify-between items-center p-2 bg-gray-700/90 rounded-t-lg">
+                            <div className="h-12 sm:h-14 flex justify-between items-center p-2 bg-gray-700/90 rounded-t-lg">
                               <div className="flex items-center space-x-2">
                                 <img
                                   src={boardOrientation === 'white' ? (bmMemberColor === 'black' ? bmAvatar : noobAvatar) : (bmMemberColor === 'white' ? bmAvatar : noobAvatar)}
                                   alt={getPlayerDisplayName('top')}
-                                  className="w-8 h-8 rounded-full border-2 border-neon-green"
+                                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-neon-green"
                                 />
-                                <span className="font-semibold text-white truncate max-w-[100px] sm:max-w-[150px]">{getPlayerDisplayName('top')}</span>
+                                <span className="font-semibold text-white text-xs sm:text-sm md:text-base truncate max-w-[80px] sm:max-w-[120px] md:max-w-[150px]">{getPlayerDisplayName('top')}</span>
                               </div>
-                              <div className="bg-gray-800 px-3 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
+                              <div className="bg-gray-800 px-2 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
                                 <Timer clockTime={getCurrentClockTime('top')} />
                               </div>
                             </div>
@@ -250,16 +250,16 @@ const GuessTheElo: React.FC = () => {
                               />
                             </div>
                             
-                            <div className="h-10 flex justify-between items-center p-2 bg-gray-700/90 rounded-b-lg">
+                            <div className="h-12 sm:h-14 flex justify-between items-center p-2 bg-gray-700/90 rounded-b-lg">
                               <div className="flex items-center space-x-2">
                                 <img
                                   src={boardOrientation === 'white' ? (bmMemberColor === 'white' ? bmAvatar : noobAvatar) : (bmMemberColor === 'black' ? bmAvatar : noobAvatar)}
                                   alt={getPlayerDisplayName('bottom')}
-                                  className="w-8 h-8 rounded-full border-2 border-neon-green"
+                                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-neon-green"
                                 />
-                                <span className="font-semibold text-white truncate max-w-[100px] sm:max-w-[150px]">{getPlayerDisplayName('bottom')}</span>
+                                <span className="font-semibold text-white text-xs sm:text-sm md:text-base truncate max-w-[80px] sm:max-w-[120px] md:max-w-[150px]">{getPlayerDisplayName('bottom')}</span>
                               </div>
-                              <div className="bg-gray-800 px-3 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
+                              <div className="bg-gray-800 px-2 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
                                 <Timer clockTime={getCurrentClockTime('bottom')} />
                               </div>
                             </div>
@@ -267,27 +267,27 @@ const GuessTheElo: React.FC = () => {
                         </div>
                       </div>
                     
-                      {/* New separate container for buttons */}
-                      <div className="mt-14 flex justify-center items-center space-x-4">
+                      {/* Buttons container moved here, below the player name div */}
+                      <div className="mt-24 sm:mt-6 md:mt-8 flex justify-center items-center space-x-2 sm:space-x-4 relative z-10">
                         <Button 
                           onClick={handlePreviousMove} 
                           disabled={currentMove === 0}
-                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-3 sm:py-2 sm:px-4 rounded-full transition-all duration-300 text-sm sm:text-base"
                         >
                           <FaArrowLeft />
                         </Button>
                         <Button 
                           onClick={handleNextMove} 
                           disabled={currentMove === game.history().length - 1}
-                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-3 sm:py-2 sm:px-4 rounded-full transition-all duration-300 text-sm sm:text-base"
                         >
                           <FaArrowRight />
                         </Button>
                         <Button
                           onClick={handleFlipBoard}
-                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-3 sm:py-2 sm:px-4 rounded-full transition-all duration-300 text-sm sm:text-base"
                         >
-                          Flip Board
+                          Flip
                         </Button>
                       </div>
                     </div>
@@ -296,7 +296,7 @@ const GuessTheElo: React.FC = () => {
               </motion.div>
 
               <motion.div 
-                className="bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20 xl:col-span-1"
+                className="bg-gray-800/50 p-4 md:p-6 rounded-2xl shadow-2xl border border-neon-green/20 xl:col-span-1"
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex items-center justify-between mb-4">
