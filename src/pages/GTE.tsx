@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink, FaExpandAlt, FaCompressAlt, FaCalendarAlt, FaClock} from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaLock, FaArrowLeft, FaArrowRight, FaLink, FaCalendarAlt, FaClock} from 'react-icons/fa';
 import ChessViewer from '@/components/pgn-viewer/board';
-import MoveTable from '@/components/pgn-viewer/movetable';
 import Timer from '@/components/pgn-viewer/timer';
 import Background from '@/components/Background';
 import Sidebar from '@/components/sidebar/Sidebar';
@@ -13,7 +12,6 @@ import { fetchRandomGame } from '@/services/gamefetcher';
 import noobAvatar from '@/assets/noob.jpg';
 import bmAvatar from '@/assets/bm.jpg';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import EvaluationBar from '@/components/EvaluationBar';
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -32,7 +30,7 @@ const GuessTheElo: React.FC = () => {
   const [clockTimes, setClockTimes] = useState<string[]>([]);
   const [gameResult, setGameResult] = useState<string>('');
   const [showGuessPopup, setShowGuessPopup] = useState(false);
-  const [showMoveTable, setShowMoveTable] = useState(false);
+  const [showMoveTable] = useState(false);
   const [gameDate, setGameDate] = useState('');
   const [gameTime, setGameTime] = useState('');
   const [timeControl, setTimeControl] = useState('');
@@ -40,9 +38,8 @@ const GuessTheElo: React.FC = () => {
   const [gameTermination, setGameTermination] = useState<string>('');
   const [gameStage, setGameStage] = useState<'initial' | 'guessing' | 'revealed'>('initial');
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
-  const [currentFen, setCurrentFen] = useState('');
-  const [boardHeight, setBoardHeight] = useState(640);
-  const boardRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 
   const handleNextGameWithReset = () => {
     handleNextGame();
@@ -153,16 +150,6 @@ const GuessTheElo: React.FC = () => {
   const handleMoveSelect = (moveIndex: number) => {
     setCurrentMove(moveIndex);
     setCurrentClockIndex(Math.floor(moveIndex / 2));
-    const newGame = new Chess();
-    newGame.loadPgn(currentPgn);
-    const moves = newGame.history({ verbose: true });
-    if (moveIndex > 0) {
-      newGame.loadPgn(currentPgn);
-      for (let i = 0; i < moveIndex; i++) {
-        newGame.move(moves[i]);
-      }
-    }
-    setCurrentFen(newGame.fen());
   };
 
   const handleGuess = () => {
@@ -185,10 +172,6 @@ const GuessTheElo: React.FC = () => {
 
   const handleCloseGuessPopup = () => {
     setShowGuessPopup(false);
-  };
-
-  const toggleMoveTable = () => {
-    setShowMoveTable(prevState => !prevState);
   };
 
   const getCurrentClockTime = (position: 'top' | 'bottom') => {
@@ -215,11 +198,8 @@ const GuessTheElo: React.FC = () => {
   };
 
   const handleFenChange = useCallback((fen: string) => {
-    setCurrentFen(fen);
-  }, []);
-
-  const handleBoardHeightChange = useCallback((height: number) => {
-    setBoardHeight(height);
+    // Use the FEN here if needed, but don't set it as state
+    console.log("Current FEN:", fen);
   }, []);
 
   return (
@@ -239,88 +219,79 @@ const GuessTheElo: React.FC = () => {
                 className={`${isMobile ? 'col-span-1' : 'lg:col-span-2'} bg-gray-800/50 p-6 rounded-2xl shadow-2xl border border-neon-green/20`}
               >
                 <div className="flex flex-col xl:flex-row items-start justify-center gap-8">
-                  <div className={`w-full ${showMoveTable ? 'xl:w-2/3' : 'xl:w-full'}`}>
+                  <div className="w-full">
                     <div className="max-w-[640px] w-full mx-auto">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <span className="font-semibold">{getPlayerDisplayName('top')}</span>
-                        </div>
-                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <Timer clockTime={getCurrentClockTime('top')} />
+                      <div className="w-full">
+                        <div className="relative w-full" style={{ paddingTop: '100%' }}>
+                          <div className="absolute inset-0 flex flex-col">
+                            <div className="h-10 flex justify-between items-center p-2 bg-gray-700/90 rounded-t-lg">
+                              <div className="flex items-center space-x-2">
+                                <img
+                                  src={boardOrientation === 'white' ? (bmMemberColor === 'black' ? bmAvatar : noobAvatar) : (bmMemberColor === 'white' ? bmAvatar : noobAvatar)}
+                                  alt={getPlayerDisplayName('top')}
+                                  className="w-8 h-8 rounded-full border-2 border-neon-green"
+                                />
+                                <span className="font-semibold text-white truncate max-w-[100px] sm:max-w-[150px]">{getPlayerDisplayName('top')}</span>
+                              </div>
+                              <div className="bg-gray-800 px-3 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
+                                <Timer clockTime={getCurrentClockTime('top')} />
+                              </div>
+                            </div>
+                            
+                            <div className="flex-grow relative">
+                              <ChessViewer 
+                                pgn={currentPgn} 
+                                currentMove={currentMove}
+                                onMoveChange={handleMoveSelect}
+                                boardOrientation={boardOrientation}
+                                onFenChange={handleFenChange}
+                                isGameFetched={gameStarted}
+                                showMoveTable={showMoveTable}
+                              />
+                            </div>
+                            
+                            <div className="h-10 flex justify-between items-center p-2 bg-gray-700/90 rounded-b-lg">
+                              <div className="flex items-center space-x-2">
+                                <img
+                                  src={boardOrientation === 'white' ? (bmMemberColor === 'white' ? bmAvatar : noobAvatar) : (bmMemberColor === 'black' ? bmAvatar : noobAvatar)}
+                                  alt={getPlayerDisplayName('bottom')}
+                                  className="w-8 h-8 rounded-full border-2 border-neon-green"
+                                />
+                                <span className="font-semibold text-white truncate max-w-[100px] sm:max-w-[150px]">{getPlayerDisplayName('bottom')}</span>
+                              </div>
+                              <div className="bg-gray-800 px-3 py-1 rounded-full text-xs sm:text-sm text-neon-green font-bold">
+                                <Timer clockTime={getCurrentClockTime('bottom')} />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div ref={boardRef} className="aspect-square w-full flex">
-                        <EvaluationBar 
-                          fen={currentFen} 
-                          height={boardHeight} 
-                          isGameFetched={gameStarted}
-                        />
-                        <motion.div
-                          className="bg-gray-700 p-4 rounded-2xl shadow-2xl border border-neon-green/20 h-full flex-grow"
-                        >
-                          <ChessViewer 
-                            pgn={currentPgn} 
-                            currentMove={currentMove}
-                            onMoveChange={handleMoveSelect}
-                            boardOrientation={boardOrientation}
-                            onFenChange={handleFenChange}
-                            onBoardHeightChange={handleBoardHeightChange}
-                          />
-                        </motion.div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center mt-2">
-                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <span className="font-semibold">{getPlayerDisplayName('bottom')}</span>
-                        </div>
-                        <div className="flex items-center justify-center h-8 sm:h-10 p-2 bg-gray-700 text-white rounded-lg shadow-lg text-xs sm:text-sm">
-                          <Timer clockTime={getCurrentClockTime('bottom')} />
-                        </div>
-                      </div>
-                    </div>
                     
-                    <div className="flex justify-center items-center mt-6 space-x-4">
-                      <Button 
-                        onClick={handlePreviousMove} 
-                        disabled={currentMove === 0}
-                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
-                      >
-                        <FaArrowLeft />
-                      </Button>
-                      <Button 
-                        onClick={handleNextMove} 
-                        disabled={currentMove === game.history().length - 1}
-                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold text-lg py-2 px-4 rounded"
-                      >
-                        <FaArrowRight />
-                      </Button>
-                      <Button
-                        onClick={toggleMoveTable}
-                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
-                      >
-                      {isMobile 
-                        ? (showMoveTable ? <FaCompressAlt /> : <FaExpandAlt />)
-                        : (showMoveTable ? <FaExpandAlt /> : <FaCompressAlt />)
-                      }
-                      </Button>
-                      <Button
-                        onClick={handleFlipBoard}
-                        className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded"
-                      >
-                        Flip Board
-                      </Button>
+                      {/* New separate container for buttons */}
+                      <div className="mt-14 flex justify-center items-center space-x-4">
+                        <Button 
+                          onClick={handlePreviousMove} 
+                          disabled={currentMove === 0}
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                        >
+                          <FaArrowLeft />
+                        </Button>
+                        <Button 
+                          onClick={handleNextMove} 
+                          disabled={currentMove === game.history().length - 1}
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                        >
+                          <FaArrowRight />
+                        </Button>
+                        <Button
+                          onClick={handleFlipBoard}
+                          className="bg-gray-700 hover:bg-gray-600 text-neon-green font-bold py-2 px-4 rounded-full transition-all duration-300"
+                        >
+                          Flip Board
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                  {showMoveTable && (
-                    <div className="w-full xl:w-1/3 mt-4 xl:mt-0">
-                      <MoveTable 
-                        moves={gameStarted ? game.history({ verbose: true }) : []} 
-                        currentMove={currentMove} 
-                        onMoveSelect={handleMoveSelect} 
-                      />
-                    </div>
-                  )}
                 </div>
               </motion.div>
 

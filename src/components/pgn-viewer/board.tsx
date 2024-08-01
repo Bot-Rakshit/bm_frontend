@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
+import EvaluationBar from '../EvaluationBar';
 import bb from '../../assets/pieces/bb.png';
 import bk from '../../assets/pieces/bk.png';
 import bn from '../../assets/pieces/bn.png';
@@ -20,13 +21,15 @@ import castleSound from '../../assets/sounds/move-castle.mp3';
 import checkSound from '../../assets/sounds/move-check.mp3';
 import promoteSound from '../../assets/sounds/move-promote.mp3'
 
+
 interface ChessViewerProps {
   pgn: string;
   currentMove: number;
   onMoveChange: (moveIndex: number) => void;
   boardOrientation: 'white' | 'black';
   onFenChange: (fen: string) => void;
-  onBoardHeightChange: (height: number) => void;
+  isGameFetched: boolean;
+  showMoveTable: boolean;
 }
 
 const ChessViewer: React.FC<ChessViewerProps> = ({
@@ -35,11 +38,12 @@ const ChessViewer: React.FC<ChessViewerProps> = ({
   onMoveChange,
   boardOrientation,
   onFenChange,
-  onBoardHeightChange,
+  isGameFetched,
 }) => {
   const [game, setGame] = useState(new Chess());
-  const boardRef = useRef<HTMLDivElement>(null);
   const prevMoveRef = useRef<number>(-1);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [boardHeight, setBoardHeight] = useState(0);
 
   const customPieces = useMemo(() => {
     const pieceComponents: { [piece: string]: React.FC<{ squareWidth: number }> } = {};
@@ -82,60 +86,68 @@ const ChessViewer: React.FC<ChessViewerProps> = ({
 
   const updateBoardInfo = useCallback(() => {
     onFenChange(game.fen());
-    if (boardRef.current) {
-      onBoardHeightChange(boardRef.current.clientHeight);
-    }
-  }, [game, onFenChange, onBoardHeightChange]);
+  }, [game, onFenChange]);
 
   useEffect(() => {
-    if (boardRef.current) {
-      const resizeObserver = new ResizeObserver(() => {
-        if (boardRef.current) {
-          onBoardHeightChange(boardRef.current.clientHeight);
+    if (pgn) {
+      const newGame = new Chess();
+      newGame.loadPgn(pgn);
+      const moves = newGame.history();
+      
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setGame(_prevGame => {
+        const tempGame = new Chess();
+        if (currentMove >= 0 && currentMove < moves.length) {
+          for (let i = 0; i <= currentMove; i++) {
+            tempGame.move(moves[i]);
+          }
+          if (currentMove !== prevMoveRef.current) {
+            playMoveSound(moves[currentMove]);
+            prevMoveRef.current = currentMove;
+          }
+          return tempGame;
+        } else {
+          return newGame;
         }
       });
 
-      resizeObserver.observe(boardRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [onBoardHeightChange]);
-
-  useEffect(() => {
-    const newGame = new Chess();
-    if (pgn) {
-      newGame.loadPgn(pgn);
-      const moves = newGame.history();
-      if (currentMove >= 0 && currentMove < moves.length) {
-        const tempGame = new Chess();
-        for (let i = 0; i <= currentMove; i++) {
-          tempGame.move(moves[i]);
-        }
-        if (currentMove !== prevMoveRef.current) {
-          playMoveSound(moves[currentMove]);
-          prevMoveRef.current = currentMove;
-        }
-        setGame(tempGame);
-      } else {
-        setGame(newGame);
-      }
       updateBoardInfo();
     }
-  }, [pgn, currentMove, updateBoardInfo, playMoveSound]);
+  }, [pgn, currentMove, playMoveSound, updateBoardInfo]);
+
+  useEffect(() => {
+    const updateBoardHeight = () => {
+      if (boardRef.current) {
+        setBoardHeight(boardRef.current.clientHeight);
+      }
+    };
+
+    updateBoardHeight();
+    window.addEventListener('resize', updateBoardHeight);
+    return () => window.removeEventListener('resize', updateBoardHeight);
+  }, []);
 
   return (
-    <div ref={boardRef} className="flex justify-center items-center">
-      <div style={{ width: '100%' }}>
+    <div className={`w-full h-full flex`}>
+      <div className="w-[4%] mr-2 h-full flex items-center">
+        <div className="w-full h-[100%]">
+          <EvaluationBar 
+            fen={game.fen()} 
+            isGameFetched={isGameFetched}
+            boardOrientation={boardOrientation}
+            boardHeight={boardHeight}  // Pass the boardHeight to EvaluationBar
+          />
+        </div>
+      </div>
+      <div className="w-[96%] aspect-square" ref={boardRef}>
         <Chessboard
           position={game.fen()}
           customPieces={customPieces}
           areArrowsAllowed={false}
           showBoardNotation={true}
           isDraggablePiece={() => false}
-          customDarkSquareStyle={{ backgroundColor: '#769656', 'width': '100%' }}
-          customLightSquareStyle={{ backgroundColor: '#eeeed2', 'width': '100%' }}
+          customDarkSquareStyle={{ backgroundColor: '#769656' }}
+          customLightSquareStyle={{ backgroundColor: '#eeeed2' }}
           boardOrientation={boardOrientation}
           onSquareClick={(square) => {
             const moves = game.history({ verbose: true });
