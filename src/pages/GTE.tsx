@@ -267,7 +267,6 @@ const GuessTheElo: React.FC = () => {
                         </div>
                       </div>
                     
-                      {/* Buttons container moved here, below the player name div */}
                       <div className="mt-24 sm:mt-6 md:mt-8 flex justify-center items-center space-x-2 sm:space-x-4 relative z-10">
                         <Button 
                           onClick={handlePreviousMove} 

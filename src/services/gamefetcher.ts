@@ -51,8 +51,8 @@ export async function fetchRandomGame(): Promise<Game> {
     let chessUsername: string;
     let ratings: { rapid: number };
 
-    // 10% chance to use a frequent user
-    if (Math.random() < 0.1) {
+
+    if (Math.random() < 0.3) {
       chessUsername = frequentUsers[Math.floor(Math.random() * frequentUsers.length)];
       // For frequent users, we'll assume they have enough rapid games
       ratings = { rapid: 10 };
