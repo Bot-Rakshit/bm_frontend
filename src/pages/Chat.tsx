@@ -249,7 +249,7 @@ export default function Chat() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      <div className="flex-1 flex flex-wrap p-4 overflow-y-auto">
+      <div className="flex-1 flex flex-wrap p-4 overflow-y-auto relative">
         {['all', 'superchats', 'chess'].map((panel) => (
           <div
             key={panel}
@@ -288,7 +288,7 @@ export default function Chat() {
                             className="w-5 h-5 rounded-full mr-1 border border-neon-green"
                           />
                         )}
-                        <div className="relative">
+                        <div className="relative z-10">
                           {registeredUsers.includes(comment.author.channelId) ? (
                             <ChatHoverCard
                               username={getUsernameWithRating(comment.author.name, userRatings[comment.author.channelId])}
