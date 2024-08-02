@@ -118,7 +118,7 @@ export default function Chat() {
 
   const fetchUserRatings = async (channelIds: string[]) => {
     try {
-      const response = await axios.post<RatingResponse[]>(`${Backend_URL}/api/chess/ratings/batch`, { youtubeChannelIds: channelIds });
+      const response = await axios.post<RatingResponse[]>(`${Backend_URL}/api/chess/ratings`, { youtubeChannelIds: channelIds });
       const newRatings = response.data.reduce((acc: { [key: string]: ChatUserRating }, item: RatingResponse) => {
         acc[item.youtubeChannelId] = {
           chessUsername: item.chessUsername,
