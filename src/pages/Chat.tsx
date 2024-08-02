@@ -192,6 +192,13 @@ export default function Chat() {
     }
   };
 
+  const handleDisconnect = async () => {
+    await axios.post(`${SERVER_URL}/api/chat/stop`);
+    setIsConnected(false);
+    setComments([]);
+    setError(null);
+  };
+
   const filterComments = (panel: string) => {
     switch (panel) {
       case 'superchats':
@@ -223,10 +230,18 @@ export default function Chat() {
           />
           <Button
             onClick={handleConnect}
-            className={`px-4 ${isConnected ? 'bg-red-600 hover:bg-red-700' : 'bg-neon-green hover:bg-green-600'}`}
+            className={`px-4 ${isConnected ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-neon-green hover:bg-green-600'}`}
           >
-            {isConnected ? 'Disconnect' : 'Connect'}
+            {isConnected ? 'Reconnect' : 'Connect'}
           </Button>
+          {isConnected && (
+            <Button
+              onClick={handleDisconnect}
+              className="px-4 bg-red-600 hover:bg-red-700"
+            >
+              Disconnect
+            </Button>
+          )}
         </div>
       </div>
       {error && (
