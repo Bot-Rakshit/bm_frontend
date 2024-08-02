@@ -90,8 +90,8 @@ export default function Chat() {
 
     if (rating >= 1500) return '1500+';
     if (rating >= 1000) return '1000+';
-    if (rating <= 800) return '800+';
-    if (rating <= 200) return '800+';
+    if (rating >= 800) return '800+';
+    if (rating >= 400) return '800+';
     
 
     return '';
