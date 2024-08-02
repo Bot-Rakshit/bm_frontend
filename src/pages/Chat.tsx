@@ -1,15 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck } from 'react-icons/fa';
-import Sidebar from '@/components/sidebar/Sidebar';
+import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar} from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import axios from 'axios';
+import io from 'socket.io-client';
+import ChatHoverCard from '@/components/ChatHoverCard';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const socket = io(SERVER_URL);
+const Backend_URL = import.meta.env.VITE_BACKEND_URL;
 
-// Define ChatItem interface based on the documentation
 interface ChatItem {
   author: {
     name: string;
@@ -42,193 +44,291 @@ interface ChatItem {
   timestamp: Date;
 }
 
+interface RatingResponse {
+  youtubeChannelId: string;
+  chessUsername: string;
+  ratings: {
+    blitz: number | null;
+    bullet: number | null;
+    rapid: number | null;
+  };
+}
+
+interface ChatUserRating {
+  chessUsername: string;
+  ratings: {
+    blitz: number;
+    bullet: number;
+    rapid: number;
+  };
+}
+
 export default function Chat() {
   const [streamUrl, setStreamUrl] = useState('');
   const [comments, setComments] = useState<ChatItem[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const eventSource = useRef<EventSource | null>(null);
-  const [liveId, setLiveId] = useState<string | null>(null);
+  const [userRatings, setUserRatings] = useState<{ [key: string]: ChatUserRating }>({});
+  const [openPanels, setOpenPanels] = useState<string[]>(['all', 'superchats', 'chess']);
+
+  const chatRefs = useMemo(() => ({
+    all: React.createRef<HTMLDivElement>(),
+    superchats: React.createRef<HTMLDivElement>(),
+    chess: React.createRef<HTMLDivElement>(),
+  }), []);
+
+  const scrollToBottom = useCallback((panel: string) => {
+    const ref = chatRefs[panel as keyof typeof chatRefs];
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, [chatRefs]);
+
+  const getRatingBand = (rating: number): string => {
+    if (rating >= 2000) return '2000+';
+
+    if (rating >= 1500) return '1500+';
+    if (rating >= 1000) return '1000+';
+    if (rating <= 800) return '800+';
+    if (rating <= 200) return '800+';
+    
+
+    return '';
+  };
+
+  const getUsernameWithRating = (username: string, userRating: ChatUserRating | undefined): string => {
+    if (!userRating || userRating.ratings.rapid === 0) return username;
+    const ratingBand = getRatingBand(userRating.ratings.rapid);
+    return ratingBand ? `${username} [${ratingBand}]` : username;
+  };
 
   useEffect(() => {
-    fetchRegisteredUsers();
-    return () => {
-      if (eventSource.current) {
-        eventSource.current.close();
+    const fetchRegisteredUsers = async () => {
+      try {
+        const response = await axios.get(`${Backend_URL}/api/chess/registered-users`);
+        setRegisteredUsers(response.data);
+      } catch (error) {
+        console.error('Failed to fetch registered users', error);
       }
     };
+
+    fetchRegisteredUsers();
   }, []);
 
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [comments]);
-
-  const fetchRegisteredUsers = async () => {
+  const fetchUserRatings = async (channelIds: string[]) => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/chess/registered-users`);
-      setRegisteredUsers(response.data);
+      const response = await axios.post<RatingResponse[]>(`${Backend_URL}/api/chess/ratings/batch`, { youtubeChannelIds: channelIds });
+      const newRatings = response.data.reduce((acc: { [key: string]: ChatUserRating }, item: RatingResponse) => {
+        acc[item.youtubeChannelId] = {
+          chessUsername: item.chessUsername,
+          ratings: {
+            blitz: item.ratings.blitz ?? 0,
+            bullet: item.ratings.bullet ?? 0,
+            rapid: item.ratings.rapid ?? 0
+          }
+        };
+        return acc;
+      }, {});
+      setUserRatings(prevRatings => ({
+        ...prevRatings,
+        ...newRatings
+      }));
     } catch (error) {
-      console.error('Failed to fetch registered users:', error);
+      console.error(`Failed to fetch user ratings`, error);
     }
   };
+
+  useEffect(() => {
+    socket.on('chatMessage', (chatItem: ChatItem) => {
+      setComments((prevComments) => {
+        const newComments = [...prevComments, chatItem].slice(-1000);
+        
+        const newRegisteredUsers = newComments
+          .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
+          .map(comment => comment.author.channelId);
+
+        if (newRegisteredUsers.length > 0) {
+          fetchUserRatings(newRegisteredUsers);
+        }
+        
+        setTimeout(() => {
+          openPanels.forEach(scrollToBottom);
+        }, 0);
+
+        return newComments;
+      });
+    });
+
+    socket.on('error', (err: string) => {
+      setError(err);
+    });
+
+    socket.on('chatStopped', () => {
+      setIsConnected(false);
+      setComments([]);
+    });
+
+    return () => {
+      socket.off('chatMessage');
+      socket.off('error');
+      socket.off('chatStopped');
+    };
+  }, [registeredUsers, userRatings, openPanels, scrollToBottom]);
 
   const handleConnect = async () => {
     if (isConnected) {
-      await stopLiveStreamChat();
+      await axios.post(`${SERVER_URL}/api/chat/stop`);
+      setIsConnected(false);
+      setComments([]);
     } else {
-      await startLiveStreamChat();
-    }
-  };
-
-  const startLiveStreamChat = async () => {
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/chat/livestream/start`, null, {
-        params: { url: streamUrl }
-      });
-      setLiveId(response.data.liveId);
-      connectToEventSource(response.data.liveId);
-      setIsConnected(true);
-      setError(null);
-    } catch (error) {
-      console.error('Failed to start live stream chat:', error);
-      setError(`Failed to connect. Error: ${(error as Error).message || 'Unknown error'}`);
-    }
-  };
-
-  const stopLiveStreamChat = async () => {
-    if (liveId) {
       try {
-        await axios.post(`${BACKEND_URL}/api/chat/livestream/${liveId}/stop`);
-        if (eventSource.current) {
-          eventSource.current.close();
-        }
-        setIsConnected(false);
-        setComments([]);
+        await axios.post(`${SERVER_URL}/api/chat/start`, { streamUrl });
+        setIsConnected(true);
         setError(null);
-        setLiveId(null);
       } catch (error) {
-        console.error('Failed to stop live stream chat:', error);
-        setError(`Failed to disconnect. Error: ${(error as Error).message || 'Unknown error'}`);
+        setError('Failed to start live chat');
       }
     }
   };
 
-  const connectToEventSource = (id: string) => {
-    eventSource.current = new EventSource(`${BACKEND_URL}/api/chat/livestream/${id}/messages`);
-
-    eventSource.current.onmessage = (event) => {
-      const chatItem: ChatItem = JSON.parse(event.data);
-      setComments((prevComments) => [...prevComments, chatItem].slice(-100));
-    };
-
-    eventSource.current.onerror = (err) => {
-      console.error('EventSource error:', err);
-      setIsConnected(false);
-      setError('An error occurred. Please try reconnecting.');
-      eventSource.current?.close();
-    };
+  const filterComments = (panel: string) => {
+    switch (panel) {
+      case 'superchats':
+        return comments.filter((comment) => comment.superchat);
+      case 'chess':
+        return comments.filter((comment) => registeredUsers.includes(comment.author.channelId));
+      default:
+        return comments;
+    }
   };
 
-  const isRegisteredUser = (channelId: string) => registeredUsers.includes(channelId);
+  const togglePanel = (panel: string) => {
+    setOpenPanels((prev) =>
+      prev.includes(panel) ? prev.filter((p) => p !== panel) : [...prev, panel]
+    );
+  };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-black text-white">
-      <Sidebar />
-      <div className="flex-1 flex flex-col p-6 overflow-hidden">
-        <h1 className="text-4xl font-bold mb-6 text-neon-green">Live Stream Chat</h1>
-        <div className="flex mb-4 space-x-4">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <div className="flex items-center justify-between p-4 bg-gray-800">
+        <h1 className="text-2xl font-bold text-neon-green">Live Stream Chat</h1>
+        <div className="flex items-center space-x-4">
           <Input
             type="text"
             value={streamUrl}
             onChange={(e) => setStreamUrl(e.target.value)}
             placeholder="Enter YouTube live stream URL"
-            className="flex-1 bg-gray-800 text-white border-neon-green"
+            className="bg-gray-700 text-white border-neon-green"
           />
           <Button
             onClick={handleConnect}
-            className={`px-6 ${
-              isConnected ? 'bg-red-600 hover:bg-red-700' : 'bg-neon-green hover:bg-green-600'
-            }`}
+            className={`px-4 ${isConnected ? 'bg-red-600 hover:bg-red-700' : 'bg-neon-green hover:bg-green-600'}`}
           >
             {isConnected ? 'Disconnect' : 'Connect'}
           </Button>
         </div>
-        {error && (
-          <Alert className="mb-4 bg-red-900 border-red-600">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <div
-          ref={chatRef}
-          className="flex-1 overflow-y-auto bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm border border-neon-green/30"
-        >
-          <AnimatePresence initial={false}>
-            {comments.map((comment, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className={`mb-2 p-3 bg-gray-700/70 rounded-lg backdrop-blur-sm ${
-                  isRegisteredUser(comment.author.channelId) ? 'border-2 border-neon-green' : ''
-                }`}
+      </div>
+      {error && (
+        <Alert className="m-4 bg-red-900 border-red-600">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      <div className="flex-1 flex flex-wrap p-4 overflow-y-auto">
+        {['all', 'superchats', 'chess'].map((panel) => (
+          <div
+            key={panel}
+            className={`flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 p-2 ${
+              openPanels.includes(panel) ? '' : 'hidden'
+            }`}
+          >
+            <div className="h-[calc(100vh-12rem)] flex flex-col bg-gray-800/50 rounded-lg backdrop-blur-sm border border-neon-green/30">
+              <div className="flex justify-between items-center p-2 border-b border-neon-green/30">
+                <h2 className="text-xl font-bold text-neon-green">
+                  {panel === 'chess' ? <FaChessKnight className="inline-block mr-2" /> : null}
+                  {panel.charAt(0).toUpperCase() + panel.slice(1)}
+                </h2>
+                <FaTimes className="cursor-pointer text-neon-green hover:text-red-500 transition-colors" onClick={() => togglePanel(panel)} />
+              </div>
+              <div
+                ref={chatRefs[panel as keyof typeof chatRefs]}
+                className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-neon-green scrollbar-track-gray-700"
               >
-                <div className="flex items-center mb-1">
-                  {comment.author.thumbnail && (
-                    <img
-                      src={comment.author.thumbnail.url}
-                      alt={comment.author.thumbnail.alt}
-                      className="w-8 h-8 rounded-full mr-2 border-2 border-neon-green"
-                    />
-                  )}
-                  <span className="font-bold mr-2 text-neon-green">{comment.author.name}</span>
-                  {comment.isOwner && <FaCrown className="text-yellow-500 mr-1" title="Stream Owner" />}
-                  {comment.isModerator && <FaShieldAlt className="text-blue-400 mr-1" title="Moderator" />}
-                  {comment.isVerified && <FaCheck className="text-green-400 mr-1" title="Verified" />}
-                  {comment.author.badge && (
-                    <img
-                      src={comment.author.badge.thumbnail.url}
-                      alt={comment.author.badge.thumbnail.alt}
-                      className="w-5 h-5 mr-1"
-                      title={comment.author.badge.label}
-                    />
-                  )}
-                </div>
-                <div className="ml-10">
-                  {comment.message.map((item, index) => (
-                    'text' in item ? (
-                      <span key={index} className="text-gray-200">{item.text}</span>
-                    ) : (
-                      <img
-                        key={index}
-                        src={item.url}
-                        alt={item.alt}
-                        className="inline-block h-6 mx-1 align-text-bottom"
-                        title={item.emojiText}
-                      />
-                    )
+                <AnimatePresence initial={false}>
+                  {filterComments(panel).map((comment, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                      className={`p-1 bg-gray-700/70 rounded-lg backdrop-blur-sm ${
+                        comment.isOwner ? 'border border-neon-green' : ''
+                      }`}
+                    >
+                      <div className="flex items-center mb-1 text-sm">
+                        {comment.author.thumbnail && (
+                          <img
+                            src={comment.author.thumbnail.url}
+                            alt={comment.author.thumbnail.alt}
+                            className="w-5 h-5 rounded-full mr-1 border border-neon-green"
+                          />
+                        )}
+                        <div className="relative">
+                          {registeredUsers.includes(comment.author.channelId) ? (
+                            <ChatHoverCard
+                              username={getUsernameWithRating(comment.author.name, userRatings[comment.author.channelId])}
+                              userRating={userRatings[comment.author.channelId]}
+                            />
+                          ) : (
+                            <span className="font-bold mr-1 text-neon-green">{comment.author.name}</span>
+                          )}
+                        </div>
+                        {comment.isOwner && <FaCrown className="text-yellow-500 mr-1" title="Stream Owner" />}
+                        {comment.isModerator && <FaShieldAlt className="text-blue-400 mr-1" title="Moderator" />}
+                        {comment.isVerified && <FaCheck className="text-green-400 mr-1" title="Verified" />}
+                        {comment.isMembership && <FaStar className="text-purple-400 mr-1" title="Member" />}
+                        {registeredUsers.includes(comment.author.channelId) && (
+                          <FaChessKnight className="text-neon-green mr-1" title="Chess Player" />
+                        )}
+                        {comment.author.badge && (
+                          <img
+                            src={comment.author.badge.thumbnail.url}
+                            alt={comment.author.badge.thumbnail.alt}
+                            className="w-4 h-4 mr-1"
+                            title={comment.author.badge.label}
+                          />
+                        )}
+                      </div>
+                      <div className="ml-6 text-xs">
+                        {comment.message.map((item, index) =>
+                          'text' in item ? (
+                            <span key={index} className="text-gray-200">{item.text}</span>
+                          ) : (
+                            <img
+                              key={index}
+                              src={item.url}
+                              alt={item.alt}
+                              className="inline-block h-4 mx-1 align-text-bottom"
+                              title={item.emojiText}
+                            />
+                          )
+                        )}
+                      </div>
+                      {comment.superchat && (
+                        <div className="mt-1 flex items-center text-xs">
+                          <FaDollarSign className="text-yellow-400 mr-1" />
+                          <span className="font-semibold text-yellow-400">
+                            Super Chat: {comment.superchat.amount}
+                          </span>
+                        </div>
+                      )}
+                    </motion.div>
                   ))}
-                </div>
-                {comment.superchat && (
-                  <div className="mt-2 flex items-center">
-                    <FaDollarSign className="text-yellow-400 mr-1" />
-                    <span className="font-semibold text-yellow-400">
-                      Super Chat: {comment.superchat.amount}
-                    </span>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-        <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
-          <span>Connected to: {isConnected ? streamUrl : 'Not connected'}</span>
-          <span>Messages: {comments.length}</span>
-        </div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -42,6 +42,7 @@
     "react-router-dom": "^6.23.1",
     "react-scroll": "^1.9.0",
     "react-swipeable": "^7.0.1",
+    "socket.io-client": "^4.7.5",
     "tailwindcss-animate": "^1.0.6",
     "vite-plugin-pwa": "^0.20.0",
     "youtube-chat": "^2.2.0"
