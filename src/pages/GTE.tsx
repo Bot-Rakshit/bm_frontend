@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chess } from 'chess.js';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,9 @@ import { fetchRandomGame } from '@/services/gamefetcher';
 import noobAvatar from '@/assets/noob.jpg';
 import bmAvatar from '@/assets/bm.jpg';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+
+
+const MemoizedSidebar = memo(Sidebar);
 
 const GuessTheElo: React.FC = () => {
   const [game, setGame] = useState(new Chess());
@@ -204,7 +207,7 @@ const GuessTheElo: React.FC = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <MemoizedSidebar />
       <div className="flex-1 flex flex-col relative w-full">
         <Background />
         <main className="flex-1 p-4 md:p-6 lg:p-10 z-10 overflow-y-auto">
