@@ -312,7 +312,7 @@ export default function Chat() {
                               title={item.emojiText}
                             />
                           )
-                        )}
+                        )} //
                       </div>
                       {comment.superchat && (
                         <div className="mt-1 flex items-center text-xs">
