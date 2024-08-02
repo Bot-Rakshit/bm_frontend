@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -151,7 +151,6 @@ const Sidebar = () => {
             >
               <Avatar className={`h-8 w-8 ${isCollapsed && !isHovered ? '' : 'mr-3'}`}>
                 <AvatarImage src={profileIcon} alt="Profile" />
-                <AvatarFallback>BM</AvatarFallback>
               </Avatar>
               {(!isCollapsed || isHovered) && <span className="text-sm">Profile</span>}
             </Button>
