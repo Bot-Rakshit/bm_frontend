@@ -439,8 +439,13 @@ const GuessTheElo: React.FC = () => {
                       >
                         <div className="flex flex-col items-center space-y-4">
                           <div className="p-4 bg-gray-700 rounded-lg shadow-lg w-full flex items-center justify-center">
-                            <p className="text-2xl font-semibold text-neon-green">
-                              Average Elo: {actualElo}
+                            <p className="text-2xl font-semibold">
+                              Average Elo: <span className='text-neon-green'>{actualElo}</span>
+                            </p>
+                          </div>
+                          <div className="p-4 bg-gray-700 rounded-lg shadow-lg w-full flex items-center justify-center">
+                            <p className="text-2xl font-semibold ">
+                              Guessed Elo: <span className='text-neon-green'>{guessedElo}</span>
                             </p>
                           </div>
                           <div className="p-4 bg-gray-700 rounded-lg shadow-lg w-full flex items-center justify-center">
