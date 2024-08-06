@@ -8,8 +8,16 @@ import io from 'socket.io-client';
 import ChatHoverCard from '@/components/ChatHoverCard';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const socket = io(SERVER_URL);
 const Backend_URL = import.meta.env.VITE_BACKEND_URL;
+
+console.log('SERVER_URL:', SERVER_URL);
+console.log('Backend_URL:', Backend_URL);
+
+const socket = io(SERVER_URL, {
+  transports: ['websocket', 'polling'],
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
 
 interface ChatItem {
   author: {
@@ -139,16 +147,24 @@ export default function Chat() {
   useEffect(() => {
     const setupSocketListeners = () => {
       socket.on('connect', () => {
+        console.log('Socket connected');
         setIsConnected(true);
         setError(null);
       });
 
-      socket.on('disconnect', () => {
+      socket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err);
+        setError(`Connection error: ${err.message}`);
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
         setIsConnected(false);
-        setError('Disconnected from server');
+        setError(`Disconnected: ${reason}`);
       });
 
       socket.on('chatMessage', (chatItem: ChatItem) => {
+        console.log('Received chat message:', chatItem);
         setComments((prevComments) => {
           const newComments = [...prevComments, chatItem].slice(-1000);
           
@@ -169,10 +185,12 @@ export default function Chat() {
       });
 
       socket.on('error', (err: string) => {
-        setError(err);
+        console.error('Socket error:', err);
+        setError(`Socket error: ${err}`);
       });
 
       socket.on('chatEnded', () => {
+        console.log('Chat ended');
         setIsConnected(false);
         setComments([]);
       });
@@ -181,7 +199,9 @@ export default function Chat() {
     setupSocketListeners();
 
     return () => {
+      console.log('Cleaning up socket listeners');
       socket.off('connect');
+      socket.off('connect_error');
       socket.off('disconnect');
       socket.off('chatMessage');
       socket.off('error');
@@ -191,11 +211,18 @@ export default function Chat() {
 
   const handleConnect = async () => {
     try {
-      await axios.get(`${SERVER_URL}/api/chat/messages`);
+      console.log('Attempting to connect to chat');
+      const response = await axios.get(`${SERVER_URL}/api/chat/messages`);
+      console.log('Connection response:', response.data);
       setIsConnected(true);
       setError(null);
     } catch (error) {
-      setError('Failed to connect to live chat');
+      console.error('Failed to connect to live chat:', error);
+      if (error instanceof Error) {
+        setError(`Failed to connect to live chat: ${error.message}`);
+      } else {
+        setError('Failed to connect to live chat: Unknown error');
+      }
     }
   };
 
