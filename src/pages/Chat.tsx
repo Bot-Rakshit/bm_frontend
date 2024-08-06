@@ -85,13 +85,10 @@ export default function Chat() {
 
   const getRatingBand = (rating: number): string => {
     if (rating >= 2000) return '2000+';
-
     if (rating >= 1500) return '1500+';
     if (rating >= 1000) return '1000+';
     if (rating >= 800) return '800+';
-    if (rating >= 400) return '800+';
-    
-
+    if (rating >= 400) return '400+';
     return '';
   };
 
@@ -140,63 +137,65 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    socket.on('chatMessage', (chatItem: ChatItem) => {
-      setComments((prevComments) => {
-        const newComments = [...prevComments, chatItem].slice(-1000);
-        
-        const newRegisteredUsers = newComments
-          .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
-          .map(comment => comment.author.channelId);
-
-        if (newRegisteredUsers.length > 0) {
-          fetchUserRatings(newRegisteredUsers);
-        }
-        
-        setTimeout(() => {
-          openPanels.forEach(scrollToBottom);
-        }, 0);
-
-        return newComments;
+    const setupSocketListeners = () => {
+      socket.on('connect', () => {
+        setIsConnected(true);
+        setError(null);
       });
-    });
 
-    socket.on('error', (err: string) => {
-      setError(err);
-    });
+      socket.on('disconnect', () => {
+        setIsConnected(false);
+        setError('Disconnected from server');
+      });
 
-    socket.on('chatStopped', () => {
-      setIsConnected(false);
-      setComments([]);
-    });
+      socket.on('chatMessage', (chatItem: ChatItem) => {
+        setComments((prevComments) => {
+          const newComments = [...prevComments, chatItem].slice(-1000);
+          
+          const newRegisteredUsers = newComments
+            .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
+            .map(comment => comment.author.channelId);
+
+          if (newRegisteredUsers.length > 0) {
+            fetchUserRatings(newRegisteredUsers);
+          }
+          
+          setTimeout(() => {
+            openPanels.forEach(scrollToBottom);
+          }, 0);
+
+          return newComments;
+        });
+      });
+
+      socket.on('error', (err: string) => {
+        setError(err);
+      });
+
+      socket.on('chatEnded', () => {
+        setIsConnected(false);
+        setComments([]);
+      });
+    };
+
+    setupSocketListeners();
 
     return () => {
+      socket.off('connect');
+      socket.off('disconnect');
       socket.off('chatMessage');
       socket.off('error');
-      socket.off('chatStopped');
+      socket.off('chatEnded');
     };
   }, [registeredUsers, userRatings, openPanels, scrollToBottom]);
 
   const handleConnect = async () => {
-    if (isConnected) {
-      await handleDisconnect();
-    }
     try {
-      await axios.post(`${SERVER_URL}/api/chat/start`);
+      await axios.get(`${SERVER_URL}/api/chat/messages`);
       setIsConnected(true);
       setError(null);
     } catch (error) {
-      setError('Failed to start live chat');
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      await axios.post(`${SERVER_URL}/api/chat/stop`);
-      setIsConnected(false);
-      setComments([]);
-      setError(null);
-    } catch (error) {
-      setError('Failed to stop live chat');
+      setError('Failed to connect to live chat');
     }
   };
 
@@ -228,14 +227,6 @@ export default function Chat() {
           >
             {isConnected ? 'Reconnect' : 'Connect'}
           </Button>
-          {isConnected && (
-            <Button
-              onClick={handleDisconnect}
-              className="px-4 bg-red-600 hover:bg-red-700"
-            >
-              Disconnect
-            </Button>
-          )}
         </div>
       </div>
       {error && (
@@ -321,7 +312,7 @@ export default function Chat() {
                               title={item.emojiText}
                             />
                           )
-                        )} //
+                        )}
                       </div>
                       {comment.superchat && (
                         <div className="mt-1 flex items-center text-xs">
