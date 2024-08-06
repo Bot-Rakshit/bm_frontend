@@ -26,6 +26,13 @@ const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
 	return <motion.span>{rounded}</motion.span>;
 };
 
+const MaintenanceNotice = () => (
+  <div className="bg-yellow-500 text-black p-4 rounded-md mb-8 text-center">
+    <p className="font-bold">🚧 Maintenance Notice 🚧</p>
+    <p>We are currently under maintenance for the next 30 minutes. Some features may be unavailable.</p>
+  </div>
+);
+
 const Hero = () => {
 	const [ref, inView] = useInView({
 		triggerOnce: true,
@@ -64,6 +71,7 @@ const Hero = () => {
 			className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
 		>
 			<div className="container mx-auto px-4 z-10">
+				<MaintenanceNotice />
 				<div className="flex flex-col lg:flex-row items-center justify-between gap-12">
 					<div className="lg:w-1/2 space-y-6 text-center lg:text-left">
 						<h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
@@ -76,13 +84,16 @@ const Hero = () => {
 							<Counter end={totalUsers} /> <span className="ml-2">Users</span>
 						</div>
 						<div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-							<Button className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
-								<Link to="/signup">Early Access (BETA)</Link>
+							<Button 
+								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-gray-500 text-white cursor-not-allowed opacity-50" 
+								disabled
+							>
+								Early Access (BETA)
 							</Button>
 							<Button
 								variant="outline"
-								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white hover:text-black transition-all duration-300"
-                onClick={scrollToHowItWorks}
+								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white cursor-not-allowed opacity-50"
+								disabled
 							>
 								Learn more
 							</Button>
@@ -315,6 +326,7 @@ export function LandingPage() {
 			<Navbar />
 			<main className="flex-grow px-4 sm:px-6 py-24 mt-15 relative z-10">
 				<div className="max-w-7xl mx-auto">
+					<MaintenanceNotice />
 					<div className="mb-48">
 						<Hero />
 						<Partner />
