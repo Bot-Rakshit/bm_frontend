@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar} from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import axios from 'axios';
-import io from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 import ChatHoverCard from '@/components/ChatHoverCard';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
@@ -61,6 +61,8 @@ export default function Chat() {
   const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
   const [userRatings, setUserRatings] = useState<{ [key: string]: ChatUserRating }>({});
   const [openPanels, setOpenPanels] = useState<string[]>(['all', 'superchats', 'chess']);
+  const socketRef = useRef<Socket | null>(null);
+  const [socketId, setSocketId] = useState<string | null>(null);
 
   const chatRefs = useMemo(() => ({
     all: React.createRef<HTMLDivElement>(),
@@ -121,34 +123,49 @@ export default function Chat() {
     }
   }, []);
 
-  useEffect(() => {
-    const socket = io(SERVER_URL, {
-      transports: ['websocket', 'polling'],
+  const connectSocket = useCallback(() => {
+    if (socketRef.current?.connected) {
+      console.log('Socket already connected');
+      return;
+    }
+
+    console.log('Initializing socket connection');
+    socketRef.current = io(SERVER_URL, {
+      transports: ['websocket'],
+      reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       timeout: 20000,
     });
 
-    socket.on('connect', () => {
-      console.log('Socket connected successfully');
+    socketRef.current.on('connect', () => {
+      console.log(`Socket connected successfully. ID: ${socketRef.current?.id}`);
+      setSocketId(socketRef.current?.id || null);
       setIsConnected(true);
       setError(null);
-      socket.emit('startChat');
     });
 
-    socket.on('connect_error', (err) => {
+    socketRef.current.on('connect_error', (err) => {
       console.error('Socket connection error:', err);
       setError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     });
 
-    socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason);
+    socketRef.current.on('disconnect', (reason) => {
+      console.log(`Socket disconnected. ID: ${socketRef.current?.id}, Reason: ${reason}`);
       setIsConnected(false);
       setError(`Disconnected: ${reason}`);
     });
 
-    socket.on('chatMessage', (chatItem: ChatItem) => {
-      console.log('Received chat message:', chatItem);
+    socketRef.current.on('ping', () => {
+      socketRef.current?.emit('pong');
+    });
+
+    socketRef.current.on('keepAliveResponse', () => {
+      console.log('Received keep-alive response from server');
+    });
+
+    socketRef.current.on('chatMessage', (chatItem: ChatItem) => {
+      console.log(`Received chat message. Socket ID: ${socketRef.current?.id}`);
       setComments((prevComments) => {
         const newComments = [...prevComments, chatItem].slice(-1000);
         
@@ -168,28 +185,29 @@ export default function Chat() {
       });
     });
 
-    socket.on('error', (err: unknown) => {
+    socketRef.current.on('error', (err: unknown) => {
       console.error('Socket error:', err);
-      if (typeof err === 'string') {
-        setError(`Socket error: ${err}`);
-      } else if (err instanceof Error) {
-        setError(`Socket error: ${err.message}`);
-      } else {
-        setError('Socket error: Unknown error');
-      }
+      setError(typeof err === 'string' ? err : 'Unknown socket error');
     });
 
-    socket.on('chatEnded', () => {
+    socketRef.current.on('chatEnded', () => {
       console.log('Chat ended');
       setIsConnected(false);
       setComments([]);
     });
+  }, [registeredUsers, userRatings, openPanels, scrollToBottom, fetchUserRatings]);
+
+  useEffect(() => {
+    connectSocket();
 
     return () => {
       console.log('Cleaning up socket connection');
-      socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
-  }, [registeredUsers, userRatings, openPanels, scrollToBottom, fetchUserRatings]);
+  }, [connectSocket]);
 
   const filterComments = (panel: string) => {
     switch (panel) {
@@ -213,9 +231,10 @@ export default function Chat() {
       <div className="flex items-center justify-between p-4 bg-gray-800">
         <h1 className="text-2xl font-bold text-neon-green">Live Stream Chat</h1>
         <div className="flex items-center space-x-4">
+          <span className="text-sm text-gray-300">Socket ID: {socketId || 'Not connected'}</span>
           <Button
             className={`px-4 ${isConnected ? 'bg-green-600' : 'bg-red-600'}`}
-            disabled
+            onClick={connectSocket}
           >
             {isConnected ? 'Connected' : 'Disconnected'}
           </Button>
