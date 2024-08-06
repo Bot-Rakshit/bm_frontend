@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar} from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -64,7 +63,6 @@ interface ChatUserRating {
 }
 
 export default function Chat() {
-  const [streamUrl, setStreamUrl] = useState('');
   const [comments, setComments] = useState<ChatItem[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -180,25 +178,26 @@ export default function Chat() {
 
   const handleConnect = async () => {
     if (isConnected) {
-      await axios.post(`${SERVER_URL}/api/chat/stop`);
-      setIsConnected(false);
-      setComments([]);
-    } else {
-      try {
-        await axios.post(`${SERVER_URL}/api/chat/start`, { streamUrl });
-        setIsConnected(true);
-        setError(null);
-      } catch (error) {
-        setError('Failed to start live chat');
-      }
+      await handleDisconnect();
+    }
+    try {
+      await axios.post(`${SERVER_URL}/api/chat/start`);
+      setIsConnected(true);
+      setError(null);
+    } catch (error) {
+      setError('Failed to start live chat');
     }
   };
 
   const handleDisconnect = async () => {
-    await axios.post(`${SERVER_URL}/api/chat/stop`);
-    setIsConnected(false);
-    setComments([]);
-    setError(null);
+    try {
+      await axios.post(`${SERVER_URL}/api/chat/stop`);
+      setIsConnected(false);
+      setComments([]);
+      setError(null);
+    } catch (error) {
+      setError('Failed to stop live chat');
+    }
   };
 
   const filterComments = (panel: string) => {
@@ -223,13 +222,6 @@ export default function Chat() {
       <div className="flex items-center justify-between p-4 bg-gray-800">
         <h1 className="text-2xl font-bold text-neon-green">Live Stream Chat</h1>
         <div className="flex items-center space-x-4">
-          <Input
-            type="text"
-            value={streamUrl}
-            onChange={(e) => setStreamUrl(e.target.value)}
-            placeholder="Enter YouTube live stream URL"
-            className="bg-gray-700 text-white border-neon-green"
-          />
           <Button
             onClick={handleConnect}
             className={`px-4 ${isConnected ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-neon-green hover:bg-green-600'}`}

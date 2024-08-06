@@ -34,7 +34,7 @@ const ChatHoverCard: React.FC<ChatHoverCardProps> = ({ username, userRating }) =
           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-neon-green scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
         </span>
       </HoverCardTrigger>
-      <HoverCardContent className="bg-gray-800 text-gray-300 p-4 rounded-md shadow-lg border border-gray-700" side="right">
+      <HoverCardContent className="bg-gray-800 text-gray-300 p-4 rounded-md shadow-lg border border-gray-700 z-[9999]" side="right">
         {userRating ? (
           <div className="flex flex-col space-y-3">
             <div className="flex items-center space-x-4">
