@@ -33,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             <Route element={<CookieConsentWrapper />}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/app" element={<App />} />
-              <Route path="/chat" element={<Chat />} />
+              <Route path="/secret-chat" element={<Chat />} />
               <Route path="/gift" element={<DiamondGift />} />
               <Route path="/chessnews" element={<ChessNews />} />
               <Route path="/chesstutorials" element={<ChessTutorials />} />
