@@ -13,12 +13,6 @@ const Backend_URL = import.meta.env.VITE_BACKEND_URL;
 console.log('SERVER_URL:', SERVER_URL);
 console.log('Backend_URL:', Backend_URL);
 
-const socket = io(SERVER_URL, {
-  transports: ['websocket', 'polling'],
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-});
-
 interface ChatItem {
   author: {
     name: string;
@@ -49,16 +43,6 @@ interface ChatItem {
   isOwner: boolean;
   isModerator: boolean;
   timestamp: Date;
-}
-
-interface RatingResponse {
-  youtubeChannelId: string;
-  chessUsername: string;
-  ratings: {
-    blitz: number | null;
-    bullet: number | null;
-    rapid: number | null;
-  };
 }
 
 interface ChatUserRating {
@@ -119,20 +103,13 @@ export default function Chat() {
     fetchRegisteredUsers();
   }, []);
 
-  const fetchUserRatings = async (channelIds: string[]) => {
+  const fetchUserRatings = useCallback(async (channelIds: string[]) => {
     try {
       const newRatings: { [key: string]: ChatUserRating } = {};
 
       for (const channelId of channelIds) {
-        const response = await axios.get<RatingResponse>(`${Backend_URL}/api/chess/ratings/${channelId}`);
-        newRatings[channelId] = {
-          chessUsername: response.data.chessUsername,
-          ratings: {
-            blitz: response.data.ratings.blitz ?? 0,
-            bullet: response.data.ratings.bullet ?? 0,
-            rapid: response.data.ratings.rapid ?? 0
-          }
-        };
+        const response = await axios.get(`${Backend_URL}/api/chess/ratings/${channelId}`);
+        newRatings[channelId] = response.data;
       }
 
       setUserRatings(prevRatings => ({
@@ -142,112 +119,77 @@ export default function Chat() {
     } catch (error) {
       console.error(`Failed to fetch user ratings`, error);
     }
-  };
-
-  useEffect(() => {
-    const setupSocketListeners = () => {
-      socket.on('connect', () => {
-        console.log('Socket connected successfully');
-        setIsConnected(true);
-        setError(null);
-      });
-
-      socket.on('connect_error', (err) => {
-        console.error('Socket connection error:', err);
-        setError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      });
-
-      socket.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', reason);
-        setIsConnected(false);
-        setError(`Disconnected: ${reason}`);
-      });
-
-      socket.on('chatMessage', (chatItem: ChatItem) => {
-        console.log('Received chat message:', chatItem);
-        setComments((prevComments) => {
-          const newComments = [...prevComments, chatItem].slice(-1000);
-          
-          const newRegisteredUsers = newComments
-            .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
-            .map(comment => comment.author.channelId);
-
-          if (newRegisteredUsers.length > 0) {
-            fetchUserRatings(newRegisteredUsers);
-          }
-          
-          setTimeout(() => {
-            openPanels.forEach(scrollToBottom);
-          }, 0);
-
-          return newComments;
-        });
-      });
-
-      socket.on('error', (err: unknown) => {
-        console.error('Socket error:', err);
-        if (typeof err === 'string') {
-          setError(`Socket error: ${err}`);
-        } else if (err instanceof Error) {
-          setError(`Socket error: ${err.message}`);
-        } else {
-          setError('Socket error: Unknown error');
-        }
-      });
-
-      socket.on('chatEnded', () => {
-        console.log('Chat ended');
-        setIsConnected(false);
-        setComments([]);
-      });
-
-      socket.io.on("error", (error) => {
-        console.error("Socket.io error:", error);
-      });
-
-      socket.io.on("reconnect_attempt", (attempt) => {
-        console.log("Attempting to reconnect:", attempt);
-      });
-
-      socket.io.on("reconnect_failed", () => {
-        console.error("Failed to reconnect");
-      });
-    };
-
-    setupSocketListeners();
-
-    // Attempt to connect when the component mounts
-    handleConnect();
-
-    return () => {
-      console.log('Cleaning up socket listeners');
-      socket.off('connect');
-      socket.off('connect_error');
-      socket.off('disconnect');
-      socket.off('chatMessage');
-      socket.off('error');
-      socket.off('chatEnded');
-      socket.io.off("error");
-      socket.io.off("reconnect_attempt");
-      socket.io.off("reconnect_failed");
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleConnect = async () => {
-    try {
-      console.log('Attempting to connect to chat');
-      const response = await axios.get(`${SERVER_URL}/api/chat/messages`);
-      console.log('Connection response:', response.data);
-    } catch (error) {
-      console.error('Failed to connect to live chat:', error);
-      if (error instanceof Error) {
-        setError(`Failed to connect to live chat: ${error.message}`);
+  useEffect(() => {
+    const socket = io(SERVER_URL, {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      timeout: 20000,
+    });
+
+    socket.on('connect', () => {
+      console.log('Socket connected successfully');
+      setIsConnected(true);
+      setError(null);
+      socket.emit('startChat');
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err);
+      setError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason);
+      setIsConnected(false);
+      setError(`Disconnected: ${reason}`);
+    });
+
+    socket.on('chatMessage', (chatItem: ChatItem) => {
+      console.log('Received chat message:', chatItem);
+      setComments((prevComments) => {
+        const newComments = [...prevComments, chatItem].slice(-1000);
+        
+        const newRegisteredUsers = newComments
+          .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
+          .map(comment => comment.author.channelId);
+
+        if (newRegisteredUsers.length > 0) {
+          fetchUserRatings(newRegisteredUsers);
+        }
+        
+        setTimeout(() => {
+          openPanels.forEach(scrollToBottom);
+        }, 0);
+
+        return newComments;
+      });
+    });
+
+    socket.on('error', (err: unknown) => {
+      console.error('Socket error:', err);
+      if (typeof err === 'string') {
+        setError(`Socket error: ${err}`);
+      } else if (err instanceof Error) {
+        setError(`Socket error: ${err.message}`);
       } else {
-        setError('Failed to connect to live chat: Unknown error');
+        setError('Socket error: Unknown error');
       }
-    }
-  };
+    });
+
+    socket.on('chatEnded', () => {
+      console.log('Chat ended');
+      setIsConnected(false);
+      setComments([]);
+    });
+
+    return () => {
+      console.log('Cleaning up socket connection');
+      socket.disconnect();
+    };
+  }, [registeredUsers, userRatings, openPanels, scrollToBottom, fetchUserRatings]);
 
   const filterComments = (panel: string) => {
     switch (panel) {
@@ -272,10 +214,10 @@ export default function Chat() {
         <h1 className="text-2xl font-bold text-neon-green">Live Stream Chat</h1>
         <div className="flex items-center space-x-4">
           <Button
-            onClick={handleConnect}
-            className={`px-4 ${isConnected ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-neon-green hover:bg-green-600'}`}
+            className={`px-4 ${isConnected ? 'bg-green-600' : 'bg-red-600'}`}
+            disabled
           >
-            {isConnected ? 'Reconnect' : 'Connect'}
+            {isConnected ? 'Connected' : 'Disconnected'}
           </Button>
         </div>
       </div>
