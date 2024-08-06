@@ -147,7 +147,7 @@ export default function Chat() {
   useEffect(() => {
     const setupSocketListeners = () => {
       socket.on('connect', () => {
-        console.log('Socket connected');
+        console.log('Socket connected successfully');
         setIsConnected(true);
         setError(null);
       });
@@ -200,6 +200,18 @@ export default function Chat() {
         setIsConnected(false);
         setComments([]);
       });
+
+      socket.io.on("error", (error) => {
+        console.error("Socket.io error:", error);
+      });
+
+      socket.io.on("reconnect_attempt", (attempt) => {
+        console.log("Attempting to reconnect:", attempt);
+      });
+
+      socket.io.on("reconnect_failed", () => {
+        console.error("Failed to reconnect");
+      });
     };
 
     setupSocketListeners();
@@ -215,7 +227,11 @@ export default function Chat() {
       socket.off('chatMessage');
       socket.off('error');
       socket.off('chatEnded');
+      socket.io.off("error");
+      socket.io.off("reconnect_attempt");
+      socket.io.off("reconnect_failed");
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleConnect = async () => {
