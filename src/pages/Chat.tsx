@@ -154,7 +154,7 @@ export default function Chat() {
 
       socket.on('connect_error', (err) => {
         console.error('Socket connection error:', err);
-        setError(`Connection error: ${err.message}`);
+        setError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);
       });
 
       socket.on('disconnect', (reason) => {
@@ -184,9 +184,15 @@ export default function Chat() {
         });
       });
 
-      socket.on('error', (err: string) => {
+      socket.on('error', (err: unknown) => {
         console.error('Socket error:', err);
-        setError(`Socket error: ${err}`);
+        if (typeof err === 'string') {
+          setError(`Socket error: ${err}`);
+        } else if (err instanceof Error) {
+          setError(`Socket error: ${err.message}`);
+        } else {
+          setError('Socket error: Unknown error');
+        }
       });
 
       socket.on('chatEnded', () => {
@@ -198,6 +204,9 @@ export default function Chat() {
 
     setupSocketListeners();
 
+    // Attempt to connect when the component mounts
+    handleConnect();
+
     return () => {
       console.log('Cleaning up socket listeners');
       socket.off('connect');
@@ -207,15 +216,13 @@ export default function Chat() {
       socket.off('error');
       socket.off('chatEnded');
     };
-  }, [registeredUsers, userRatings, openPanels, scrollToBottom]);
+  }, []);
 
   const handleConnect = async () => {
     try {
       console.log('Attempting to connect to chat');
       const response = await axios.get(`${SERVER_URL}/api/chat/messages`);
       console.log('Connection response:', response.data);
-      setIsConnected(true);
-      setError(null);
     } catch (error) {
       console.error('Failed to connect to live chat:', error);
       if (error instanceof Error) {
