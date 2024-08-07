@@ -72,10 +72,16 @@ const Chat: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('Attempting to connect to socket');
     const socket = io(import.meta.env.VITE_SERVER_URL);
     socketRef.current = socket;
 
+    socket.on('connect', () => {
+      console.log('Socket connected successfully');
+    });
+
     socket.on('chatMessage', (message: ChatMessage) => {
+      console.log('Received chat message:', message);
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
         setTimeout(() => {
@@ -91,6 +97,10 @@ const Chat: React.FC = () => {
 
     socket.on('error', (errorMessage: string) => {
       console.error('Socket error:', errorMessage);
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log(`Socket disconnected. Reason: ${reason}`);
     });
 
     const heartbeat = setInterval(() => {
@@ -139,6 +149,7 @@ const Chat: React.FC = () => {
   };
 
   const handleSwitchChannel = () => {
+    console.log('Switching channel to:', videoUrl);
     if (socketRef.current) {
       socketRef.current.emit('switchChannel', videoUrl);
     }
