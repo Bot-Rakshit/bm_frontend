@@ -1,52 +1,28 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar, FaExchangeAlt } from 'react-icons/fa';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/Alert';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
-import io, { Socket } from 'socket.io-client';
+import { FaChessKnight, FaCrown, FaShieldAlt, FaCheck, FaStar, FaDollarSign } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatHoverCard from '@/components/ChatHoverCard';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const Backend_URL = import.meta.env.VITE_BACKEND_URL;
-
-console.log('SERVER_URL:', SERVER_URL);
-console.log('Backend_URL:', Backend_URL);
-
-interface ChatItem {
+interface ChatMessage {
   author: {
     name: string;
-    thumbnail?: {
-      url: string;
-      alt: string;
-    };
     channelId: string;
-    badge?: {
-      thumbnail: {
-        url: string;
-        alt: string;
-      };
-      label: string;
-    };
   };
-  message: Array<{ text: string } | { url: string; alt: string; emojiText: string }>;
+  message: string;
+  timestamp: Date;
+  isOwner: boolean;
+  isModerator: boolean;
+  isVerified: boolean;
+  isMembership: boolean;
   superchat?: {
     amount: string;
     color: string;
-    sticker?: {
-      url: string;
-      alt: string;
-    };
   };
-  isMembership: boolean;
-  isVerified: boolean;
-  isOwner: boolean;
-  isModerator: boolean;
-  timestamp: Date;
 }
 
-interface ChatUserRating {
+interface UserRating {
   chessUsername: string;
   ratings: {
     blitz: number;
@@ -55,22 +31,22 @@ interface ChatUserRating {
   };
 }
 
-export default function Chat() {
-  const [comments, setComments] = useState<ChatItem[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const Chat: React.FC = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [videoUrl, setVideoUrl] = useState('');
   const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
-  const [userRatings, setUserRatings] = useState<{ [key: string]: ChatUserRating }>({});
+  const [userRatings, setUserRatings] = useState<{ [key: string]: UserRating }>({});
   const [openPanels, setOpenPanels] = useState<string[]>(['all', 'superchats', 'chess']);
   const socketRef = useRef<Socket | null>(null);
-  const [socketId, setSocketId] = useState<string | null>(null);
-  const [currentChannelId, setCurrentChannelId] = useState<string>('');
-  const [newChannelId, setNewChannelId] = useState<string>('');
+
+  const allChatRef = useRef<HTMLDivElement>(null);
+  const superchatsChatRef = useRef<HTMLDivElement>(null);
+  const chessChatRef = useRef<HTMLDivElement>(null);
 
   const chatRefs = useMemo(() => ({
-    all: React.createRef<HTMLDivElement>(),
-    superchats: React.createRef<HTMLDivElement>(),
-    chess: React.createRef<HTMLDivElement>(),
+    all: allChatRef,
+    superchats: superchatsChatRef,
+    chess: chessChatRef,
   }), []);
 
   const scrollToBottom = useCallback((panel: string) => {
@@ -89,16 +65,49 @@ export default function Chat() {
     return '';
   };
 
-  const getUsernameWithRating = (username: string, userRating: ChatUserRating | undefined): string => {
+  const getUsernameWithRating = (username: string, userRating: UserRating | undefined): string => {
     if (!userRating || userRating.ratings.rapid === 0) return username;
     const ratingBand = getRatingBand(userRating.ratings.rapid);
     return ratingBand ? `${username} [${ratingBand}]` : username;
   };
 
   useEffect(() => {
+    const socket = io(import.meta.env.VITE_SERVER_URL);
+    socketRef.current = socket;
+
+    socket.on('chatMessage', (message: ChatMessage) => {
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages, message];
+        setTimeout(() => {
+          openPanels.forEach(scrollToBottom);
+        }, 0);
+        return newMessages;
+      });
+
+      if (registeredUsers.includes(message.author.channelId) && !userRatings[message.author.channelId]) {
+        fetchUserRatings(message.author.channelId);
+      }
+    });
+
+    socket.on('error', (errorMessage: string) => {
+      console.error('Socket error:', errorMessage);
+    });
+
+    const heartbeat = setInterval(() => {
+      socket.emit('heartbeat');
+    }, 25000);
+
+    return () => {
+      socket.disconnect();
+      clearInterval(heartbeat);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registeredUsers, userRatings, openPanels, scrollToBottom]);
+
+  useEffect(() => {
     const fetchRegisteredUsers = async () => {
       try {
-        const response = await axios.get(`${Backend_URL}/api/chess/registered-users`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/chess/registered-users`);
         setRegisteredUsers(response.data);
       } catch (error) {
         console.error('Failed to fetch registered users', error);
@@ -108,123 +117,41 @@ export default function Chat() {
     fetchRegisteredUsers();
   }, []);
 
-  const fetchUserRatings = useCallback(async (channelIds: string[]) => {
+  const fetchUserRatings = async (channelId: string) => {
+    if (userRatings[channelId]) return;
+
     try {
-      const newRatings: { [key: string]: ChatUserRating } = {};
-
-      for (const channelId of channelIds) {
-        const response = await axios.get(`${Backend_URL}/api/chess/ratings/${channelId}`);
-        newRatings[channelId] = response.data;
-      }
-
-      setUserRatings(prevRatings => ({
-        ...prevRatings,
-        ...newRatings
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/chess/ratings/${channelId}`);
+      setUserRatings(prev => ({
+        ...prev,
+        [channelId]: {
+          chessUsername: response.data.chessUsername,
+          ratings: {
+            blitz: response.data.ratings.blitz ?? 0,
+            bullet: response.data.ratings.bullet ?? 0,
+            rapid: response.data.ratings.rapid ?? 0
+          }
+        }
       }));
     } catch (error) {
-      console.error(`Failed to fetch user ratings`, error);
+      console.error(`Failed to fetch user ratings for ${channelId}`, error);
     }
-  }, []);
+  };
 
-  const connectSocket = useCallback(() => {
-    if (socketRef.current?.connected) {
-      console.log('Socket already connected');
-      return;
+  const handleSwitchChannel = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('switchChannel', videoUrl);
     }
+  };
 
-    console.log('Initializing socket connection');
-    socketRef.current = io(SERVER_URL, {
-      transports: ['websocket'],
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      timeout: 20000,
-    });
-
-    socketRef.current.on('connect', () => {
-      console.log(`Socket connected successfully. ID: ${socketRef.current?.id}`);
-      setSocketId(socketRef.current?.id || null);
-      setIsConnected(true);
-      setError(null);
-    });
-
-    socketRef.current.on('connect_error', (err) => {
-      console.error('Socket connection error:', err);
-      setError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-    });
-
-    socketRef.current.on('disconnect', (reason) => {
-      console.log(`Socket disconnected. ID: ${socketRef.current?.id}, Reason: ${reason}`);
-      setIsConnected(false);
-      setError(`Disconnected: ${reason}`);
-    });
-
-    socketRef.current.on('ping', () => {
-      socketRef.current?.emit('pong');
-    });
-
-    socketRef.current.on('keepAliveResponse', () => {
-      console.log('Received keep-alive response from server');
-    });
-
-    socketRef.current.on('chatMessage', (chatItem: ChatItem) => {
-      console.log(`Received chat message. Socket ID: ${socketRef.current?.id}`);
-      setComments((prevComments) => {
-        const newComments = [...prevComments, chatItem].slice(-1000);
-        
-        const newRegisteredUsers = newComments
-          .filter(comment => registeredUsers.includes(comment.author.channelId) && !userRatings[comment.author.channelId])
-          .map(comment => comment.author.channelId);
-
-        if (newRegisteredUsers.length > 0) {
-          fetchUserRatings(newRegisteredUsers);
-        }
-        
-        setTimeout(() => {
-          openPanels.forEach(scrollToBottom);
-        }, 0);
-
-        return newComments;
-      });
-    });
-
-    socketRef.current.on('error', (err: unknown) => {
-      console.error('Socket error:', err);
-      setError(typeof err === 'string' ? err : 'Unknown socket error');
-    });
-
-    socketRef.current.on('chatEnded', () => {
-      console.log('Chat ended');
-      setIsConnected(false);
-      setComments([]);
-    });
-
-    socketRef.current.on('chatStarted', ({ liveId }) => {
-      console.log(`Chat started for live stream: ${liveId}`);
-      setCurrentChannelId(liveId);
-    });
-  }, [registeredUsers, userRatings, openPanels, scrollToBottom, fetchUserRatings]);
-
-  useEffect(() => {
-    connectSocket();
-
-    return () => {
-      console.log('Cleaning up socket connection');
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
-  }, [connectSocket]);
-
-  const filterComments = (panel: string) => {
+  const filterMessages = (panel: string) => {
     switch (panel) {
       case 'superchats':
-        return comments.filter((comment) => comment.superchat);
+        return messages.filter((msg) => msg.superchat);
       case 'chess':
-        return comments.filter((comment) => registeredUsers.includes(comment.author.channelId));
+        return messages.filter((msg) => registeredUsers.includes(msg.author.channelId));
       default:
-        return comments;
+        return messages;
     }
   };
 
@@ -234,59 +161,27 @@ export default function Chat() {
     );
   };
 
-  const switchChannel = async () => {
-    if (!newChannelId) {
-      setError('Please enter a valid channel ID');
-      return;
-    }
-
-    try {
-      await axios.post(`${Backend_URL}/api/chat/switch-channel`, { channelId: newChannelId });
-      setNewChannelId('');
-      setError(null);
-    } catch (error) {
-      console.error('Failed to switch channel', error);
-      setError('Failed to switch channel. Please try again.');
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-black text-white">
       <div className="flex items-center justify-between p-4 bg-gray-800">
         <h1 className="text-2xl font-bold text-neon-green">Live Stream Chat</h1>
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-300">Socket ID: {socketId || 'Not connected'}</span>
-          <Button
-            className={`px-4 ${isConnected ? 'bg-green-600' : 'bg-red-600'}`}
-            onClick={connectSocket}
-          >
-            {isConnected ? 'Connected' : 'Disconnected'}
-          </Button>
-        </div>
-      </div>
-      {error && (
-        <Alert className="m-4 bg-red-900 border-red-600">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      <div className="flex items-center justify-between p-4 bg-gray-800">
-        <div className="flex items-center space-x-2">
-          <Input
+          <input
             type="text"
-            placeholder="Enter new channel ID"
-            value={newChannelId}
-            onChange={(e) => setNewChannelId(e.target.value)}
-            className="bg-gray-700 text-white"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="Enter YouTube video URL"
+            className="bg-gray-700 text-white border-neon-green rounded px-2 py-1"
           />
-          <Button onClick={switchChannel} className="bg-blue-600">
-            <FaExchangeAlt className="mr-2" /> Switch Channel
-          </Button>
+          <button
+            onClick={handleSwitchChannel}
+            className="px-4 py-2 bg-neon-green text-black rounded hover:bg-green-600 transition-colors"
+          >
+            Switch Channel
+          </button>
         </div>
-        <span className="text-sm text-gray-300">
-          Current Channel: {currentChannelId || 'Not set'}
-        </span>
       </div>
-      <div className="flex-1 flex flex-wrap p-4 overflow-y-auto relative">
+      <div className="flex-1 flex flex-wrap p-4 overflow-y-auto">
         {['all', 'superchats', 'chess'].map((panel) => (
           <div
             key={panel}
@@ -294,83 +189,54 @@ export default function Chat() {
               openPanels.includes(panel) ? '' : 'hidden'
             }`}
           >
-            <div className="h-[calc(100vh-16rem)] flex flex-col bg-gray-800/50 rounded-lg backdrop-blur-sm border border-neon-green/30">
+            <div className="h-[calc(100vh-12rem)] flex flex-col bg-gray-800/50 rounded-lg backdrop-blur-sm border border-neon-green/30">
               <div className="flex justify-between items-center p-2 border-b border-neon-green/30">
                 <h2 className="text-xl font-bold text-neon-green">
-                  {panel === 'chess' ? <FaChessKnight className="inline-block mr-2" /> : null}
+                  {panel === 'chess' && <FaChessKnight className="inline-block mr-2" />}
                   {panel.charAt(0).toUpperCase() + panel.slice(1)}
                 </h2>
-                <FaTimes className="cursor-pointer text-neon-green hover:text-red-500 transition-colors" onClick={() => togglePanel(panel)} />
+                <button
+                  onClick={() => togglePanel(panel)}
+                  className="text-neon-green hover:text-red-500 transition-colors"
+                >
+                  Close
+                </button>
               </div>
               <div
                 ref={chatRefs[panel as keyof typeof chatRefs]}
                 className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-neon-green scrollbar-track-gray-700"
               >
                 <AnimatePresence initial={false}>
-                  {filterComments(panel).map((comment, index) => (
+                  {filterMessages(panel).map((msg, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                      className={`p-1 bg-gray-700/70 rounded-lg backdrop-blur-sm ${
-                        comment.isOwner ? 'border border-neon-green' : ''
+                      className={`p-2 bg-gray-700/70 rounded-lg backdrop-blur-sm ${
+                        msg.isOwner ? 'border border-neon-green' : ''
                       }`}
                     >
-                      <div className="flex items-center mb-1 text-sm">
-                        {comment.author.thumbnail && (
-                          <img
-                            src={comment.author.thumbnail.url}
-                            alt={comment.author.thumbnail.alt}
-                            className="w-5 h-5 rounded-full mr-1 border border-neon-green"
+                      <div className="flex items-center mb-1">
+                        {registeredUsers.includes(msg.author.channelId) ? (
+                          <ChatHoverCard
+                            username={getUsernameWithRating(msg.author.name, userRatings[msg.author.channelId])}
+                            userRating={userRatings[msg.author.channelId]}
                           />
+                        ) : (
+                          <span className="font-bold mr-1 text-neon-green">{msg.author.name}</span>
                         )}
-                        <div className="relative z-10">
-                          {registeredUsers.includes(comment.author.channelId) ? (
-                            <ChatHoverCard
-                              username={getUsernameWithRating(comment.author.name, userRatings[comment.author.channelId])}
-                              userRating={userRatings[comment.author.channelId]}
-                            />
-                          ) : (
-                            <span className="font-bold mr-1 text-neon-green">{comment.author.name}</span>
-                          )}
-                        </div>
-                        {comment.isOwner && <FaCrown className="text-yellow-500 mr-1" title="Stream Owner" />}
-                        {comment.isModerator && <FaShieldAlt className="text-blue-400 mr-1" title="Moderator" />}
-                        {comment.isVerified && <FaCheck className="text-green-400 mr-1" title="Verified" />}
-                        {comment.isMembership && <FaStar className="text-purple-400 mr-1" title="Member" />}
-                        {registeredUsers.includes(comment.author.channelId) && (
-                          <FaChessKnight className="text-neon-green mr-1" title="Chess Player" />
-                        )}
-                        {comment.author.badge && (
-                          <img
-                            src={comment.author.badge.thumbnail.url}
-                            alt={comment.author.badge.thumbnail.alt}
-                            className="w-4 h-4 mr-1"
-                            title={comment.author.badge.label}
-                          />
-                        )}
+                        {msg.isOwner && <FaCrown className="text-yellow-500 ml-1" title="Stream Owner" />}
+                        {msg.isModerator && <FaShieldAlt className="text-blue-400 ml-1" title="Moderator" />}
+                        {msg.isVerified && <FaCheck className="text-green-400 ml-1" title="Verified" />}
+                        {msg.isMembership && <FaStar className="text-purple-400 ml-1" title="Member" />}
                       </div>
-                      <div className="ml-6 text-xs">
-                        {comment.message.map((item, index) =>
-                          'text' in item ? (
-                            <span key={index} className="text-gray-200">{item.text}</span>
-                          ) : (
-                            <img
-                              key={index}
-                              src={item.url}
-                              alt={item.alt}
-                              className="inline-block h-4 mx-1 align-text-bottom"
-                              title={item.emojiText}
-                            />
-                          )
-                        )}
-                      </div>
-                      {comment.superchat && (
-                        <div className="mt-1 flex items-center text-xs">
+                      <div className="ml-6 text-sm text-gray-300">{msg.message}</div>
+                      {msg.superchat && (
+                        <div className="mt-1 flex items-center text-sm">
                           <FaDollarSign className="text-yellow-400 mr-1" />
                           <span className="font-semibold text-yellow-400">
-                            Super Chat: {comment.superchat.amount}
+                            Super Chat: {msg.superchat.amount}
                           </span>
                         </div>
                       )}
@@ -384,4 +250,6 @@ export default function Chat() {
       </div>
     </div>
   );
-}
+};
+
+export default Chat;
