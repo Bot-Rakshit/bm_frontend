@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navbar } from '@/components/landing/navbar';
-import { PredictionCard } from '@/components/landing/PredictionCard';
 import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-react';
 import samayheader from '../assets/samayheader.webp';
 import chesscomLogo from '../assets/chesscomlogo.webp';
@@ -112,9 +111,6 @@ const Hero = () => {
 								className="rounded-lg shadow-2xl w-full h-[300px] sm:h-[400px] object-cover object-center"
 							/>
 							<div className="absolute -bottom-36 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
-								<div className="overflow-hidden" style={{ maxHeight: '50%' }}>
-									<PredictionCard token={token} />
-								</div>
 							</div>
 						</div>
 					</div>
