@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -26,13 +26,6 @@ const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
 	return <motion.span>{rounded}</motion.span>;
 };
 
-const MaintenanceNotice = () => (
-  <div className="bg-yellow-500 text-black p-4 rounded-md mb-8 text-center">
-    <p className="font-bold">🚧 Maintenance Notice 🚧</p>
-    <p>We are currently under maintenance for the next 30 minutes. Some features may be unavailable.</p>
-  </div>
-);
-
 const Hero = () => {
 	const [ref, inView] = useInView({
 		triggerOnce: true,
@@ -40,6 +33,8 @@ const Hero = () => {
 	});
 
 	const [totalUsers, setTotalUsers] = useState(0);
+	const [token, setToken] = useState<string | null>(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchTotalUsers = async () => {
@@ -52,6 +47,9 @@ const Hero = () => {
 		};
 
 		fetchTotalUsers();
+
+		const storedToken = localStorage.getItem('token');
+		setToken(storedToken);
 	}, []);
 
   const scrollToHowItWorks = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,6 +57,14 @@ const Hero = () => {
     const howItWorksSection = document.getElementById('how-it-works');
     if (howItWorksSection) {
       howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleEarlyAccess = () => {
+    if (token) {
+      navigate(`/welcome?token=${token}`);
+    } else {
+      navigate('/signup');
     }
   };
 
@@ -71,7 +77,6 @@ const Hero = () => {
 			className="relative pt-20 lg:pt-32 flex items-center overflow-hidden"
 		>
 			<div className="container mx-auto px-4 z-10">
-				<MaintenanceNotice />
 				<div className="flex flex-col lg:flex-row items-center justify-between gap-12">
 					<div className="lg:w-1/2 space-y-6 text-center lg:text-left">
 						<h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
@@ -85,15 +90,15 @@ const Hero = () => {
 						</div>
 						<div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
 							<Button 
-								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-gray-500 text-white cursor-not-allowed opacity-50" 
-								disabled
+								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300" 
+								onClick={handleEarlyAccess}
 							>
-								Early Access (BETA)
+								{token ? 'Go to App' : 'Early Access (BETA)'}
 							</Button>
 							<Button
 								variant="outline"
-								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white cursor-not-allowed opacity-50"
-								disabled
+								className="rounded-full px-6 py-3 text-base sm:text-lg font-medium text-white border-white hover:bg-white/20 transition-all duration-300"
+								onClick={scrollToHowItWorks}
 							>
 								Learn more
 							</Button>
@@ -108,7 +113,7 @@ const Hero = () => {
 							/>
 							<div className="absolute -bottom-36 sm:-bottom-32 -right-8 sm:-right-16 transform rotate-6 hover:rotate-0 transition-transform duration-300 scale-75 sm:scale-100">
 								<div className="overflow-hidden" style={{ maxHeight: '50%' }}>
-									<PredictionCard />
+									<PredictionCard token={token} />
 								</div>
 							</div>
 						</div>
@@ -326,7 +331,6 @@ export function LandingPage() {
 			<Navbar />
 			<main className="flex-grow px-4 sm:px-6 py-24 mt-15 relative z-10">
 				<div className="max-w-7xl mx-auto">
-					<MaintenanceNotice />
 					<div className="mb-48">
 						<Hero />
 						<Partner />

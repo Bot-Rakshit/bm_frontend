@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar} from 'react-icons/fa';
+import { FaCrown, FaShieldAlt, FaDollarSign, FaCheck, FaTimes, FaChessKnight, FaStar, FaExchangeAlt } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import axios from 'axios';
 import io, { Socket } from 'socket.io-client';
@@ -63,6 +64,8 @@ export default function Chat() {
   const [openPanels, setOpenPanels] = useState<string[]>(['all', 'superchats', 'chess']);
   const socketRef = useRef<Socket | null>(null);
   const [socketId, setSocketId] = useState<string | null>(null);
+  const [currentChannelId, setCurrentChannelId] = useState<string>('');
+  const [newChannelId, setNewChannelId] = useState<string>('');
 
   const chatRefs = useMemo(() => ({
     all: React.createRef<HTMLDivElement>(),
@@ -195,6 +198,11 @@ export default function Chat() {
       setIsConnected(false);
       setComments([]);
     });
+
+    socketRef.current.on('chatStarted', ({ liveId }) => {
+      console.log(`Chat started for live stream: ${liveId}`);
+      setCurrentChannelId(liveId);
+    });
   }, [registeredUsers, userRatings, openPanels, scrollToBottom, fetchUserRatings]);
 
   useEffect(() => {
@@ -226,6 +234,22 @@ export default function Chat() {
     );
   };
 
+  const switchChannel = async () => {
+    if (!newChannelId) {
+      setError('Please enter a valid channel ID');
+      return;
+    }
+
+    try {
+      await axios.post(`${Backend_URL}/api/chat/switch-channel`, { channelId: newChannelId });
+      setNewChannelId('');
+      setError(null);
+    } catch (error) {
+      console.error('Failed to switch channel', error);
+      setError('Failed to switch channel. Please try again.');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 to-black text-white">
       <div className="flex items-center justify-between p-4 bg-gray-800">
@@ -245,6 +269,23 @@ export default function Chat() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+      <div className="flex items-center justify-between p-4 bg-gray-800">
+        <div className="flex items-center space-x-2">
+          <Input
+            type="text"
+            placeholder="Enter new channel ID"
+            value={newChannelId}
+            onChange={(e) => setNewChannelId(e.target.value)}
+            className="bg-gray-700 text-white"
+          />
+          <Button onClick={switchChannel} className="bg-blue-600">
+            <FaExchangeAlt className="mr-2" /> Switch Channel
+          </Button>
+        </div>
+        <span className="text-sm text-gray-300">
+          Current Channel: {currentChannelId || 'Not set'}
+        </span>
+      </div>
       <div className="flex-1 flex flex-wrap p-4 overflow-y-auto relative">
         {['all', 'superchats', 'chess'].map((panel) => (
           <div
@@ -253,7 +294,7 @@ export default function Chat() {
               openPanels.includes(panel) ? '' : 'hidden'
             }`}
           >
-            <div className="h-[calc(100vh-12rem)] flex flex-col bg-gray-800/50 rounded-lg backdrop-blur-sm border border-neon-green/30">
+            <div className="h-[calc(100vh-16rem)] flex flex-col bg-gray-800/50 rounded-lg backdrop-blur-sm border border-neon-green/30">
               <div className="flex justify-between items-center p-2 border-b border-neon-green/30">
                 <h2 className="text-xl font-bold text-neon-green">
                   {panel === 'chess' ? <FaChessKnight className="inline-block mr-2" /> : null}

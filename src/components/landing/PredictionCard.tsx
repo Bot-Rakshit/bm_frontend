@@ -1,37 +1,32 @@
-import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
-type PredictionCardProps = {
-  className?: string;
-};
-
-export const PredictionCard: React.FC<PredictionCardProps> = ({ className }) => (
-  <div className={`bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-lg w-full max-w-sm ${className}`}>
-    <h3 className="text-xl font-bold text-neon-green mb-4">Upcoming Matches</h3>
-    <div className="space-y-4">
-      <MatchPrediction 
-        players="Samay Raina vs  Alex Sem"
-        date="TBD, 2024"
-      />
-      <MatchPrediction 
-        players="Anish Giri vs Magnus Carlsen"
-        date="May 18, 2024"
-      />
-    </div>
-  </div>
-)
-
-function MatchPrediction({ players, date }: { players: string; date: string }) {
-  return (
-    <div className="mb-3 pb-3 border-b border-gray-700 last:border-0">
-      <p className="text-sm font-semibold text-white mb-1">{players}</p>
-      <p className="text-xs text-gray-400 mb-2">{date}</p>
-      <div className="flex items-center justify-between">
-        <Button className="rounded-full px-3 py-1 text-xs font-medium bg-neon-green text-black hover:bg-opacity-80 transition-all duration-300" asChild>
-          <Link to="/signup">Predict Now</Link>
-        </Button>
-        <div className="text-neon-green font-bold text-sm">+100 BM</div>
-      </div>
-    </div>
-  )
+interface PredictionCardProps {
+  token: string | null;
 }
+
+export const PredictionCard: React.FC<PredictionCardProps> = ({ token }) => {
+  const navigate = useNavigate();
+
+  const handlePredictNow = () => {
+    if (token) {
+      navigate(`/welcome?token=${token}`);
+    } else {
+      navigate('/signup');
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] p-6 rounded-xl shadow-lg border border-neon-green/30 max-w-sm">
+      <h3 className="text-2xl font-bold text-neon-green mb-4">Make Your Prediction</h3>
+      <p className="text-gray-300 mb-6">Predict the outcomes of upcoming chess matches and events. Win exclusive rewards!</p>
+      <Button 
+        className="w-full bg-neon-green text-black hover:bg-neon-green/80 transition-all duration-300 rounded-full py-3 font-semibold text-base"
+        onClick={handlePredictNow}
+      >
+        {token ? 'Go to Predictions' : 'Predict Now'}
+      </Button>
+    </div>
+  );
+};
