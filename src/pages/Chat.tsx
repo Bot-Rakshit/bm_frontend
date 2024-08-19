@@ -75,7 +75,9 @@ const Chat: React.FC = () => {
   useEffect(() => {
     console.log('Server URL:', import.meta.env.VITE_SERVER_URL);
     console.log('Attempting to connect to socket');
-    const socket = io(import.meta.env.VITE_SERVER_URL);
+    const socket = io(import.meta.env.VITE_SERVER_URL, {
+      withCredentials: true,
+    });
     socketRef.current = socket;
 
     socket.on('connect', () => {
@@ -105,13 +107,20 @@ const Chat: React.FC = () => {
       console.log(`Socket disconnected. Reason: ${reason}`);
     });
 
-    const heartbeat = setInterval(() => {
+    socket.on('switchChannel', (videoUrl: string) => {
+      console.log('Switching to channel:', videoUrl);
+      setVideoUrl(videoUrl);
+      setMessages([]);
+    });
+
+    // Implement heartbeat
+    const heartbeatInterval = setInterval(() => {
       socket.emit('heartbeat');
     }, 25000);
 
     return () => {
       socket.disconnect();
-      clearInterval(heartbeat);
+      clearInterval(heartbeatInterval);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registeredUsers, userRatings, openPanels, scrollToBottom]);
@@ -153,8 +162,12 @@ const Chat: React.FC = () => {
   const handleSwitchChannel = async () => {
     console.log('Switching channel to:', videoUrl);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/chat/switch-channel`, { videoUrl });
-      setVideoInfo(response.data);
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/chat/switch-channel`, { videoUrl });
+      setVideoInfo({
+        title: response.data.videoTitle,
+        channelTitle: response.data.channelTitle,
+        isLiveStream: response.data.isLiveStream
+      });
       setMessages([]); // Clear previous messages
       if (socketRef.current) {
         socketRef.current.emit('switchChannel', videoUrl);
