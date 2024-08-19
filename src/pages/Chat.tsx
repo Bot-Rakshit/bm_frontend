@@ -37,6 +37,7 @@ const Chat: React.FC = () => {
   const [registeredUsers, setRegisteredUsers] = useState<string[]>([]);
   const [userRatings, setUserRatings] = useState<{ [key: string]: UserRating }>({});
   const [openPanels, setOpenPanels] = useState<string[]>(['all', 'superchats', 'chess']);
+  const [videoInfo, setVideoInfo] = useState<{ title: string; channelTitle: string; isLiveStream: boolean } | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
   const allChatRef = useRef<HTMLDivElement>(null);
@@ -72,6 +73,7 @@ const Chat: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('Server URL:', import.meta.env.VITE_SERVER_URL);
     console.log('Attempting to connect to socket');
     const socket = io(import.meta.env.VITE_SERVER_URL);
     socketRef.current = socket;
@@ -148,10 +150,18 @@ const Chat: React.FC = () => {
     }
   };
 
-  const handleSwitchChannel = () => {
+  const handleSwitchChannel = async () => {
     console.log('Switching channel to:', videoUrl);
-    if (socketRef.current) {
-      socketRef.current.emit('switchChannel', videoUrl);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/chat/switch-channel`, { videoUrl });
+      setVideoInfo(response.data);
+      setMessages([]); // Clear previous messages
+      if (socketRef.current) {
+        socketRef.current.emit('switchChannel', videoUrl);
+      }
+    } catch (error) {
+      console.error('Failed to switch channel:', error);
+      // Handle error (e.g., show an error message to the user)
     }
   };
 
@@ -192,6 +202,13 @@ const Chat: React.FC = () => {
           </button>
         </div>
       </div>
+      {videoInfo && (
+        <div className="p-4 bg-gray-800 text-neon-green">
+          <p>Now watching: {videoInfo.title}</p>
+          <p>Channel: {videoInfo.channelTitle}</p>
+          <p>{videoInfo.isLiveStream ? 'Live Stream' : 'Video'}</p>
+        </div>
+      )}
       <div className="flex-1 flex flex-wrap p-4 overflow-y-auto">
         {['all', 'superchats', 'chess'].map((panel) => (
           <div
