@@ -74,9 +74,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
 
-  /* scrllbar stylesfor webkit based browsers */
+  /* Scrollbar styles for webkit-based browsers */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -93,5 +94,27 @@
   ::-webkit-scrollbar-thumb:hover {
     background-color: rgb(57 255 20);
     cursor: pointer;
+  }
+
+  /* Hide scrollbar when not needed */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(49, 212, 20) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(49, 212, 20);
+    border-radius: 20px;
+    border: 3px solid transparent;
+  }
+  
+  /* Only show scrollbar when content overflows */
+  * {
+    overflow: auto;
   }
 }
