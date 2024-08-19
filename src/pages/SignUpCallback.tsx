@@ -91,7 +91,7 @@ export default function SignUpCallback() {
         animate="visible"
         variants={fadeIn}
         transition={{ duration: 0.5 }}
-        className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] p-6 rounded-3xl border border-neon-green/20 w-full max-w-5xl shadow-2xl shadow-neon-green/20 relative z-10"
+        className="bg-gradient-to-br from-[#1a3a1a] to-[#0a1f0a] p-6 rounded-3xl border border-neon-green/20 w-full max-w-5xl shadow-2xl shadow-neon-green/20 relative z-10 overflow-hidden"
       >
         <div className="flex flex-col lg:flex-row gap-8 h-full">
           <div className="lg:w-2/5 flex flex-col justify-center items-center p-4 md:p-8 relative rounded-lg">
@@ -106,7 +106,7 @@ export default function SignUpCallback() {
               </p>
             </div>
           </div>
-          <div className="lg:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-white/5 rounded-lg backdrop-blur-sm">
+          <div className="lg:w-3/5 flex flex-col items-center justify-center p-4 md:p-8 mt-4 md:mt-0 bg-white/5 rounded-lg backdrop-blur-sm overflow-y-auto max-h-[80vh] lg:max-h-none">
             <div className="w-full max-w-md space-y-6 md:space-y-8">
               {step === 1 && (
                 <div className="text-center">
