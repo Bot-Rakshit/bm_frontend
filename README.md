@@ -1,6 +1,6 @@
 # BMSamay.com Frontend
 
-Join our Discord - https://discord.gg/vWbrBVNV
+Join our Discord - https://discord.gg/6Pje7Wch
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
