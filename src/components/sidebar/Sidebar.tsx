@@ -132,7 +132,7 @@ const Sidebar = () => {
               <ChevronRight size={20} />
             ) : (
               // Hide the ChevronLeft icon when collapsed
-              <ChevronLeft size={30} className="hidden" />
+              <ChevronLeft size={30} className=" " />
             )}
           </Button>
         )}
