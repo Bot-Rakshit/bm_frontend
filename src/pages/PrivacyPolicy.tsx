@@ -4,7 +4,7 @@ export default function PrivacyPolicy() {
   return (
     <div className="flex flex-col min-h-screen bg-black text-gray-300 font-sans">
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-10 sm:py-10 md:py-12 lg:py-14 xl:py-16 2xl:py-16">
           <div className="container px-4 md:px-6">
             <Card className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <CardHeader>
