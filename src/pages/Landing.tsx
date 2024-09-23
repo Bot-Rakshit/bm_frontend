@@ -11,7 +11,6 @@ import { BadgeIcon, PointerIcon, GroupIcon, Zap, Target, Trophy } from 'lucide-r
 import samayheader from '../assets/samayheader.webp';
 import chesscomLogo from '../assets/chesscomlogo.webp';
 import { Helmet } from 'react-helmet-async';
-import { Alert, AlertDescription } from "@/components/ui/Alert";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 //
 const Counter = ({ end, duration = 2 }: { end: number; duration?: number }) => {
@@ -304,29 +303,6 @@ const Footer = () => (
 );
 
 export function LandingPage() {
-  const [showMaintenanceAlert, setShowMaintenanceAlert] = useState(false);
-
-  useEffect(() => {
-    const checkMaintenanceTime = () => {
-      const now = new Date();
-      const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
-      const istTime = new Date(now.getTime() + istOffset);
-      
-      const maintenanceStart = new Date(istTime);
-      maintenanceStart.setHours(19, 30, 0, 0);
-      
-      const maintenanceEnd = new Date(istTime);
-      maintenanceEnd.setHours(21, 30, 0, 0);
-
-      setShowMaintenanceAlert(istTime >= maintenanceStart && istTime <= maintenanceEnd);
-    };
-
-    checkMaintenanceTime();
-    const interval = setInterval(checkMaintenanceTime, 60000); // Check every minute
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="relative bg-black min-h-screen text-white flex flex-col overflow-x-hidden">
       <Helmet>
@@ -340,14 +316,6 @@ export function LandingPage() {
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       
-      {showMaintenanceAlert && (
-        <Alert className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black p-2 sm:p-4">
-          <AlertDescription className="text-sm sm:text-base text-center">
-            We are under maintenance from 7:30PM IST to 9:30PM IST. Signups will resume after this period.
-          </AlertDescription>
-        </Alert>
-      )}
-
       <div className="absolute inset-0 bg-gradient-to-br from-black via-[#0a1f0a] to-[#1a3a1a] z-0">
         <div className="absolute inset-0 opacity-20 bg-[url('/chess-pattern.svg')] bg-repeat"></div>
       </div>
