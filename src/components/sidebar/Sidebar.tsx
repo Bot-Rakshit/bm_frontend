@@ -93,7 +93,7 @@ const Sidebar = () => {
           whileTap={{ scale: item.comingSoon ? 1 : 0.95 }}
           className="flex items-center gap-4"
         >
-          <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} />
+          <item.icon className={`h-5 w-5 ${isCollapsed && !isHovered ? 'mr-0' : 'mr-3'}`} aria-hidden="true"/>
           {(!isCollapsed || isHovered) && <span className="text-sm whitespace-nowrap">{item.name}</span>}
         </motion.div>
         {(!isCollapsed || isHovered) && item.comingSoon && (
