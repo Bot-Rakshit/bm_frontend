@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
+import { Home, Users, LogOut, Newspaper, BookOpen, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.webp';
@@ -115,25 +115,19 @@ const Sidebar = () => {
     <div className={`flex flex-col h-full bg-gray-900 ${isCollapsed && !isHovered ? 'w-20' : 'w-64'} shadow-xl transition-all duration-300`}>
       <div className={`flex items-center ${isCollapsed && !isHovered ? 'justify-center' : 'justify-between'} px-4 py-6 border-b border-gray-800`}>
         {(!isCollapsed || isHovered) && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <img src={samayBM} alt="BM Samay Logo" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold text-neon-green">BM Samay</span>
           </div>
         )}
-        {!isMobile && (
+        {!isMobile && !isHovered && isCollapsed && (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleToggleCollapse}
             className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
           >
-            {isCollapsed ? (
-              // Only show the ChevronRight icon when collapsed
-              <ChevronRight size={20} />
-            ) : (
-              // Hide the ChevronLeft icon when collapsed
-              <ChevronLeft size={30} className="hidden" />
-            )}
+            <ChevronRight size={20} />
           </Button>
         )}
       </div>
