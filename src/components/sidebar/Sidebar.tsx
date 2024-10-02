@@ -132,7 +132,7 @@ const Sidebar = () => {
             }`}
           >
             {isCollapsed ? (
-              // Only show the ChevronRight icon when expanded
+              // Only show the ChevronRight icon when collapsed
               <ChevronRight size={20} />
             ) : (
               // Hide the ChevronLeft icon when collapsed
