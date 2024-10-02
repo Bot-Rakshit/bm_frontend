@@ -125,14 +125,18 @@ const Sidebar = () => {
             variant="ghost"
             size="icon"
             onClick={handleToggleCollapse}
-            className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
+            className={`rounded-full ${
+              isCollapsed 
+                ? 'text-gray-400 hover:text-neon-green hover:bg-neon-green/5' 
+                : 'text-gray-400 hover:text-gray-400 hover:bg-transparent cursor-default'
+            }`}
           >
             {isCollapsed ? (
-              // Only show the ChevronRight icon when collapsed
+              // Only show the ChevronRight icon when expanded
               <ChevronRight size={20} />
             ) : (
               // Hide the ChevronLeft icon when collapsed
-              <ChevronLeft size={30} className="hidden" />
+              <ChevronLeft size={20} className="hidden" />
             )}
           </Button>
         )}
