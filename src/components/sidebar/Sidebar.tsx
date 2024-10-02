@@ -69,7 +69,7 @@ const Sidebar = () => {
 
   const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isMobile) {
-      if (event.relatedTarget && event.relatedTarget !== window && event.currentTarget !== event.relatedTarget) {
+      if (!event.currentTarget.contains(event.relatedTarget as Node)) {
         setIsHovered(false);
         setIsCollapsed(true);
       }
@@ -120,7 +120,7 @@ const Sidebar = () => {
             <span className="text-lg font-bold text-neon-green">BM Samay</span>
           </div>
         )}
-        {!isMobile && (
+        {!isMobile && !isHovered && (
           <Button
             variant="ghost"
             size="icon"
@@ -128,10 +128,8 @@ const Sidebar = () => {
             className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
           >
             {isCollapsed ? (
-              // Only show the ChevronRight icon when collapsed
               <ChevronRight size={20} />
             ) : (
-              // Hide the ChevronLeft icon when collapsed
               <ChevronLeft size={30} className="hidden" />
             )}
           </Button>
