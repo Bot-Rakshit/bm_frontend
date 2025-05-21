@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Home, Users, LogOut, Newspaper, BookOpen, ChevronLeft, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
+import { Home, Users, LogOut, Newspaper, BookOpen, ChevronRight, GraduationCap, Dices, Share2 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import samayBM from '@/assets/SamayBM.webp';
@@ -125,15 +125,10 @@ const Sidebar = () => {
             variant="ghost"
             size="icon"
             onClick={handleToggleCollapse}
-            className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
+            className={`text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full ${!isCollapsed ? 'hidden' : ''}`}
           >
-            {isCollapsed ? (
-              // Only show the ChevronRight icon when collapsed
+              {/* Only show the ChevronRight icon when collapsed */}
               <ChevronRight size={20} />
-            ) : (
-              // Hide the ChevronLeft icon when collapsed
-              <ChevronLeft size={30} className="hidden" />
-            )}
           </Button>
         )}
       </div>
