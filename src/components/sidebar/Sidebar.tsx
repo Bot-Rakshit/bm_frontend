@@ -120,20 +120,15 @@ const Sidebar = () => {
             <span className="text-lg font-bold text-neon-green">BM Samay</span>
           </div>
         )}
-        {!isMobile && (
+        {!isMobile && isCollapsed && (
+              // Only show the ChevronRight icon when collapsed
           <Button
             variant="ghost"
             size="icon"
             onClick={handleToggleCollapse}
             className="text-gray-400 hover:text-neon-green hover:bg-neon-green/5 rounded-full"
           >
-            {isCollapsed ? (
-              // Only show the ChevronRight icon when collapsed
               <ChevronRight size={20} />
-            ) : (
-              // Hide the ChevronLeft icon when collapsed
-              <ChevronLeft size={30} className="hidden" />
-            )}
           </Button>
         )}
       </div>
