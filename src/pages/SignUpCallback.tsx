@@ -54,6 +54,10 @@ export default function SignUpCallback() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === 'Enter') handleNextStep();
+  };
+
   const handleVerify = async () => {
     if (chessComId && token) {
       try {
@@ -115,6 +119,7 @@ export default function SignUpCallback() {
                     type="text"
                     value={chessComId}
                     onChange={(e) => setChessComId(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Your Chess.com ID"
                     className="w-full px-4 py-2 rounded-lg bg-white/10 border border-neon-green/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-green"
                   />
